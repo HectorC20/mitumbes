@@ -1,0 +1,197 @@
+---
+import PlaceCard from '../place/PlaceCard.astro';
+import Icon from '../Icon.astro';
+import {
+  loc,
+  type Categoria,
+  type ContenidoConRelaciones,
+  type Zona,
+} from '../../shared/content/places';
+import { COLLECTION_ICONS } from '../../shared/constants/collections';
+import { isLocale, localizePath, type Locale } from '../../shared/constants/locales';
+import { t } from '../../shared/constants/ui';
+import { SECTIONS, sectionLabel } from '../../shared/constants/sections';
+
+interface Props {
+  lugares: ContenidoConRelaciones[];
+  categorias: Categoria[];
+  zonas: Zona[];
+  params: { q?: string; categoria?: string; zona?: string };
+  lang?: Locale;
+}
+
+const { lugares, categorias, zonas, params } = Astro.props;
+const lang: Locale = isLocale(Astro.props.lang) ? Astro.props.lang : 'es';
+const total = lugares.length;
+const action = localizePath('/lugares/', lang);
+const populares = ['lugares', 'playa', 'cebiche', 'manglares', 'surf'];
+
+const categoriasPorId = new Map(categorias.map((c) => [c.collection, c]));
+const categoriasOptions = categorias.map((c) => ({
+  id: c.collection,
+  title: loc(c.data.title, lang) ?? c.collection,
+}));
+const zonasOptions = zonas
+  .map((z) => ({ id: z.id, title: loc(z.data.title, lang) ?? z.id }))
+  .sort((a, b) => a.title.localeCompare(b.title));
+---
+
+<div class="search-toolbar">
+  <form class="search-form" role="search" action={action} method="get">
+    <label class="sr-only" for="search-q">{t(lang, 'search.label')}</label>
+    <input
+      id="search-q"
+      class="search-form__input"
+      type="search"
+      name="q"
+      placeholder={t(lang, 'search.placeholder')}
+      value={params.q ?? ''}
+    />
+    <select
+      class="filter-field"
+      id="filter-categoria"
+      name="categoria"
+      aria-label={t(lang, 'search.filterCategory')}
+    >
+      <option value="">{t(lang, 'search.allCategories')}</option>
+      {
+        categoriasOptions.map((c) => (
+          <option value={c.id} selected={params.categoria === c.id}>
+            {c.title}
+          </option>
+        ))
+      }
+    </select>
+    <select
+      class="filter-field"
+      id="filter-zona"
+      name="zona"
+      aria-label={t(lang, 'search.filterZone')}
+    >
+      <option value="">{t(lang, 'search.allZones')}</option>
+      {
+        zonasOptions.map((z) => (
+          <option value={z.id} selected={params.zona === z.id}>
+            {z.title}
+          </option>
+        ))
+      }
+    </select>
+    <button class="btn btn--primary search-form__submit" type="submit">
+      <Icon name="search" size="sm" />
+      {t(lang, 'search.submit')}
+    </button>
+  </form>
+
+  <!-- Apartados: identificadores de sección para accesibilidad del contenido -->
+  <div class="flex flex-wrap items-center gap-2">
+    <span class="text-sm text-muted">{t(lang, 'search.bySection')}</span>
+    {
+      SECTIONS.map((s) => (
+        <a
+          class="search-tab"
+          data-section={s.id}
+          href={localizePath(s.path, lang)}
+        >
+          {sectionLabel(s.id, lang)}
+        </a>
+      ))
+    }
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <span class="text-sm text-muted">{t(lang, 'search.popular')}</span>
+    {
+      populares.map((p) => (
+        <a class="search-tab" href={`${action}?q=${p}`}>
+          {p}
+        </a>
+      ))
+    }
+  </div>
+</div>
+
+<p id="search-count" class="search-meta mb-6" aria-live="polite">
+  {total} {total === 1 ? t(lang, 'count.place') : t(lang, 'count.places')}
+</p>
+
+<div id="place-grid" class="place-grid">
+  {
+    lugares.map((lugar) => (
+      <PlaceCard
+        lugar={lugar}
+        categoria={categoriasPorId.get(lugar.collection)}
+        lang={lang}
+      />
+    ))
+  }
+</div>
+
+<div id="search-empty" class="empty-state" hidden={total > 0}>
+  <p class="font-display text-xl text-secondary">{t(lang, 'search.emptyTitle')}</p>
+  <p class="mt-2 text-muted">{t(lang, 'search.emptyBody')}</p>
+  <a class="btn btn--outline mt-6" href={action}>
+    {t(lang, 'search.viewAllPlaces')}
+  </a>
+</div>
+
+<script>
+  const grid = document.querySelector<HTMLElement>('#place-grid');
+  if (grid) {
+    const q = document.querySelector<HTMLInputElement>('#search-q');
+    const categoria =
+      document.querySelector<HTMLSelectElement>('#filter-categoria');
+    const zona = document.querySelector<HTMLSelectElement>('#filter-zona');
+    const form = document.querySelector<HTMLFormElement>('.search-form');
+    const counter = document.querySelector<HTMLElement>('#search-count');
+    const empty = document.querySelector<HTMLElement>('#search-empty');
+    const items = Array.from(grid.querySelectorAll<HTMLElement>('[data-lugar]'));
+    const lang = document.documentElement.lang;
+
+    const counterWords: Record<string, (n: number) => string> = {
+      es: (n) => (n === 1 ? 'lugar' : 'lugares'),
+      en: (n) => (n === 1 ? 'place' : 'places'),
+      pt: (n) => (n === 1 ? 'lugar' : 'lugares'),
+    };
+    const countWord = counterWords[lang] ?? counterWords.es;
+
+    const normalizar = (s: string) =>
+      s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+    const aplicar = () => {
+      const termino = normalizar(q?.value ?? '').trim();
+      const cat = categoria?.value ?? '';
+      const zonaVal = zona?.value ?? '';
+      let visibles = 0;
+
+      for (const el of items) {
+        const texto = el.dataset.search ?? '';
+        const ok =
+          (!termino || texto.includes(termino)) &&
+          (!cat || el.dataset.categoria === cat) &&
+          (!zonaVal || el.dataset.zona === zonaVal);
+        el.hidden = !ok;
+        if (ok) visibles++;
+      }
+
+      if (counter) {
+        counter.textContent = `${visibles} ${countWord(visibles)}`;
+      }
+      if (empty) empty.hidden = visibles > 0;
+
+      const params = new URLSearchParams();
+      if (q?.value.trim()) params.set('q', q.value.trim());
+      if (cat) params.set('categoria', cat);
+      if (zonaVal) params.set('zona', zonaVal);
+      const qs = params.toString();
+      const base = `${window.location.pathname}`;
+      history.replaceState(null, '', qs ? `${base}?${qs}` : base);
+    };
+
+    form?.addEventListener('submit', (e) => e.preventDefault());
+    q?.addEventListener('input', aplicar);
+    categoria?.addEventListener('change', aplicar);
+    zona?.addEventListener('change', aplicar);
+    aplicar();
+  }
+</script>

@@ -1,0 +1,164 @@
+---
+import Layout from '../../components/layout/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import PlaceCard from '../../components/place/PlaceCard.astro';
+import {
+  getDestacados,
+  getCategorias,
+  getZonas,
+  getConteos,
+  loc,
+} from '../../shared/content/places';
+import {
+  LOCALES,
+  localizePath,
+  type Locale,
+} from '../../shared/constants/locales';
+import { t } from '../../shared/constants/ui';
+import { COLLECTION_ICONS } from '../../shared/constants/collections';
+import '../../styles/pages/home.css';
+
+export async function getStaticPaths() {
+  return LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+export const prerender = true;
+
+const lang = Astro.params.lang as Locale;
+const [destacados, categorias, zonas, conteos] = await Promise.all([
+  getDestacados(6),
+  getCategorias(),
+  getZonas(),
+  getConteos(),
+]);
+
+const categoriasPorId = new Map(categorias.map((c) => [c.collection, c]));
+
+const heroImg =
+  'https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Tumbes%20Peru%20coastline%20aerial%20view%20turquoise%20ocean%20beaches%20mangroves%20palm%20trees%20golden%20sunset%20warm%20light%20travel%20photography&image_size=landscape_16_9';
+
+const lugaresHref = localizePath('/lugares/', lang);
+const categoriasHref = localizePath('/categorias/', lang);
+const zonasHref = localizePath('/zonas/', lang);
+---
+
+<Layout lang={lang} title={t(lang, 'seo.homeTitle')} description={t(lang, 'seo.homeDescription')} image={heroImg}>
+  <section class="hero">
+    <img class="hero__img" src={heroImg} alt="" fetchpriority="high" />
+    <div class="container-page hero__inner">
+      <p class="hero__eyebrow">{t(lang, 'home.heroEyebrow')}</p>
+      <h1 class="hero__title">{t(lang, 'home.heroTitle')}</h1>
+      <p class="hero__lead">{t(lang, 'home.heroLead')}</p>
+      <div class="hero__search">
+        <form class="search-form" role="search" action={lugaresHref} method="get">
+          <label class="sr-only" for="home-search">{t(lang, 'search.label')}</label>
+          <input
+            id="home-search"
+            class="search-form__input"
+            type="search"
+            name="q"
+            placeholder={t(lang, 'home.searchPlaceholder')}
+          />
+          <button class="btn btn--white search-form__submit" type="submit">
+            <Icon name="search" size="sm" />
+            {t(lang, 'home.searchSubmit')}
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="categorias" data-section="categorias">
+    <div class="container-page">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">{t(lang, 'home.categoriesEyebrow')}</p>
+          <h2 class="section-head__title">{t(lang, 'home.categoriesTitle')}</h2>
+        </div>
+        <a class="section-head__link" href={categoriasHref}>
+          {t(lang, 'home.viewAll')}
+          <Icon name="arrow-right" size="sm" />
+        </a>
+      </div>
+      <div class="category-grid">
+        {
+          categorias.map((c) => (
+            <a class="category-tile" href={localizePath(`/categorias/${c.collection}/`, lang)}>
+              <span class="category-tile__icon">
+                <Icon name={COLLECTION_ICONS[c.collection] ?? 'pin'} />
+              </span>
+              <span>
+                <span class="category-tile__title block">
+                  {loc(c.data.title, lang)}
+                </span>
+                <span class="category-tile__count">
+                  {conteos.porCategoria.get(c.collection) ?? 0} {t(lang, 'count.places')}
+                </span>
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sand" id="destacados">
+    <div class="container-page">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">{t(lang, 'home.featuredEyebrow')}</p>
+          <h2 class="section-head__title">{t(lang, 'home.featuredTitle')}</h2>
+        </div>
+        <a class="section-head__link" href={lugaresHref}>
+          {t(lang, 'home.viewAll')}
+          <Icon name="arrow-right" size="sm" />
+        </a>
+      </div>
+      <div class="place-grid">
+        {
+          destacados.map((lugar) => (
+            <PlaceCard
+              lugar={lugar}
+              categoria={categoriasPorId.get(lugar.collection)}
+              lang={lang}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="zonas" data-section="zonas">
+    <div class="container-page">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">{t(lang, 'home.zonesEyebrow')}</p>
+          <h2 class="section-head__title">{t(lang, 'home.zonesTitle')}</h2>
+        </div>
+        <a class="section-head__link" href={zonasHref}>
+          {t(lang, 'home.viewZones')}
+          <Icon name="arrow-right" size="sm" />
+        </a>
+      </div>
+      <div class="zone-grid">
+        {
+          zonas.map((z) => (
+            <a class="zone-card" href={localizePath(`/zonas/${z.id}/`, lang)}>
+              {
+                z.data.image && (
+                  <img class="zone-card__img" src={z.data.image} alt="" loading="lazy" />
+                )
+              }
+              <div class="zone-card__body">
+                <p class="zone-card__title">{loc(z.data.title, lang)}</p>
+                <p class="zone-card__count">
+                  {conteos.porZona.get(z.id) ?? 0} {t(lang, 'count.places')}
+                </p>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Layout>

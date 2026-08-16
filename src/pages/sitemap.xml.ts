@@ -1,0 +1,68 @@
+import type { APIRoute } from 'astro';
+import {
+  getAllContenidos,
+  getCategorias,
+  getZonas,
+} from '../shared/content/places';
+import { SITE } from '../shared/constants/site';
+import { LOCALES } from '../shared/constants/locales';
+
+export const prerender = true;
+
+interface UrlEntry {
+  url: string;
+  priority: number;
+  lastmod?: string;
+}
+
+export const GET: APIRoute = async () => {
+  const [contenidos, categorias, zonas] = await Promise.all([
+    getAllContenidos(),
+    getCategorias(),
+    getZonas(),
+  ]);
+
+  const urls: UrlEntry[] = [];
+
+  for (const lang of LOCALES) {
+    const l = (path: string) => `${SITE.url}/${lang}${path === '/' ? '/' : path}`;
+
+    urls.push({ url: l('/'), priority: 1.0 });
+    urls.push({ url: l('/lugares/'), priority: 0.9 });
+    urls.push({ url: l('/categorias/'), priority: 0.6 });
+    urls.push({ url: l('/zonas/'), priority: 0.6 });
+
+    for (const item of contenidos) {
+      urls.push({
+        url: l(`/lugares/${item.id}/`),
+        priority: 0.8,
+        lastmod: item.data.updatedAt?.toISOString().slice(0, 10),
+      });
+    }
+    for (const categoria of categorias) {
+      urls.push({
+        url: l(`/categorias/${categoria.collection}/`),
+        priority: 0.6,
+      });
+    }
+    for (const zona of zonas) {
+      urls.push({ url: l(`/zonas/${zona.id}/`), priority: 0.6 });
+    }
+  }
+
+  const body = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls
+  .map(
+    (u) => `  <url>
+    <loc>${u.url}</loc>
+    ${u.lastmod ? `    <lastmod>${u.lastmod}</lastmod>\n` : ''}    <priority>${u.priority}</priority>
+  </url>`,
+  )
+  .join('\n')}
+</urlset>`;
+
+  return new Response(body, {
+    headers: { 'Content-Type': 'application/xml' },
+  });
+};

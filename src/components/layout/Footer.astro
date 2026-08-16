@@ -1,0 +1,72 @@
+---
+import { SITE } from '../../shared/constants/site';
+import { isLocale, localizePath, type Locale } from '../../shared/constants/locales';
+import { t } from '../../shared/constants/ui';
+import Icon from '../Icon.astro';
+
+interface Props {
+  lang?: Locale;
+}
+
+const lang: Locale = isLocale(Astro.props.lang) ? Astro.props.lang : 'es';
+const year = new Date().getFullYear();
+const link = (path: string) => localizePath(path, lang);
+---
+
+<footer class="site-footer">
+  <div class="container-page">
+    <div class="site-footer__inner">
+      <div>
+        <a
+          class="nav-shell__brand"
+          href={link('/')}
+          aria-label={`MiTumbes — ${t(lang, 'nav.home')}`}
+        >
+          <span class="nav-shell__logo"><Icon name="waves" size="sm" /></span>
+          <span class="nav-shell__wordmark">MiTumbes</span>
+        </a>
+        <p class="mt-4 max-w-sm text-sm leading-relaxed text-white/70">
+          {t(lang, 'seo.homeDescription')}
+        </p>
+      </div>
+      <nav aria-label={t(lang, 'footer.placesHeading')}>
+        <p class="site-footer__heading">{t(lang, 'footer.placesHeading')}</p>
+        <a class="site-footer__link" href={link('/lugares/')}>
+          {t(lang, 'footer.viewAllPlaces')}
+        </a>
+        <a class="site-footer__link" href={link('/categorias/places/')}>
+          {t(lang, 'footer.placesType1')}
+        </a>
+        <a class="site-footer__link" href={link('/categorias/restaurants/')}>
+          {t(lang, 'footer.placesType2')}
+        </a>
+        <a class="site-footer__link" href={link('/categorias/hotels/')}>
+          {t(lang, 'footer.placesType3')}
+        </a>
+      </nav>
+      <nav aria-label={t(lang, 'footer.exploreHeading')}>
+        <p class="site-footer__heading">{t(lang, 'footer.exploreHeading')}</p>
+        <a class="site-footer__link" href={link('/categorias/')}>
+          {t(lang, 'footer.categories')}
+        </a>
+        <a class="site-footer__link" href={link('/zonas/')}>
+          {t(lang, 'footer.zones')}
+        </a>
+        <a class="site-footer__link" href={link('/zonas/zorritos/')}>
+          Zorritos
+        </a>
+        <a class="site-footer__link" href={link('/zonas/punta-sal/')}>
+          Punta Sal
+        </a>
+      </nav>
+    </div>
+    <div class="site-footer__note">
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <span>© {year} {SITE.name}. {t(lang, 'footer.note')}</span>
+        <span>
+          {t(lang, 'footer.verification')}
+        </span>
+      </div>
+    </div>
+  </div>
+</footer>

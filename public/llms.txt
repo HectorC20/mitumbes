@@ -1,0 +1,33 @@
+# MiTumbes
+
+> Guía turística de Tumbes (Perú): lugares turísticos, restaurantes, hoteles, actividades, eventos y rutas en la costa norte.
+
+## Sobre el sitio
+
+MiTumbes es una plataforma de información turística estructurada sobre la región Tumbes. Cada lugar tiene datos verificables: nombre, categoría, zona, descripción, ubicación, coordenadas, horarios, precios, servicios, cómo llegar y actividades. El contenido se sirve como HTML semántico y JSON-LD (Schema.org) para que buscadores, LLMs y agentes de IA lo consuman.
+
+## Enlaces principales
+
+- [Inicio](https://mitumbes.com/)
+- [Lugares en Tumbes](https://mitumbes.com/lugares/)
+- [Categorías](https://mitumbes.com/categorias/)
+- [Zonas](https://mitumbes.com/zonas/)
+- [Sitemap](https://mitumbes.com/sitemap.xml)
+
+## Categorías
+
+- [Lugares turísticos](https://mitumbes.com/categorias/turisticos/)
+- [Restaurantes](https://mitumbes.com/categorias/restaurantes/)
+- [Hoteles y alojamientos](https://mitumbes.com/categorias/hoteles/)
+- [Actividades y experiencias](https://mitumbes.com/categorias/actividades/)
+- [Eventos](https://mitumbes.com/categorias/eventos/)
+- [Servicios de turismo](https://mitumbes.com/categorias/servicios/)
+
+## Zonas
+
+- [Tumbes (ciudad)](https://mitumbes.com/zonas/tumbes/)
+- [Zorritos](https://mitumbes.com/zonas/zorritos/)
+- [Punta Sal](https://mitumbes.com/zonas/punta-sal/)
+- [Cancas](https://mitumbes.com/zonas/cancas/)
+- [Bocapán](https://mitumbes.com/zonas/bocapan/)
+- [Puerto Pizarro](https://mitumbes.com/zonas/puerto-pizarro/)

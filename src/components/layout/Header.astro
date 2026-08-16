@@ -1,0 +1,175 @@
+---
+import Icon from '../Icon.astro';
+import {
+  LOCALES,
+  LOCALE_LABELS,
+  LOCALE_SHORT,
+  isLocale,
+  localizePath,
+  stripLocale,
+  type Locale,
+} from '@/shared/constants/locales';
+import { t } from '@/shared/constants/ui';
+import { SECTIONS, sectionLabel } from '@/shared/constants/sections';
+
+interface Props {
+  lang?: Locale;
+}
+
+const lang: Locale = isLocale(Astro.props.lang) ? Astro.props.lang : 'es';
+const path = Astro.url.pathname;
+const base = stripLocale(path);
+
+const links = SECTIONS.map((section) => ({
+  ...section,
+  href: localizePath(section.path, lang),
+  label: sectionLabel(section.id, lang),
+}));
+
+const isActive = (href: string) => {
+  const current = path.replace(/\/$/, '');
+  return current === href.replace(/\/$/, '');
+};
+
+const searchHref = localizePath('/lugares/', lang);
+---
+
+<header class="nav-shell">
+  <div class="container-page nav-shell__inner">
+    <a
+      class="nav-shell__brand"
+      href={localizePath('/', lang)}
+      aria-label={`MiTumbes — ${t(lang, 'nav.home')}`}
+    >
+      <span class="nav-shell__logo"><Icon name="waves" size="sm" /></span>
+      <span class="nav-shell__wordmark">MiTumbes</span>
+    </a>
+
+    <nav class="nav-shell__nav" aria-label={t(lang, 'nav.home')}>
+      {
+        links.map((link) => (
+          <a
+            class:list={[
+              'nav-link',
+              { 'nav-link--active': isActive(link.href) },
+            ]}
+            href={link.href}
+            aria-current={isActive(link.href) ? 'page' : undefined}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <!-- Búsqueda -->
+    <form
+      class="hidden items-center gap-1 md:flex"
+      role="search"
+      action={searchHref}
+      method="get"
+    >
+      <label class="sr-only" for="nav-search">{t(lang, 'nav.search')}</label>
+      <input
+        id="nav-search"
+        class="w-44 rounded-sm border-2 border-ink/15 bg-white px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none"
+        type="search"
+        name="q"
+        placeholder={t(lang, 'nav.searchPlaceholder')}
+      />
+      <button
+        class="inline-flex h-9 w-9 items-center justify-center rounded-sm bg-primary text-white hover:bg-secondary"
+        type="submit"
+        aria-label={t(lang, 'nav.search')}
+      >
+        <Icon name="search" size="sm" />
+      </button>
+    </form>
+
+    <!-- Selector de idioma -->
+    <details class="nav-lang">
+      <summary class="nav-lang__toggle" aria-label={t(lang, 'nav.language')}>
+        <Icon name="globe" size="sm" />
+        {LOCALE_SHORT[lang]}
+      </summary>
+      <div class="nav-lang__menu">
+        {
+          LOCALES.map((l) => (
+            <a
+              class:list={[
+                'nav-lang__item',
+                { 'nav-lang__item--active': l === lang },
+              ]}
+              href={localizePath(base, l)}
+              lang={l}
+              aria-current={l === lang ? 'true' : undefined}
+            >
+              {LOCALE_LABELS[l]}
+            </a>
+          ))
+        }
+      </div>
+    </details>
+
+    <!--
+      EXPLORAR: deshabilitado por ahora — no cumple una buena función.
+    <a class="btn btn--primary btn--sm" href={searchHref}>Explorar</a>
+    -->
+
+    <details class="nav-shell__mobile">
+      <summary class="nav-shell__toggle" aria-label={t(lang, 'nav.menu')}>
+        <Icon name="menu" />
+      </summary>
+      <nav class="nav-shell__mobile-list" aria-label={t(lang, 'nav.home')}>
+        <form role="search" action={searchHref} method="get" class="mb-2 flex gap-1">
+          <input
+            class="w-full rounded-sm border-2 border-ink/15 bg-white px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none"
+            type="search"
+            name="q"
+            placeholder={t(lang, 'nav.searchPlaceholder')}
+          />
+          <button
+            class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-sm bg-primary text-white"
+            type="submit"
+            aria-label={t(lang, 'nav.search')}
+          >
+            <Icon name="search" size="sm" />
+          </button>
+        </form>
+        {
+          links.map((link) => (
+            <a
+              class:list={[
+                'nav-link',
+                { 'nav-link--active': isActive(link.href) },
+              ]}
+              href={link.href}
+              aria-current={isActive(link.href) ? 'page' : undefined}
+            >
+              {link.label}
+            </a>
+          ))
+        }
+        <p class="mt-2 border-t border-ink/10 px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wider text-muted">
+          {t(lang, 'nav.language')}
+        </p>
+        <div class="flex gap-1">
+          {
+            LOCALES.map((l) => (
+              <a
+                class:list={[
+                  'nav-link',
+                  { 'nav-link--active': l === lang },
+                ]}
+                href={localizePath(base, l)}
+                lang={l}
+              >
+                {LOCALE_LABELS[l]}
+              </a>
+            ))
+          }
+        </div>
+      </nav>
+    </details>
+  </div>
+</header>

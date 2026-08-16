@@ -1,0 +1,127 @@
+---
+import Layout from '../../../components/layout/Layout.astro';
+import Icon from '../../../components/Icon.astro';
+import PlaceCard from '../../../components/place/PlaceCard.astro';
+import {
+  getCategoriaPorId,
+  getContenidosPorCategoria,
+  loc,
+} from '../../../shared/content/places';
+import { breadcrumbJsonLd } from '../../../lib/seo/jsonld';
+import {
+  CONTENT_COLLECTIONS,
+  type ContentCollectionName,
+} from '../../../shared/constants/collections';
+import { LOCALES, localizePath, type Locale } from '../../../shared/constants/locales';
+import { t } from '../../../shared/constants/ui';
+import { COLLECTION_ICONS } from '../../../shared/constants/collections';
+import '../../../styles/pages/home.css';
+
+export async function getStaticPaths() {
+  const params: { params: { lang: Locale; slug: string } }[] = [];
+  for (const lang of LOCALES) {
+    for (const collection of CONTENT_COLLECTIONS) {
+      params.push({ params: { lang, slug: collection } });
+    }
+  }
+  return params;
+}
+
+export const prerender = true;
+
+const lang = Astro.params.lang as Locale;
+const { slug } = Astro.params;
+
+if (!(CONTENT_COLLECTIONS as readonly string[]).includes(slug!)) {
+  return Astro.redirect(`/${lang}/404/`);
+}
+
+const collection = slug as ContentCollectionName;
+const [categoria, contenidos] = await Promise.all([
+  getCategoriaPorId(collection),
+  getContenidosPorCategoria(collection),
+]);
+
+if (!categoria) {
+  return Astro.redirect(`/${lang}/404/`);
+}
+
+const title = loc(categoria.data.title, lang) ?? collection;
+const description = loc(categoria.data.description, lang) ?? '';
+
+const breadcrumbs = [
+  { name: t(lang, 'nav.home'), url: localizePath('/', lang) },
+  { name: t(lang, 'nav.categories'), url: localizePath('/categorias/', lang) },
+  { name: title },
+];
+---
+
+<Layout
+  lang={lang}
+  title={`${title} ${t(lang, 'categories.inTumbes')}`}
+  description={description}
+  jsonLd={breadcrumbJsonLd(breadcrumbs)}
+>
+  <nav class="container-page breadcrumbs" aria-label={t(lang, 'nav.home')}>
+    <ol class="breadcrumbs__list">
+      {
+        breadcrumbs.map((item, i) => (
+          <>
+            {i > 0 && <li class="breadcrumbs__sep" aria-hidden="true">/</li>}
+            {
+              item.url ? (
+                <li>
+                  <a class="breadcrumbs__link" href={item.url}>
+                    {item.name}
+                  </a>
+                </li>
+              ) : (
+                <li aria-current="page">{item.name}</li>
+              )
+            }
+          </>
+        ))
+      }
+    </ol>
+  </nav>
+
+  <section class="section section--sand">
+    <div class="container-page">
+      <div class="flex items-center gap-4">
+        <span class="category-tile__icon">
+          <Icon name={COLLECTION_ICONS[collection] ?? 'pin'} size="lg" />
+        </span>
+        <div>
+          <h1 class="page-title">{title} {t(lang, 'categories.inTumbes')}</h1>
+          <p class="lead">{description}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-page">
+      <p class="search-meta mb-6">
+        {contenidos.length} {contenidos.length === 1 ? t(lang, 'count.place') : t(lang, 'count.places')}
+      </p>
+      {
+        contenidos.length > 0 ? (
+          <div class="place-grid">
+            {
+              contenidos.map((lugar) => (
+                <PlaceCard lugar={lugar} categoria={categoria} lang={lang} />
+              ))
+            }
+          </div>
+        ) : (
+          <div class="empty-state">
+            <p class="font-display text-xl text-secondary">
+              {t(lang, 'categories.emptyTitle')}
+            </p>
+            <p class="mt-2 text-muted">{t(lang, 'categories.emptyBody')}</p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</Layout>

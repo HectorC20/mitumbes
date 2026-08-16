@@ -1,0 +1,106 @@
+---
+import '@/styles/global.css';
+import { SITE } from '@/shared/constants/site';
+import {
+  DEFAULT_LOCALE,
+  LOCALE_BCP47,
+  LOCALE_OG,
+  alternatePaths,
+  getLocaleFromPath,
+  isLocale,
+  localizePath,
+  stripLocale,
+  type Locale,
+} from '@/shared/constants/locales';
+import { webSiteJsonLd } from '@/lib/seo/jsonld';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+
+interface Props {
+  lang?: Locale;
+  title?: string;
+  description?: string;
+  image?: string;
+  jsonLd?: object | object[];
+  noindex?: boolean;
+}
+
+const {
+  title = SITE.name,
+  description = SITE.description,
+  image,
+  jsonLd,
+  noindex = false,
+} = Astro.props;
+
+const lang: Locale =
+  Astro.props.lang ??
+  (isLocale(Astro.params.lang) ? Astro.params.lang : getLocaleFromPath(Astro.url.pathname) ?? DEFAULT_LOCALE);
+
+const internalPath = stripLocale(Astro.url.pathname);
+const canonical = new URL(localizePath(internalPath, lang), SITE.url).href;
+const alternates = alternatePaths(internalPath);
+
+const fullTitle = title === SITE.name ? title : `${title} | ${SITE.name}`;
+const gtag = import.meta.env.PUBLIC_GA4_ID;
+const schemas = [
+  webSiteJsonLd(lang),
+  ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : []),
+];
+---
+
+<!doctype html>
+<html lang={LOCALE_BCP47[lang]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title={`${SITE.name} — Sitemap`} href={`${SITE.url}/sitemap.xml`} />
+    {(Object.keys(alternates) as Locale[]).map((l) => (
+      <link
+        rel="alternate"
+        hreflang={LOCALE_BCP47[l]}
+        href={new URL(alternates[l], SITE.url).href}
+      />
+    ))}
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={new URL(alternates.es, SITE.url).href}
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={LOCALE_OG[lang]} />
+    {image && <meta property="og:image" content={image} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    {noindex && <meta name="robots" content="noindex" />}
+    {schemas.map((schema) => (
+      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    ))}
+    {gtag && (
+      <>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${gtag}`} />
+        <script is:inline set:html={`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${gtag}');
+        `} />
+      </>
+    )}
+  </head>
+  <body>
+    <Header lang={lang} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+  </body>
+</html>

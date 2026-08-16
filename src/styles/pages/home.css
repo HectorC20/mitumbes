@@ -1,0 +1,90 @@
+@reference "../global.css";
+
+/* ---------- Hero ---------- */
+.hero {
+  @apply relative overflow-hidden bg-secondary text-white;
+}
+
+.hero__img {
+  @apply absolute inset-0 h-full w-full object-cover opacity-50;
+}
+
+.hero::after {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-r from-secondary via-secondary/80 to-secondary/30;
+}
+
+.hero__inner {
+  @apply relative z-10 py-20 md:py-28;
+}
+
+.hero__eyebrow {
+  @apply text-xs font-semibold uppercase tracking-[0.2em] text-sun;
+}
+
+.hero__title {
+  @apply mt-3 max-w-3xl text-4xl leading-tight text-white sm:text-5xl lg:text-6xl;
+}
+
+.hero__lead {
+  @apply mt-5 max-w-xl text-lg leading-relaxed text-white/85;
+}
+
+.hero__search {
+  @apply mt-8;
+}
+
+/* ---------- Tiles de categoría ---------- */
+.category-grid {
+  @apply grid gap-4 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.category-tile {
+  @apply flex items-center gap-4 rounded-md border border-ink/10 bg-white p-5 transition-colors duration-200 hover:border-primary hover:bg-primary/5;
+}
+
+.category-tile__icon {
+  @apply flex h-12 w-12 shrink-0 items-center justify-center rounded-sm bg-primary/10 text-primary;
+}
+
+.category-tile__title {
+  @apply font-display text-lg leading-snug text-secondary;
+}
+
+.category-tile__count {
+  @apply text-sm text-muted;
+}
+
+/* ---------- Cards de zona ---------- */
+.zone-grid {
+  @apply grid gap-4 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.zone-card {
+  @apply relative block overflow-hidden rounded-md;
+}
+
+.zone-card__img {
+  @apply absolute inset-0 h-full w-full object-cover transition-transform duration-300;
+}
+
+.zone-card:hover .zone-card__img {
+  @apply scale-105;
+}
+
+.zone-card::after {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-t from-secondary/95 via-secondary/40 to-transparent;
+}
+
+.zone-card__body {
+  @apply relative z-10 flex min-h-44 flex-col justify-end gap-1 p-5;
+}
+
+.zone-card__title {
+  @apply text-2xl leading-tight text-white;
+}
+
+.zone-card__count {
+  @apply text-sm text-white/85;
+}

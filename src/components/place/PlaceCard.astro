@@ -1,0 +1,99 @@
+---
+import {
+  loc,
+  textoDeBusqueda,
+  type Categoria,
+  type ContenidoConRelaciones,
+} from '../../shared/content/places';
+import { COLLECTION_ICONS } from '../../shared/constants/collections';
+import { isLocale, localizePath, type Locale } from '../../shared/constants/locales';
+import { t } from '../../shared/constants/ui';
+import Icon from '../Icon.astro';
+
+interface Props {
+  lugar: ContenidoConRelaciones;
+  categoria?: Categoria;
+  lang?: Locale;
+}
+
+const { lugar, categoria } = Astro.props;
+const lang: Locale = isLocale(Astro.props.lang) ? Astro.props.lang : 'es';
+const href = localizePath(`/lugares/${lugar.id}/`, lang);
+const title = loc(lugar.data.title, lang) ?? lugar.id;
+const description = loc(lugar.data.description, lang) ?? '';
+const excerpt = loc(lugar.data.excerpt, lang) ?? description;
+const zoneTitle = lugar.zone ? loc(lugar.zone.data.title, lang) : undefined;
+const categoriaTitle = categoria ? loc(categoria.data.title, lang) : undefined;
+---
+
+<article
+  class="card"
+  data-lugar
+  data-section="lugares"
+  data-slug={lugar.id}
+  data-categoria={lugar.collection}
+  data-zona={lugar.zone?.id ?? ''}
+  data-search={textoDeBusqueda(lugar, lang)}
+>
+  <div class="card__media">
+    {
+      lugar.data.image && (
+        <img
+          src={lugar.data.image}
+          alt={title}
+          loading="lazy"
+          width="640"
+          height="360"
+        />
+      )
+    }
+    {
+      categoriaTitle && (
+        <span class="card__badge badge badge--primary">
+          <Icon name={COLLECTION_ICONS[lugar.collection] ?? 'pin'} size="sm" />
+          {categoriaTitle}
+        </span>
+      )
+    }
+  </div>
+
+  <div class="card__body">
+    <h3 class="card__title">
+      <a href={href}>{title}</a>
+    </h3>
+    <p class="card__meta">
+      {
+        zoneTitle && (
+          <span class="inline-flex items-center gap-1">
+            <Icon name="pin" size="sm" />
+            {zoneTitle}
+          </span>
+        )
+      }
+      {
+        lugar.data.rating && (
+          <span class="inline-flex items-center gap-1">
+            <Icon name="star" size="sm" />
+            {lugar.data.rating.toFixed(1)}
+          </span>
+        )
+      }
+    </p>
+    <p class="card__text">{excerpt}</p>
+  </div>
+
+  <div class="card__footer">
+    <a class="card__link" href={href}>
+      {t(lang, 'place.seePlace')}
+      <Icon name="arrow-right" size="sm" />
+    </a>
+    {
+      lugar.data.verified && (
+        <span class="badge badge--sun">
+          <Icon name="check" size="sm" />
+          {t(lang, 'place.verifiedBadge')}
+        </span>
+      )
+    }
+  </div>
+</article>

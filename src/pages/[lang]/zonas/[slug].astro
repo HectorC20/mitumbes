@@ -1,0 +1,132 @@
+---
+import Layout from '../../../components/layout/Layout.astro';
+import PlaceCard from '../../../components/place/PlaceCard.astro';
+import {
+  getZonaPorId,
+  getContenidosPorZona,
+  getZonas,
+  getCategorias,
+  loc,
+} from '../../../shared/content/places';
+import { breadcrumbJsonLd } from '../../../lib/seo/jsonld';
+import { LOCALES, localizePath, type Locale } from '../../../shared/constants/locales';
+import { t } from '../../../shared/constants/ui';
+
+export async function getStaticPaths() {
+  const zonas = await getZonas();
+  const params: { params: { lang: Locale; slug: string } }[] = [];
+  for (const lang of LOCALES) {
+    for (const zona of zonas) {
+      params.push({ params: { lang, slug: zona.id } });
+    }
+  }
+  return params;
+}
+
+export const prerender = true;
+
+const lang = Astro.params.lang as Locale;
+const { slug } = Astro.params;
+
+const zona = await getZonaPorId(slug!);
+
+if (!zona) {
+  return Astro.redirect(`/${lang}/404/`);
+}
+
+const [contenidos, categorias] = await Promise.all([
+  getContenidosPorZona(slug!),
+  getCategorias(),
+]);
+
+const categoriasPorId = new Map(categorias.map((c) => [c.collection, c]));
+const title = loc(zona.data.title, lang) ?? zona.id;
+const description = loc(zona.data.description, lang) ?? '';
+
+const breadcrumbs = [
+  { name: t(lang, 'nav.home'), url: localizePath('/', lang) },
+  { name: t(lang, 'nav.zones'), url: localizePath('/zonas/', lang) },
+  { name: title },
+];
+---
+
+<Layout
+  lang={lang}
+  title={`${title} — Tumbes`}
+  description={description}
+  image={zona.data.image}
+  jsonLd={breadcrumbJsonLd(breadcrumbs)}
+>
+  <nav class="container-page breadcrumbs" aria-label={t(lang, 'nav.home')}>
+    <ol class="breadcrumbs__list">
+      {
+        breadcrumbs.map((item, i) => (
+          <>
+            {i > 0 && <li class="breadcrumbs__sep" aria-hidden="true">/</li>}
+            {
+              item.url ? (
+                <li>
+                  <a class="breadcrumbs__link" href={item.url}>
+                    {item.name}
+                  </a>
+                </li>
+              ) : (
+                <li aria-current="page">{item.name}</li>
+              )
+            }
+          </>
+        ))
+      }
+    </ol>
+  </nav>
+
+  {
+    zona.data.image && (
+      <section class="relative h-64 overflow-hidden bg-secondary md:h-80">
+        <img class="h-full w-full object-cover opacity-70" src={zona.data.image} alt="" />
+        <div class="absolute inset-0 bg-gradient-to-t from-secondary/90 to-transparent"></div>
+        <div class="container-page absolute inset-x-0 bottom-0 pb-6">
+          <h1 class="text-4xl leading-tight text-white sm:text-5xl">
+            {title}
+          </h1>
+        </div>
+      </section>
+    )
+  }
+
+  <section class={zona.data.image ? 'section' : 'section section--sand'}>
+    <div class="container-page">
+      <p class="lead">{description}</p>
+    </div>
+  </section>
+
+  <section class="section pt-0">
+    <div class="container-page">
+      <p class="search-meta mb-6">
+        {contenidos.length} {contenidos.length === 1 ? t(lang, 'count.place') : t(lang, 'count.places')} {t(lang, 'count.in')} {title}
+      </p>
+      {
+        contenidos.length > 0 ? (
+          <div class="place-grid">
+            {
+              contenidos.map((lugar) => (
+                <PlaceCard
+                  lugar={lugar}
+                  categoria={categoriasPorId.get(lugar.collection)}
+                  lang={lang}
+                />
+              ))
+            }
+          </div>
+        ) : (
+          <div class="empty-state">
+            <p class="font-display text-xl text-secondary">
+              {t(lang, 'zones.emptyTitle')}
+            </p>
+            <p class="mt-2 text-muted">{t(lang, 'zones.emptyBody')}</p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,93 @@
+@reference "../global.css";
+
+/* ---------- Hero del detalle ---------- */
+.place-hero__inner {
+  @apply grid gap-6 py-10 md:grid-cols-2 md:items-center md:gap-10 md:py-14;
+}
+
+.place-hero__title {
+  @apply mt-4 text-3xl leading-tight text-white sm:text-4xl;
+}
+
+.place-hero__zone {
+  @apply mt-3 inline-flex items-center gap-1.5 text-sm text-white/85;
+}
+
+.place-hero__img {
+  @apply aspect-[16/9] w-full rounded-md object-cover;
+}
+
+/* ---------- Barra de datos rápidos ---------- */
+.place-stats {
+  @apply grid grid-cols-2 gap-4 border-y border-ink/10 py-5 sm:grid-cols-4;
+}
+
+.place-stat {
+  @apply flex items-center gap-2.5 text-sm text-ink;
+}
+
+.place-stat__icon {
+  @apply shrink-0 text-primary;
+}
+
+/* ---------- Layout principal ---------- */
+.place-layout {
+  @apply grid gap-10 lg:grid-cols-3;
+}
+
+.place-main {
+  @apply space-y-10 lg:col-span-2;
+}
+
+.place-aside {
+  @apply space-y-6;
+}
+
+.place-section__title {
+  @apply mb-4 text-2xl;
+}
+
+.place-panel {
+  @apply rounded-md border border-ink/10 bg-sand/50 p-6;
+}
+
+.place-panel__title {
+  @apply mb-5 text-lg;
+}
+
+.info-list {
+  @apply space-y-4;
+}
+
+.info-item {
+  @apply flex gap-3;
+}
+
+.info-item__icon {
+  @apply mt-0.5 shrink-0 text-primary;
+}
+
+.info-item__label {
+  @apply text-xs font-semibold uppercase tracking-wider text-muted;
+}
+
+.info-item__value {
+  @apply text-sm leading-relaxed text-ink;
+}
+
+.info-item__value a {
+  @apply text-primary no-underline hover:text-secondary;
+}
+
+/* ---------- Listas con check ---------- */
+.check-list {
+  @apply grid gap-2 sm:grid-cols-2;
+}
+
+.check-list__item {
+  @apply flex items-start gap-2 text-sm text-ink;
+}
+
+.check-list__icon {
+  @apply mt-0.5 shrink-0 text-primary;
+}

@@ -1,0 +1,55 @@
+---
+import Layout from '../../../components/layout/Layout.astro';
+import Icon from '../../../components/Icon.astro';
+import { getCategorias, getConteos, loc } from '../../../shared/content/places';
+import { LOCALES, localizePath, type Locale } from '../../../shared/constants/locales';
+import { t } from '../../../shared/constants/ui';
+import { COLLECTION_ICONS } from '../../../shared/constants/collections';
+import '../../../styles/pages/home.css';
+
+export async function getStaticPaths() {
+  return LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+export const prerender = true;
+
+const lang = Astro.params.lang as Locale;
+const [categorias, conteos] = await Promise.all([getCategorias(), getConteos()]);
+---
+
+<Layout lang={lang} title={t(lang, 'seo.categoriesTitle')} description={t(lang, 'seo.categoriesDescription')}>
+  <section class="section section--sand">
+    <div class="container-page">
+      <p class="eyebrow">{t(lang, 'categories.eyebrow')}</p>
+      <h1 class="page-title">{t(lang, 'nav.categories')}</h1>
+      <p class="lead">{t(lang, 'categories.lead')}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-page">
+      <div class="category-grid">
+        {
+          categorias.map((c) => (
+            <a
+              class="category-tile"
+              data-section="categorias"
+              data-id={c.collection}
+              href={localizePath(`/categorias/${c.collection}/`, lang)}
+            >
+              <span class="category-tile__icon">
+                <Icon name={COLLECTION_ICONS[c.collection] ?? 'pin'} />
+              </span>
+              <span>
+                <span class="category-tile__title block">{loc(c.data.title, lang)}</span>
+                <span class="category-tile__count">
+                  {conteos.porCategoria.get(c.collection) ?? 0} {t(lang, 'count.places')}
+                </span>
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Layout>

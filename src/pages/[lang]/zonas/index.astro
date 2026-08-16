@@ -1,0 +1,55 @@
+---
+import Layout from '../../../components/layout/Layout.astro';
+import { getZonas, getConteos, loc } from '../../../shared/content/places';
+import { LOCALES, localizePath, type Locale } from '../../../shared/constants/locales';
+import { t } from '../../../shared/constants/ui';
+import '../../../styles/pages/home.css';
+
+export async function getStaticPaths() {
+  return LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+export const prerender = true;
+
+const lang = Astro.params.lang as Locale;
+const [zonas, conteos] = await Promise.all([getZonas(), getConteos()]);
+---
+
+<Layout lang={lang} title={t(lang, 'seo.zonesTitle')} description={t(lang, 'seo.zonesDescription')}>
+  <section class="section section--sand">
+    <div class="container-page">
+      <p class="eyebrow">{t(lang, 'zones.eyebrow')}</p>
+      <h1 class="page-title">{t(lang, 'seo.zonesTitle')}</h1>
+      <p class="lead">{t(lang, 'zones.lead')}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-page">
+      <div class="zone-grid">
+        {
+          zonas.map((z) => (
+            <a
+              class="zone-card"
+              data-section="zonas"
+              data-id={z.id}
+              href={localizePath(`/zonas/${z.id}/`, lang)}
+            >
+              {
+                z.data.image && (
+                  <img class="zone-card__img" src={z.data.image} alt="" loading="lazy" />
+                )
+              }
+              <div class="zone-card__body">
+                <p class="zone-card__title">{loc(z.data.title, lang)}</p>
+                <p class="zone-card__count">
+                  {conteos.porZona.get(z.id) ?? 0} {t(lang, 'count.places')}
+                </p>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Layout>

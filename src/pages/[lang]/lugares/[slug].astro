@@ -1,0 +1,421 @@
+---
+import Layout from '../../../components/layout/Layout.astro';
+import Icon from '../../../components/Icon.astro';
+import PlaceCard from '../../../components/place/PlaceCard.astro';
+import {
+  getAllContenidos,
+  getCategorias,
+  getRelacionados,
+  loc,
+  renderBody,
+  type ContenidoConRelaciones,
+} from '../../../shared/content/places';
+import { lugarJsonLd, breadcrumbJsonLd } from '../../../lib/seo/jsonld';
+import {
+  LOCALES,
+  LOCALE_BCP47,
+  localizePath,
+  type Locale,
+} from '../../../shared/constants/locales';
+import { t, interpolate } from '../../../shared/constants/ui';
+import { COLLECTION_ICONS } from '../../../shared/constants/collections';
+import { SITE } from '../../../shared/constants/site';
+import '../../../styles/pages/place.css';
+
+export async function getStaticPaths() {
+  const contenidos = await getAllContenidos();
+  const params: { params: { lang: Locale; slug: string } }[] = [];
+  for (const lang of LOCALES) {
+    for (const item of contenidos) {
+      params.push({ params: { lang, slug: item.id } });
+    }
+  }
+  return params;
+}
+
+export const prerender = true;
+
+const lang = Astro.params.lang as Locale;
+const { slug } = Astro.params;
+
+const todos = await getAllContenidos();
+const lugar = todos.find((item) => item.id === slug);
+
+if (!lugar) {
+  return Astro.redirect(`/${lang}/404/`);
+}
+
+const [categorias, relacionados] = await Promise.all([
+  getCategorias(),
+  getRelacionados(lugar),
+]);
+
+const categoria = categorias.find((c) => c.collection === lugar.collection);
+const categoriasPorId = new Map(categorias.map((c) => [c.collection, c]));
+
+const title = loc(lugar.data.title, lang) ?? lugar.id;
+const description = loc(lugar.data.description, lang) ?? '';
+const zonaTitle = lugar.zone ? loc(lugar.zone.data.title, lang) : undefined;
+const categoriaTitle = categoria ? loc(categoria.data.title, lang) : undefined;
+
+const url = `${SITE.url}/${lang}/lugares/${lugar.id}/`;
+const bodyHtml = await renderBody(lugar, lang);
+
+const formatFecha = (fecha: Date | undefined) =>
+  fecha
+    ? fecha.toLocaleDateString(LOCALE_BCP47[lang], {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    : '';
+
+const mapsUrl = lugar.data.coordinates
+  ? `https://www.google.com/maps?q=${lugar.data.coordinates.lat},${lugar.data.coordinates.lng}`
+  : undefined;
+
+const waShare = `https://wa.me/?text=${encodeURIComponent(`${title} — ${url}`)}`;
+
+const breadcrumbs = [
+  { name: t(lang, 'nav.home'), url: localizePath('/', lang) },
+  { name: t(lang, 'nav.places'), url: localizePath('/lugares/', lang) },
+  ...(categoria
+    ? [
+        {
+          name: categoriaTitle ?? '',
+          url: localizePath(`/categorias/${lugar.collection}/`, lang),
+        },
+      ]
+    : []),
+  { name: title },
+];
+---
+
+<Layout
+  lang={lang}
+  title={title}
+  description={description}
+  image={lugar.data.image}
+  jsonLd={[
+    lugarJsonLd(lugar, lang),
+    breadcrumbJsonLd(breadcrumbs),
+  ]}
+>
+  <nav class="container-page breadcrumbs" aria-label={t(lang, 'nav.home')}>
+    <ol class="breadcrumbs__list">
+      {
+        breadcrumbs.map((item, i) => (
+          <>
+            {i > 0 && <li class="breadcrumbs__sep" aria-hidden="true">/</li>}
+            {
+              item.url ? (
+                <li>
+                  <a class="breadcrumbs__link" href={item.url}>
+                    {item.name}
+                  </a>
+                </li>
+              ) : (
+                <li aria-current="page">{item.name}</li>
+              )
+            }
+          </>
+        ))
+      }
+    </ol>
+  </nav>
+
+  <section class="bg-secondary text-white">
+    <div class="container-page place-hero__inner">
+      <div>
+        {
+          categoriaTitle && (
+            <span class="badge badge--primary">
+              <Icon name={COLLECTION_ICONS[lugar.collection] ?? 'pin'} size="sm" />
+              {categoriaTitle}
+            </span>
+          )
+        }
+        <h1 class="place-hero__title">{title}</h1>
+        {
+          zonaTitle && (
+            <p class="place-hero__zone">
+              <Icon name="pin" size="sm" />
+              {zonaTitle}
+            </p>
+          )
+        }
+      </div>
+      {
+        lugar.data.image && (
+          <img
+            class="place-hero__img"
+            src={lugar.data.image}
+            alt={title}
+            fetchpriority="high"
+            width="960"
+            height="540"
+          />
+        )
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-page">
+      <div class="place-stats">
+        {
+          lugar.data.rating && (
+            <div class="place-stat">
+              <Icon class="place-stat__icon" name="star" />
+              <span>{lugar.data.rating.toFixed(1)} / 5</span>
+            </div>
+          )
+        }
+        {
+          loc(lugar.data.hours, lang) && (
+            <div class="place-stat">
+              <Icon class="place-stat__icon" name="clock" />
+              <span>{loc(lugar.data.hours, lang)}</span>
+            </div>
+          )
+        }
+        {
+          loc(lugar.data.price, lang) && (
+            <div class="place-stat">
+              <Icon class="place-stat__icon" name="tag" />
+              <span>{loc(lugar.data.price, lang)}</span>
+            </div>
+          )
+        }
+        {
+          zonaTitle && (
+            <div class="place-stat">
+              <Icon class="place-stat__icon" name="pin" />
+              <span>{zonaTitle}</span>
+            </div>
+          )
+        }
+      </div>
+
+      <div class="place-layout mt-10">
+        <div class="place-main">
+          {
+            bodyHtml && (
+              <div>
+                <h2 class="place-section__title">{t(lang, 'place.about')}</h2>
+                <div class="prose space-y-4 leading-relaxed text-ink" set:html={bodyHtml} />
+              </div>
+            )
+          }
+
+          {
+            loc(lugar.data.howToGet, lang) && (
+              <div>
+                <h2 class="place-section__title">{t(lang, 'place.howToGet')}</h2>
+                <div class="info-list">
+                  <div class="info-item">
+                    <Icon class="info-item__icon" name="car" />
+                    <p class="info-item__value">{loc(lugar.data.howToGet, lang)}</p>
+                  </div>
+                </div>
+              </div>
+            )
+          }
+
+          {
+            (loc(lugar.data.activities, lang) ?? []).length > 0 && (
+              <div>
+                <h2 class="place-section__title">{t(lang, 'place.activities')}</h2>
+                <ul class="check-list">
+                  {
+                    (loc(lugar.data.activities, lang) ?? []).map((a) => (
+                      <li class="check-list__item">
+                        <Icon class="check-list__icon" name="check" size="sm" />
+                        {a}
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
+            )
+          }
+
+          {
+            (loc(lugar.data.services, lang) ?? []).length > 0 && (
+              <div>
+                <h2 class="place-section__title">{t(lang, 'place.services')}</h2>
+                <ul class="check-list">
+                  {
+                    (loc(lugar.data.services, lang) ?? []).map((s) => (
+                      <li class="check-list__item">
+                        <Icon class="check-list__icon" name="check" size="sm" />
+                        {s}
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
+            )
+          }
+        </div>
+
+        <aside class="place-aside">
+          <div class="place-panel">
+            <h2 class="place-panel__title">{t(lang, 'place.usefulInfo')}</h2>
+            <div class="info-list">
+              {
+                loc(lugar.data.address, lang) && (
+                  <div class="info-item">
+                    <Icon class="info-item__icon" name="pin" />
+                    <div>
+                      <p class="info-item__label">{t(lang, 'place.address')}</p>
+                      <p class="info-item__value">{loc(lugar.data.address, lang)}</p>
+                    </div>
+                  </div>
+                )
+              }
+              {
+                lugar.data.phone && (
+                  <div class="info-item">
+                    <Icon class="info-item__icon" name="phone" />
+                    <div>
+                      <p class="info-item__label">{t(lang, 'place.phone')}</p>
+                      <p class="info-item__value">
+                        <a href={`tel:${lugar.data.phone.replace(/\s/g, '')}`}>
+                          {lugar.data.phone}
+                        </a>
+                      </p>
+                    </div>
+                  </div>
+                )
+              }
+              {
+                lugar.data.website && (
+                  <div class="info-item">
+                    <Icon class="info-item__icon" name="globe" />
+                    <div>
+                      <p class="info-item__label">{t(lang, 'place.website')}</p>
+                      <p class="info-item__value">
+                        <a
+                          href={lugar.data.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {lugar.data.website.replace(/^https?:\/\//, '')}
+                        </a>
+                      </p>
+                    </div>
+                  </div>
+                )
+              }
+              {
+                lugar.data.coordinates && (
+                  <div class="info-item">
+                    <Icon class="info-item__icon" name="compass" />
+                    <div>
+                      <p class="info-item__label">{t(lang, 'place.location')}</p>
+                      <p class="info-item__value">
+                        <a
+                          href={mapsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {t(lang, 'place.viewMap')}
+                        </a>
+                      </p>
+                    </div>
+                  </div>
+                )
+              }
+              {
+                loc(lugar.data.source, lang) && (
+                  <div class="info-item">
+                    <Icon class="info-item__icon" name="info" />
+                    <div>
+                      <p class="info-item__label">{t(lang, 'place.source')}</p>
+                      <p class="info-item__value">{loc(lugar.data.source, lang)}</p>
+                    </div>
+                  </div>
+                )
+              }
+              <div class="info-item">
+                <Icon class="info-item__icon" name="clock" />
+                <div>
+                  <p class="info-item__label">{t(lang, 'place.updated')}</p>
+                  <p class="info-item__value">{formatFecha(lugar.data.updatedAt)}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-3">
+            {
+              mapsUrl && (
+                <a class="btn btn--primary" href={mapsUrl} target="_blank" rel="noopener noreferrer">
+                  <Icon name="pin" size="sm" />
+                  {t(lang, 'place.getDirections')}
+                </a>
+              )
+            }
+            <a class="btn btn--outline" href={waShare} target="_blank" rel="noopener noreferrer">
+              <Icon name="phone" size="sm" />
+              {t(lang, 'place.shareWhatsApp')}
+            </a>
+            {
+              lugar.data.verified && (
+                <span class="badge badge--sun mx-auto">
+                  <Icon name="check" size="sm" />
+                  {t(lang, 'place.verified')}
+                </span>
+              )
+            }
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  {
+    relacionados.length > 0 && (
+      <section class="section section--sand">
+        <div class="container-page">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">{t(lang, 'place.relatedEyebrow')}</p>
+              <h2 class="section-head__title">
+                {
+                  interpolate(t(lang, 'place.relatedTitle'), {
+                    zone: zonaTitle ?? '',
+                    category: categoriaTitle ? categoriaTitle.toLowerCase() : '',
+                  })
+                }
+              </h2>
+            </div>
+            {
+              lugar.zone && (
+                <a
+                  class="section-head__link"
+                  href={localizePath(`/zonas/${lugar.zone.id}/`, lang)}
+                >
+                  {t(lang, 'place.viewZone')}
+                  <Icon name="arrow-right" size="sm" />
+                </a>
+              )
+            }
+          </div>
+          <div class="place-grid">
+            {
+              relacionados.map((l) => (
+                <PlaceCard
+                  lugar={l as ContenidoConRelaciones}
+                  categoria={categoriasPorId.get(l.collection)}
+                  lang={lang}
+                />
+              ))
+            }
+          </div>
+        </div>
+      </section>
+    )
+  }
+</Layout>
