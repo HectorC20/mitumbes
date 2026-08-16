@@ -11,15 +11,15 @@ excerpt:
   es: "Celebración gastronómica en honor al cebiche."
   en: "Gastronomic celebration in honor of ceviche."
   pt: "Celebração gastronômica em homenagem ao cebiche."
-zone: "tumbes"
+zone: "puerto-pizarro"
 image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Lively%20outdoor%20food%20festival%20in%20Tumbes%20Peru%20street%20stalls%20serving%20ceviche%20crowds%20enjoying%20local%20music%20colorful%20banners%20festive%20atmosphere%20photography&image_size=landscape_16_9"
 coordinates:
   lat: -3.5667
   lng: -80.4511
 hours:
-  es: "Fechas por confirmar cada año"
-  en: "Dates to be confirmed each year"
-  pt: "Datas a confirmar a cada ano"
+  es: "22 y 23 de julio (en el marco de las Fiestas Patrias)"
+  en: "July 22nd and 23rd (during the Peruvian national holidays)"
+  pt: "22 e 23 de julho (no marco das festividades pátrias peruanas)"
 price:
   es: "Entrada libre (consumos aparte)"
   en: "Free entry (food and drinks not included)"
@@ -38,9 +38,9 @@ services:
     - "Música ao vivo"
     - "Feiras e artesanato"
 howToGet:
-  es: "Se realiza en espacios públicos del centro de Tumbes; las sedes varían cada edición."
-  en: "It takes place in public spaces in downtown Tumbes; venues vary each edition."
-  pt: "Realiza-se em espaços públicos do centro de Tumbes; os locais variam a cada edição."
+  es: "Se realiza en Puerto Pizarro, frente al estero del manglar; las sedes exactas varían cada edición."
+  en: "It takes place in Puerto Pizarro, facing the mangrove estuary; exact venues vary each edition."
+  pt: "Realiza-se em Puerto Pizarro, em frente ao estuário do mangue; os locais exatos variam a cada edição."
 activities:
   es:
     - "Degustar cebiches de diferentes cevicherías"
@@ -67,13 +67,13 @@ body:
   es: |
     El **Festival del Cebiche de Tumbes** celebra el plato más representativo de la costa peruana. Durante el evento, cevicherías locales compiten por el título del mejor cebiche, y los asistentes pueden degustar versiones de pescado, concha negra y mariscos mixtos.
 
-    Las fechas varían año a año; conviene consultar la agenda turística oficial de la región.
+    Se celebra cada año a finales de julio en el balneario de Puerto Pizarro, en el marco de las Fiestas Patrias peruanas, con la concha negra como producto estrella.
   en: |
     The **Tumbes Ceviche Festival** celebrates the most representative dish of the Peruvian coast. During the event, local cevicherías compete for the title of best ceviche, and attendees can taste fish, black clam and mixed seafood versions.
 
-    Dates vary from year to year; it is advisable to check the region's official tourism calendar.
+    It is held every year in late July in the Puerto Pizarro resort, during the Peruvian national holidays, with the black clam as its star product.
   pt: |
     O **Festival do Cebiche de Tumbes** celebra o prato mais representativo do litoral peruano. Durante o evento, cevicherias locais competem pelo título de melhor cebiche, e os visitantes podem degustar versões de peixe, concha negra e frutos do mar mistos.
 
-    As datas variam a cada ano; convém consultar a agenda turística oficial da região.
+    É celebrado todos os anos no final de julho no balneário de Puerto Pizarro, no marco das festividades pátrias peruanas, com a concha negra como produto estrela.
 ---
