@@ -64,7 +64,7 @@ const searchHref = localizePath('/lugares/', lang);
 
     <!-- Búsqueda -->
     <form
-      class="hidden items-center gap-1 md:flex"
+      class="nav-search"
       role="search"
       action={searchHref}
       method="get"
@@ -72,13 +72,13 @@ const searchHref = localizePath('/lugares/', lang);
       <label class="sr-only" for="nav-search">{t(lang, 'nav.search')}</label>
       <input
         id="nav-search"
-        class="w-44 rounded-sm border-2 border-ink/15 bg-white px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none"
+        class="nav-search__input"
         type="search"
         name="q"
         placeholder={t(lang, 'nav.searchPlaceholder')}
       />
       <button
-        class="inline-flex h-9 w-9 items-center justify-center rounded-sm bg-primary text-white hover:bg-secondary"
+        class="nav-search__submit"
         type="submit"
         aria-label={t(lang, 'nav.search')}
       >
@@ -121,15 +121,15 @@ const searchHref = localizePath('/lugares/', lang);
         <Icon name="menu" />
       </summary>
       <nav class="nav-shell__mobile-list" aria-label={t(lang, 'nav.home')}>
-        <form role="search" action={searchHref} method="get" class="mb-2 flex gap-1">
+        <form role="search" action={searchHref} method="get" class="nav-search--mobile">
           <input
-            class="w-full rounded-sm border-2 border-ink/15 bg-white px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none"
+            class="nav-search__input nav-search__input--mobile"
             type="search"
             name="q"
             placeholder={t(lang, 'nav.searchPlaceholder')}
           />
           <button
-            class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-sm bg-primary text-white"
+            class="nav-search__submit nav-search__submit--mobile"
             type="submit"
             aria-label={t(lang, 'nav.search')}
           >
@@ -150,10 +150,10 @@ const searchHref = localizePath('/lugares/', lang);
             </a>
           ))
         }
-        <p class="mt-2 border-t border-ink/10 px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wider text-muted">
+        <p class="mobile-lang__label">
           {t(lang, 'nav.language')}
         </p>
-        <div class="flex gap-1">
+        <div class="mobile-lang">
           {
             LOCALES.map((l) => (
               <a

@@ -48,11 +48,16 @@
 }
 
 .category-tile__title {
-  @apply font-display text-lg leading-snug text-secondary;
+  @apply block font-display text-lg leading-snug text-secondary;
 }
 
 .category-tile__count {
   @apply text-sm text-muted;
+}
+
+/* ---------- Cabecera de categoría (detalle) ---------- */
+.categoria-header {
+  @apply flex items-center gap-4;
 }
 
 /* ---------- Cards de zona ---------- */

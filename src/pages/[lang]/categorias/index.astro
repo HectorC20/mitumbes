@@ -1,11 +1,13 @@
 ---
-import Layout from '../../../components/layout/Layout.astro';
-import Icon from '../../../components/Icon.astro';
-import { getCategorias, getConteos, loc } from '../../../shared/content/places';
-import { LOCALES, localizePath, type Locale } from '../../../shared/constants/locales';
-import { t } from '../../../shared/constants/ui';
-import { COLLECTION_ICONS } from '../../../shared/constants/collections';
-import '../../../styles/pages/home.css';
+import Layout from '@/components/layout/Layout.astro';
+import Icon from '@/components/Icon.astro';
+import { categoriasService } from '@/services/categorias.service';
+import { conteosService } from '@/services/conteos.service';
+import { loc } from '@/shared/content/places';
+import { LOCALES, localizePath, type Locale } from '@/shared/constants/locales';
+import { t } from '@/shared/constants/ui';
+import { COLLECTION_ICONS } from '@/shared/constants/collections';
+import '@/styles/pages/home.css';
 
 export async function getStaticPaths() {
   return LOCALES.map((lang) => ({ params: { lang } }));
@@ -14,7 +16,10 @@ export async function getStaticPaths() {
 export const prerender = true;
 
 const lang = Astro.params.lang as Locale;
-const [categorias, conteos] = await Promise.all([getCategorias(), getConteos()]);
+const [categorias, conteos] = await Promise.all([
+  categoriasService.listar(),
+  conteosService.obtener(),
+]);
 ---
 
 <Layout lang={lang} title={t(lang, 'seo.categoriesTitle')} description={t(lang, 'seo.categoriesDescription')}>
@@ -41,7 +46,7 @@ const [categorias, conteos] = await Promise.all([getCategorias(), getConteos()])
                 <Icon name={COLLECTION_ICONS[c.collection] ?? 'pin'} />
               </span>
               <span>
-                <span class="category-tile__title block">{loc(c.data.title, lang)}</span>
+                <span class="category-tile__title">{loc(c.data.title, lang)}</span>
                 <span class="category-tile__count">
                   {conteos.porCategoria.get(c.collection) ?? 0} {t(lang, 'count.places')}
                 </span>

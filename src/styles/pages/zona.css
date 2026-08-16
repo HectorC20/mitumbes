@@ -1,0 +1,27 @@
+@reference "../global.css";
+
+/* ---------- Hero de zona ---------- */
+.zona-hero {
+  @apply relative h-64 overflow-hidden bg-secondary md:h-80;
+}
+
+.zona-hero__img {
+  @apply h-full w-full object-cover opacity-70;
+}
+
+.zona-hero__overlay {
+  @apply absolute inset-0 bg-gradient-to-t from-secondary/90 to-transparent;
+}
+
+.zona-hero__inner {
+  @apply container-page absolute inset-x-0 bottom-0 pb-6;
+}
+
+.zona-hero__title {
+  @apply text-4xl leading-tight text-white sm:text-5xl;
+}
+
+/* ---------- Listado de lugares de la zona ---------- */
+.zona-list {
+  @apply pt-0;
+}

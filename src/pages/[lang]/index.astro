@@ -1,22 +1,20 @@
 ---
-import Layout from '../../components/layout/Layout.astro';
-import Icon from '../../components/Icon.astro';
-import PlaceCard from '../../components/place/PlaceCard.astro';
-import {
-  getDestacados,
-  getCategorias,
-  getZonas,
-  getConteos,
-  loc,
-} from '../../shared/content/places';
+import Layout from '@/components/layout/Layout.astro';
+import Icon from '@/components/Icon.astro';
+import PlaceCard from '@/components/place/PlaceCard.astro';
+import { lugaresService } from '@/services/lugares.service';
+import { categoriasService } from '@/services/categorias.service';
+import { zonasService } from '@/services/zonas.service';
+import { conteosService } from '@/services/conteos.service';
+import { imagenSrc, loc } from '@/shared/content/places';
 import {
   LOCALES,
   localizePath,
   type Locale,
-} from '../../shared/constants/locales';
-import { t } from '../../shared/constants/ui';
-import { COLLECTION_ICONS } from '../../shared/constants/collections';
-import '../../styles/pages/home.css';
+} from '@/shared/constants/locales';
+import { t } from '@/shared/constants/ui';
+import { COLLECTION_ICONS } from '@/shared/constants/collections';
+import '@/styles/pages/home.css';
 
 export async function getStaticPaths() {
   return LOCALES.map((lang) => ({ params: { lang } }));
@@ -26,10 +24,10 @@ export const prerender = true;
 
 const lang = Astro.params.lang as Locale;
 const [destacados, categorias, zonas, conteos] = await Promise.all([
-  getDestacados(6),
-  getCategorias(),
-  getZonas(),
-  getConteos(),
+  lugaresService.listarDestacados(6),
+  categoriasService.listar(),
+  zonasService.listar(),
+  conteosService.obtener(),
 ]);
 
 const categoriasPorId = new Map(categorias.map((c) => [c.collection, c]));
@@ -88,7 +86,7 @@ const zonasHref = localizePath('/zonas/', lang);
                 <Icon name={COLLECTION_ICONS[c.collection] ?? 'pin'} />
               </span>
               <span>
-                <span class="category-tile__title block">
+                <span class="category-tile__title">
                   {loc(c.data.title, lang)}
                 </span>
                 <span class="category-tile__count">
@@ -146,7 +144,7 @@ const zonasHref = localizePath('/zonas/', lang);
             <a class="zone-card" href={localizePath(`/zonas/${z.id}/`, lang)}>
               {
                 z.data.image && (
-                  <img class="zone-card__img" src={z.data.image} alt="" loading="lazy" />
+                  <img class="zone-card__img" src={imagenSrc(z.data.image)} alt="" loading="lazy" />
                 )
               }
               <div class="zone-card__body">

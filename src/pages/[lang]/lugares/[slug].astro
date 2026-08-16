@@ -1,29 +1,28 @@
 ---
-import Layout from '../../../components/layout/Layout.astro';
-import Icon from '../../../components/Icon.astro';
-import PlaceCard from '../../../components/place/PlaceCard.astro';
+import Layout from '@/components/layout/Layout.astro';
+import Icon from '@/components/Icon.astro';
+import PlaceCard from '@/components/place/PlaceCard.astro';
 import {
-  getAllContenidos,
-  getCategorias,
-  getRelacionados,
+  imagenSrc,
   loc,
-  renderBody,
   type ContenidoConRelaciones,
-} from '../../../shared/content/places';
-import { lugarJsonLd, breadcrumbJsonLd } from '../../../lib/seo/jsonld';
+} from '@/shared/content/places';
+import { lugaresService } from '@/services/lugares.service';
+import { categoriasService } from '@/services/categorias.service';
+import { lugarJsonLd, breadcrumbJsonLd } from '@/lib/seo/jsonld';
 import {
   LOCALES,
   LOCALE_BCP47,
   localizePath,
   type Locale,
-} from '../../../shared/constants/locales';
-import { t, interpolate } from '../../../shared/constants/ui';
-import { COLLECTION_ICONS } from '../../../shared/constants/collections';
-import { SITE } from '../../../shared/constants/site';
-import '../../../styles/pages/place.css';
+} from '@/shared/constants/locales';
+import { t, interpolate } from '@/shared/constants/ui';
+import { COLLECTION_ICONS } from '@/shared/constants/collections';
+import { SITE } from '@/shared/constants/site';
+import '@/styles/pages/place.css';
 
 export async function getStaticPaths() {
-  const contenidos = await getAllContenidos();
+  const contenidos = await lugaresService.listarTodos();
   const params: { params: { lang: Locale; slug: string } }[] = [];
   for (const lang of LOCALES) {
     for (const item of contenidos) {
@@ -38,7 +37,7 @@ export const prerender = true;
 const lang = Astro.params.lang as Locale;
 const { slug } = Astro.params;
 
-const todos = await getAllContenidos();
+const todos = await lugaresService.listarTodos();
 const lugar = todos.find((item) => item.id === slug);
 
 if (!lugar) {
@@ -46,8 +45,8 @@ if (!lugar) {
 }
 
 const [categorias, relacionados] = await Promise.all([
-  getCategorias(),
-  getRelacionados(lugar),
+  categoriasService.listar(),
+  lugaresService.listarRelacionados(lugar),
 ]);
 
 const categoria = categorias.find((c) => c.collection === lugar.collection);
@@ -59,7 +58,7 @@ const zonaTitle = lugar.zone ? loc(lugar.zone.data.title, lang) : undefined;
 const categoriaTitle = categoria ? loc(categoria.data.title, lang) : undefined;
 
 const url = `${SITE.url}/${lang}/lugares/${lugar.id}/`;
-const bodyHtml = await renderBody(lugar, lang);
+const bodyHtml = await lugaresService.renderBody(lugar, lang);
 
 const formatFecha = (fecha: Date | undefined) =>
   fecha
@@ -95,7 +94,7 @@ const breadcrumbs = [
   lang={lang}
   title={title}
   description={description}
-  image={lugar.data.image}
+  image={imagenSrc(lugar.data.image)}
   jsonLd={[
     lugarJsonLd(lugar, lang),
     breadcrumbJsonLd(breadcrumbs),
@@ -124,7 +123,7 @@ const breadcrumbs = [
     </ol>
   </nav>
 
-  <section class="bg-secondary text-white">
+  <section class="place-hero">
     <div class="container-page place-hero__inner">
       <div>
         {
@@ -149,7 +148,7 @@ const breadcrumbs = [
         lugar.data.image && (
           <img
             class="place-hero__img"
-            src={lugar.data.image}
+            src={imagenSrc(lugar.data.image)}
             alt={title}
             fetchpriority="high"
             width="960"
@@ -197,13 +196,13 @@ const breadcrumbs = [
         }
       </div>
 
-      <div class="place-layout mt-10">
+      <div class="place-layout">
         <div class="place-main">
           {
             bodyHtml && (
               <div>
                 <h2 class="place-section__title">{t(lang, 'place.about')}</h2>
-                <div class="prose space-y-4 leading-relaxed text-ink" set:html={bodyHtml} />
+                <div class="place-body" set:html={bodyHtml} />
               </div>
             )
           }
@@ -348,7 +347,7 @@ const breadcrumbs = [
             </div>
           </div>
 
-          <div class="flex flex-col gap-3">
+          <div class="place-actions">
             {
               mapsUrl && (
                 <a class="btn btn--primary" href={mapsUrl} target="_blank" rel="noopener noreferrer">
@@ -363,7 +362,7 @@ const breadcrumbs = [
             </a>
             {
               lugar.data.verified && (
-                <span class="badge badge--sun mx-auto">
+                <span class="badge badge--sun badge--center">
                   <Icon name="check" size="sm" />
                   {t(lang, 'place.verified')}
                 </span>

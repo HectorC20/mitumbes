@@ -1,4 +1,5 @@
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+import type { ImageMetadata } from 'astro';
 import { marked } from 'marked';
 import {
   CONTENT_COLLECTIONS,
@@ -17,13 +18,26 @@ export type Contenido = CollectionEntry<ContentCollectionName>;
 export type Categoria = Contenido;
 export type Zona = CollectionEntry<'zones'>;
 
-export interface ContenidoConRelaciones extends Contenido {
-  zone?: Zona;
-}
+/**
+ * Contenido con su zona resuelta.
+ * Se declara como type alias (no interface) porque la base es un tipo
+ * condicional distribuido (CollectionEntry sobre unión de colecciones);
+ * una interface no puede extender ese tipo (TS2312).
+ */
+export type ContenidoConRelaciones = Contenido & { zone?: Zona };
 
 /** Acceso seguro a un campo localizado con respaldo en español. */
 export function loc<T>(campo: Record<Locale, T> | undefined, lang: Locale): T | undefined {
   return campo?.[lang] ?? campo?.es;
+}
+
+/**
+ * URL renderizable de una imagen de contenido.
+ * Acepta tanto una imagen local procesada por astro:assets (ImageMetadata,
+ * devuelve su `src` emitido) como una URL remota o de /public (string).
+ */
+export function imagenSrc(imagen: ImageMetadata | string | undefined): string | undefined {
+  return typeof imagen === 'string' ? imagen : imagen?.src;
 }
 
 /** Recupera todos los contenidos de las 6 categorías (sin index.md). */

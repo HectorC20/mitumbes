@@ -127,7 +127,7 @@ export const ui = {
     'footer.zones': 'Zonas',
     'footer.note':
       'Información turística de la región Tumbes.',
-    'footer.verification': 'Contenido en verificación — reportar datos.',
+    'footer.verification': '',
     'footer.report': 'reportar datos',
   },
   en: {

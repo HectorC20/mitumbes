@@ -82,11 +82,11 @@ const schemas = [
     <meta name="twitter:card" content="summary_large_image" />
     {noindex && <meta name="robots" content="noindex" />}
     {schemas.map((schema) => (
-      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+      <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
     ))}
     {gtag && (
       <>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${gtag}`} />
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gtag}`} />
         <script is:inline set:html={`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}

@@ -1,5 +1,6 @@
 ---
 import {
+  imagenSrc,
   loc,
   textoDeBusqueda,
   type Categoria,
@@ -39,7 +40,7 @@ const categoriaTitle = categoria ? loc(categoria.data.title, lang) : undefined;
     {
       lugar.data.image && (
         <img
-          src={lugar.data.image}
+          src={imagenSrc(lugar.data.image)}
           alt={title}
           loading="lazy"
           width="640"
@@ -64,7 +65,7 @@ const categoriaTitle = categoria ? loc(categoria.data.title, lang) : undefined;
     <p class="card__meta">
       {
         zoneTitle && (
-          <span class="inline-flex items-center gap-1">
+          <span class="card__meta-item">
             <Icon name="pin" size="sm" />
             {zoneTitle}
           </span>
@@ -72,7 +73,7 @@ const categoriaTitle = categoria ? loc(categoria.data.title, lang) : undefined;
       }
       {
         lugar.data.rating && (
-          <span class="inline-flex items-center gap-1">
+          <span class="card__meta-item">
             <Icon name="star" size="sm" />
             {lugar.data.rating.toFixed(1)}
           </span>

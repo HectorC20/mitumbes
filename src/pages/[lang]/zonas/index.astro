@@ -1,9 +1,11 @@
 ---
-import Layout from '../../../components/layout/Layout.astro';
-import { getZonas, getConteos, loc } from '../../../shared/content/places';
-import { LOCALES, localizePath, type Locale } from '../../../shared/constants/locales';
-import { t } from '../../../shared/constants/ui';
-import '../../../styles/pages/home.css';
+import Layout from '@/components/layout/Layout.astro';
+import { imagenSrc, loc } from '@/shared/content/places';
+import { zonasService } from '@/services/zonas.service';
+import { conteosService } from '@/services/conteos.service';
+import { LOCALES, localizePath, type Locale } from '@/shared/constants/locales';
+import { t } from '@/shared/constants/ui';
+import '@/styles/pages/home.css';
 
 export async function getStaticPaths() {
   return LOCALES.map((lang) => ({ params: { lang } }));
@@ -12,7 +14,10 @@ export async function getStaticPaths() {
 export const prerender = true;
 
 const lang = Astro.params.lang as Locale;
-const [zonas, conteos] = await Promise.all([getZonas(), getConteos()]);
+const [zonas, conteos] = await Promise.all([
+  zonasService.listar(),
+  conteosService.obtener(),
+]);
 ---
 
 <Layout lang={lang} title={t(lang, 'seo.zonesTitle')} description={t(lang, 'seo.zonesDescription')}>
@@ -37,7 +42,7 @@ const [zonas, conteos] = await Promise.all([getZonas(), getConteos()]);
             >
               {
                 z.data.image && (
-                  <img class="zone-card__img" src={z.data.image} alt="" loading="lazy" />
+                  <img class="zone-card__img" src={imagenSrc(z.data.image)} alt="" loading="lazy" />
                 )
               }
               <div class="zone-card__body">

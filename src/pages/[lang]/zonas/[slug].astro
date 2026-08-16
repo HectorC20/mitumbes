@@ -1,19 +1,16 @@
 ---
-import Layout from '../../../components/layout/Layout.astro';
-import PlaceCard from '../../../components/place/PlaceCard.astro';
-import {
-  getZonaPorId,
-  getContenidosPorZona,
-  getZonas,
-  getCategorias,
-  loc,
-} from '../../../shared/content/places';
-import { breadcrumbJsonLd } from '../../../lib/seo/jsonld';
-import { LOCALES, localizePath, type Locale } from '../../../shared/constants/locales';
-import { t } from '../../../shared/constants/ui';
+import Layout from '@/components/layout/Layout.astro';
+import PlaceCard from '@/components/place/PlaceCard.astro';
+import { zonasService } from '@/services/zonas.service';
+import { categoriasService } from '@/services/categorias.service';
+import { imagenSrc, loc } from '@/shared/content/places';
+import { breadcrumbJsonLd } from '@/lib/seo/jsonld';
+import { LOCALES, localizePath, type Locale } from '@/shared/constants/locales';
+import { t } from '@/shared/constants/ui';
+import '@/styles/pages/zona.css';
 
 export async function getStaticPaths() {
-  const zonas = await getZonas();
+  const zonas = await zonasService.listar();
   const params: { params: { lang: Locale; slug: string } }[] = [];
   for (const lang of LOCALES) {
     for (const zona of zonas) {
@@ -28,15 +25,15 @@ export const prerender = true;
 const lang = Astro.params.lang as Locale;
 const { slug } = Astro.params;
 
-const zona = await getZonaPorId(slug!);
+const zona = await zonasService.buscarPorId(slug!);
 
 if (!zona) {
   return Astro.redirect(`/${lang}/404/`);
 }
 
 const [contenidos, categorias] = await Promise.all([
-  getContenidosPorZona(slug!),
-  getCategorias(),
+  zonasService.listarLugares(slug!),
+  categoriasService.listar(),
 ]);
 
 const categoriasPorId = new Map(categorias.map((c) => [c.collection, c]));
@@ -54,7 +51,7 @@ const breadcrumbs = [
   lang={lang}
   title={`${title} — Tumbes`}
   description={description}
-  image={zona.data.image}
+  image={imagenSrc(zona.data.image)}
   jsonLd={breadcrumbJsonLd(breadcrumbs)}
 >
   <nav class="container-page breadcrumbs" aria-label={t(lang, 'nav.home')}>
@@ -82,11 +79,11 @@ const breadcrumbs = [
 
   {
     zona.data.image && (
-      <section class="relative h-64 overflow-hidden bg-secondary md:h-80">
-        <img class="h-full w-full object-cover opacity-70" src={zona.data.image} alt="" />
-        <div class="absolute inset-0 bg-gradient-to-t from-secondary/90 to-transparent"></div>
-        <div class="container-page absolute inset-x-0 bottom-0 pb-6">
-          <h1 class="text-4xl leading-tight text-white sm:text-5xl">
+      <section class="zona-hero">
+        <img class="zona-hero__img" src={imagenSrc(zona.data.image)} alt="" />
+        <div class="zona-hero__overlay"></div>
+        <div class="zona-hero__inner">
+          <h1 class="zona-hero__title">
             {title}
           </h1>
         </div>
@@ -100,9 +97,9 @@ const breadcrumbs = [
     </div>
   </section>
 
-  <section class="section pt-0">
+  <section class="section zona-list">
     <div class="container-page">
-      <p class="search-meta mb-6">
+      <p class="search-meta">
         {contenidos.length} {contenidos.length === 1 ? t(lang, 'count.place') : t(lang, 'count.places')} {t(lang, 'count.in')} {title}
       </p>
       {
@@ -120,10 +117,10 @@ const breadcrumbs = [
           </div>
         ) : (
           <div class="empty-state">
-            <p class="font-display text-xl text-secondary">
+            <p class="empty-state__title">
               {t(lang, 'zones.emptyTitle')}
             </p>
-            <p class="mt-2 text-muted">{t(lang, 'zones.emptyBody')}</p>
+            <p class="empty-state__body">{t(lang, 'zones.emptyBody')}</p>
           </div>
         )
       }

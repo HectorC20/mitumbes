@@ -1,15 +1,12 @@
 ---
-import Layout from '../../../components/layout/Layout.astro';
-import PlaceSearch from '../../../components/search/PlaceSearch.astro';
-import {
-  getAllContenidos,
-  getCategorias,
-  getZonas,
-  filtrarContenidos,
-  type FiltroContenidos,
-} from '../../../shared/content/places';
-import { LOCALES, type Locale } from '../../../shared/constants/locales';
-import { t } from '../../../shared/constants/ui';
+import Layout from '@/components/layout/Layout.astro';
+import PlaceSearch from '@/components/search/PlaceSearch.astro';
+import { lugaresService } from '@/services/lugares.service';
+import { categoriasService } from '@/services/categorias.service';
+import { zonasService } from '@/services/zonas.service';
+import type { FiltroContenidos } from '@/shared/content/places';
+import { LOCALES, type Locale } from '@/shared/constants/locales';
+import { t } from '@/shared/constants/ui';
 
 export async function getStaticPaths() {
   return LOCALES.map((lang) => ({ params: { lang } }));
@@ -21,12 +18,12 @@ const lang = Astro.params.lang as Locale;
 const params = Object.fromEntries(Astro.url.searchParams) as FiltroContenidos;
 
 const [todos, categorias, zonas] = await Promise.all([
-  getAllContenidos(),
-  getCategorias(),
-  getZonas(),
+  lugaresService.listarTodos(),
+  categoriasService.listar(),
+  zonasService.listar(),
 ]);
 
-const filtrados = filtrarContenidos(todos, params, lang);
+const filtrados = lugaresService.filtrar(todos, params, lang);
 ---
 
 <Layout lang={lang} title={t(lang, 'seo.placesTitle')} description={t(lang, 'seo.placesDescription')}>

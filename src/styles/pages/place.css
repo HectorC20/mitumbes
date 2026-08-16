@@ -1,6 +1,10 @@
 @reference "../global.css";
 
 /* ---------- Hero del detalle ---------- */
+.place-hero {
+  @apply bg-secondary text-white;
+}
+
 .place-hero__inner {
   @apply grid gap-6 py-10 md:grid-cols-2 md:items-center md:gap-10 md:py-14;
 }
@@ -32,7 +36,15 @@
 
 /* ---------- Layout principal ---------- */
 .place-layout {
-  @apply grid gap-10 lg:grid-cols-3;
+  @apply mt-10 grid gap-10 lg:grid-cols-3;
+}
+
+.place-body {
+  @apply space-y-4 leading-relaxed text-ink;
+}
+
+.place-actions {
+  @apply flex flex-col gap-3;
 }
 
 .place-main {

@@ -1,11 +1,12 @@
-import { defineCollection, reference } from 'astro:content';
+import { defineCollection, reference, type SchemaContext } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 const LOCALES = ['es', 'en', 'pt'] as const;
 /** Helper para campos localizados: `title: { es, en, pt }`. */
 const loc = <T extends z.ZodType>(type: T) => z.record(z.enum(LOCALES), type);
 
-const placeSchema = z.object({
+const placeSchema = ({ image }: SchemaContext) =>
+  z.object({
   title: loc(z.string()),
   description: loc(z.string()),
   excerpt: loc(z.string()).optional(),
@@ -13,7 +14,8 @@ const placeSchema = z.object({
   icon: z.string().optional(),
   /** Solo presente en contenidos reales; el index.md no tiene zona. */
   zone: reference('zones').optional(),
-  image: z.string().optional(),
+  /** Imagen local (ruta relativa al archivo, se procesa con astro:assets) o URL remota. */
+  image: z.union([image(), z.string()]).optional(),
   gallery: z.array(z.string()).optional(),
   coordinates: z
     .object({ lat: z.number(), lng: z.number() })
@@ -43,12 +45,14 @@ const placeSchema = z.object({
   body: loc(z.string()).optional(),
 });
 
-const zonaSchema = z.object({
+const zonaSchema = ({ image }: SchemaContext) =>
+  z.object({
   title: loc(z.string()),
   /** Solo presente en zonas reales; el index.md de zones no lo tiene. */
   type: z.enum(['ciudad', 'playa', 'zona', 'distrito']).optional(),
   description: loc(z.string()),
-  image: z.string().optional(),
+  /** Imagen local (ruta relativa al archivo, se procesa con astro:assets) o URL remota. */
+  image: z.union([image(), z.string()]).optional(),
   icon: z.string().optional(),
   body: loc(z.string()).optional(),
 });

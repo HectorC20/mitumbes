@@ -1,0 +1,14 @@
+@reference "../global.css";
+
+/* ---------- Página 404 ---------- */
+.notfound {
+  @apply container-page text-center;
+}
+
+.notfound__code {
+  @apply font-display text-7xl text-primary;
+}
+
+.notfound__actions {
+  @apply mt-8 flex flex-wrap justify-center gap-3;
+}

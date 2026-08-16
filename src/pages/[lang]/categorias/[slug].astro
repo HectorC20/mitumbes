@@ -1,21 +1,19 @@
 ---
-import Layout from '../../../components/layout/Layout.astro';
-import Icon from '../../../components/Icon.astro';
-import PlaceCard from '../../../components/place/PlaceCard.astro';
-import {
-  getCategoriaPorId,
-  getContenidosPorCategoria,
-  loc,
-} from '../../../shared/content/places';
-import { breadcrumbJsonLd } from '../../../lib/seo/jsonld';
+import Layout from '@/components/layout/Layout.astro';
+import Icon from '@/components/Icon.astro';
+import PlaceCard from '@/components/place/PlaceCard.astro';
+import { loc } from '@/shared/content/places';
+import { categoriasService } from '@/services/categorias.service';
+import { lugaresService } from '@/services/lugares.service';
+import { breadcrumbJsonLd } from '@/lib/seo/jsonld';
 import {
   CONTENT_COLLECTIONS,
   type ContentCollectionName,
-} from '../../../shared/constants/collections';
-import { LOCALES, localizePath, type Locale } from '../../../shared/constants/locales';
-import { t } from '../../../shared/constants/ui';
-import { COLLECTION_ICONS } from '../../../shared/constants/collections';
-import '../../../styles/pages/home.css';
+} from '@/shared/constants/collections';
+import { LOCALES, localizePath, type Locale } from '@/shared/constants/locales';
+import { t } from '@/shared/constants/ui';
+import { COLLECTION_ICONS } from '@/shared/constants/collections';
+import '@/styles/pages/home.css';
 
 export async function getStaticPaths() {
   const params: { params: { lang: Locale; slug: string } }[] = [];
@@ -38,8 +36,8 @@ if (!(CONTENT_COLLECTIONS as readonly string[]).includes(slug!)) {
 
 const collection = slug as ContentCollectionName;
 const [categoria, contenidos] = await Promise.all([
-  getCategoriaPorId(collection),
-  getContenidosPorCategoria(collection),
+  categoriasService.buscarPorId(collection),
+  lugaresService.listarPorCategoria(collection),
 ]);
 
 if (!categoria) {
@@ -87,7 +85,7 @@ const breadcrumbs = [
 
   <section class="section section--sand">
     <div class="container-page">
-      <div class="flex items-center gap-4">
+      <div class="categoria-header">
         <span class="category-tile__icon">
           <Icon name={COLLECTION_ICONS[collection] ?? 'pin'} size="lg" />
         </span>
@@ -101,7 +99,7 @@ const breadcrumbs = [
 
   <section class="section">
     <div class="container-page">
-      <p class="search-meta mb-6">
+      <p class="search-meta">
         {contenidos.length} {contenidos.length === 1 ? t(lang, 'count.place') : t(lang, 'count.places')}
       </p>
       {
@@ -115,10 +113,10 @@ const breadcrumbs = [
           </div>
         ) : (
           <div class="empty-state">
-            <p class="font-display text-xl text-secondary">
+            <p class="empty-state__title">
               {t(lang, 'categories.emptyTitle')}
             </p>
-            <p class="mt-2 text-muted">{t(lang, 'categories.emptyBody')}</p>
+            <p class="empty-state__body">{t(lang, 'categories.emptyBody')}</p>
           </div>
         )
       }

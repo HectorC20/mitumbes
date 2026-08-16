@@ -25,7 +25,7 @@ const link = (path: string) => localizePath(path, lang);
           <span class="nav-shell__logo"><Icon name="waves" size="sm" /></span>
           <span class="nav-shell__wordmark">MiTumbes</span>
         </a>
-        <p class="mt-4 max-w-sm text-sm leading-relaxed text-white/70">
+        <p class="site-footer__desc">
           {t(lang, 'seo.homeDescription')}
         </p>
       </div>
@@ -61,7 +61,7 @@ const link = (path: string) => localizePath(path, lang);
       </nav>
     </div>
     <div class="site-footer__note">
-      <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div class="site-footer__note-inner">
         <span>© {year} {SITE.name}. {t(lang, 'footer.note')}</span>
         <span>
           {t(lang, 'footer.verification')}

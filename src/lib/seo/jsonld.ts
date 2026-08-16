@@ -1,11 +1,11 @@
-import { SITE } from '../../shared/constants/site';
-import { COLLECTION_ICONS } from '../../shared/constants/collections';
-import type { Locale } from '../../shared/constants/locales';
-import { t } from '../../shared/constants/ui';
+import { SITE } from '@/shared/constants/site';
+import { COLLECTION_ICONS } from '@/shared/constants/collections';
+import type { Locale } from '@/shared/constants/locales';
+import { t } from '@/shared/constants/ui';
 import {
   loc,
   type ContenidoConRelaciones,
-} from '../../shared/content/places';
+} from '@/shared/content/places';
 
 export function webSiteJsonLd(lang: Locale) {
   return {

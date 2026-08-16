@@ -50,12 +50,15 @@
   }
 }
 
+/* Utilidad del sistema: contenedor de página.
+   Declarada como @utility para poder usarse con @apply desde
+   las hojas de página (src/styles/pages/*.css). */
+@utility container-page {
+  @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+}
+
 @layer components {
   /* ---------- Layout ---------- */
-  .container-page {
-    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
-  }
-
   .section {
     @apply py-14 md:py-20;
   }
@@ -355,5 +358,85 @@
 
   .breadcrumbs__sep {
     @apply text-muted/50;
+  }
+
+  /* ---------- Accesibilidad ---------- */
+  .sr-only {
+    @apply sr-only;
+  }
+
+  /* ---------- Búsqueda del header ---------- */
+  .nav-search {
+    @apply hidden items-center gap-1 md:flex;
+  }
+
+  .nav-search--mobile {
+    @apply mb-2 flex gap-1;
+  }
+
+  .nav-search__input {
+    @apply w-44 rounded-sm border-2 border-ink/15 bg-white px-3 py-2 text-sm text-ink
+           placeholder:text-muted focus:border-primary focus:outline-none;
+  }
+
+  .nav-search__input--mobile {
+    @apply w-full;
+  }
+
+  .nav-search__submit {
+    @apply inline-flex h-9 w-9 items-center justify-center rounded-sm bg-primary text-white hover:bg-secondary;
+  }
+
+  .nav-search__submit--mobile {
+    @apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-sm bg-primary text-white;
+  }
+
+  /* ---------- Selector de idioma móvil ---------- */
+  .mobile-lang__label {
+    @apply mt-2 border-t border-ink/10 px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wider text-muted;
+  }
+
+  .mobile-lang {
+    @apply flex gap-1;
+  }
+
+  /* ---------- Footer ---------- */
+  .site-footer__desc {
+    @apply mt-4 max-w-sm text-sm leading-relaxed text-white/70;
+  }
+
+  .site-footer__note-inner {
+    @apply flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between;
+  }
+
+  /* ---------- Cards de lugar ---------- */
+  .card__meta-item {
+    @apply inline-flex items-center gap-1;
+  }
+
+  /* ---------- Búsqueda ---------- */
+  .search-tabs__label {
+    @apply text-sm text-muted;
+  }
+
+  .empty-state__title {
+    @apply font-display text-xl text-secondary;
+  }
+
+  .empty-state__body {
+    @apply mt-2 text-muted;
+  }
+
+  .empty-state__action {
+    @apply mt-6;
+  }
+
+  /* ---------- Modificadores ---------- */
+  .lead--center {
+    @apply mx-auto;
+  }
+
+  .badge--center {
+    @apply mx-auto;
   }
 }

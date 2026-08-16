@@ -7,6 +7,7 @@ import {
   type Locale,
 } from '../shared/constants/locales';
 import { t } from '../shared/constants/ui';
+import '../styles/pages/notfound.css';
 
 // Servida en runtime para detectar el idioma de la URL y responder 404.
 export const prerender = false;
@@ -21,11 +22,11 @@ const lang: Locale = getLocaleFromPath(Astro.url.pathname);
   noindex
 >
   <section class="section section--sand">
-    <div class="container-page text-center">
-      <p class="font-display text-7xl text-primary">404</p>
+    <div class="notfound">
+      <p class="notfound__code">404</p>
       <h1 class="page-title">{t(lang, 'notFound.title')}</h1>
-      <p class="lead mx-auto">{t(lang, 'notFound.lead')}</p>
-      <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <p class="lead lead--center">{t(lang, 'notFound.lead')}</p>
+      <div class="notfound__actions">
         <a class="btn btn--primary" href={localizePath('/', lang)}>
           <Icon name="compass" size="sm" />
           {t(lang, 'notFound.goHome')}
