@@ -15,6 +15,7 @@ import {
 import { webSiteJsonLd } from '@/lib/seo/jsonld';
 import Header from './Header.astro';
 import Footer from './Footer.astro';
+import ShareRail from './ShareRail.astro';
 
 interface Props {
   lang?: Locale;
@@ -102,5 +103,6 @@ const schemas = [
       <slot />
     </main>
     <Footer lang={lang} />
+    <ShareRail lang={lang} />
   </body>
 </html>

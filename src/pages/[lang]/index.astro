@@ -2,6 +2,8 @@
 import Layout from '@/components/layout/Layout.astro';
 import Icon from '@/components/Icon.astro';
 import PlaceCard from '@/components/place/PlaceCard.astro';
+import HeroCarousel from '@/components/home/HeroCarousel.astro';
+import noImage from '@/assets/images/no-image.svg';
 import { lugaresService } from '@/services/lugares.service';
 import { categoriasService } from '@/services/categorias.service';
 import { zonasService } from '@/services/zonas.service';
@@ -32,8 +34,19 @@ const [destacados, categorias, zonas, conteos] = await Promise.all([
 
 const categoriasPorId = new Map(categorias.map((c) => [c.collection, c]));
 
+const carouselPlaces = destacados.slice(0, 5);
+const fallbackHeroImg = noImage.src;
 const heroImg =
-  'https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Tumbes%20Peru%20coastline%20aerial%20view%20turquoise%20ocean%20beaches%20mangroves%20palm%20trees%20golden%20sunset%20warm%20light%20travel%20photography&image_size=landscape_16_9';
+  imagenSrc(carouselPlaces[0]?.data?.image) || fallbackHeroImg;
+
+const heroSlides = carouselPlaces.map((item) => ({
+  id: item.id,
+  title: loc(item.data.title, lang) ?? '',
+  subtitle: loc(item.data.excerpt, lang) ?? loc(item.data.description, lang) ?? '',
+  eyebrow: item.zone ? loc(item.zone.data.title, lang) : undefined,
+  image: imagenSrc(item.data.image) || fallbackHeroImg,
+  href: localizePath(`/lugares/${item.id}/`, lang),
+}));
 
 const lugaresHref = localizePath('/lugares/', lang);
 const categoriasHref = localizePath('/categorias/', lang);
@@ -41,30 +54,7 @@ const zonasHref = localizePath('/zonas/', lang);
 ---
 
 <Layout lang={lang} title={t(lang, 'seo.homeTitle')} description={t(lang, 'seo.homeDescription')} image={heroImg}>
-  <section class="hero">
-    <img class="hero__img" src={heroImg} alt="" fetchpriority="high" />
-    <div class="container-page hero__inner">
-      <p class="hero__eyebrow">{t(lang, 'home.heroEyebrow')}</p>
-      <h1 class="hero__title">{t(lang, 'home.heroTitle')}</h1>
-      <p class="hero__lead">{t(lang, 'home.heroLead')}</p>
-      <div class="hero__search">
-        <form class="search-form" role="search" action={lugaresHref} method="get">
-          <label class="sr-only" for="home-search">{t(lang, 'search.label')}</label>
-          <input
-            id="home-search"
-            class="search-form__input"
-            type="search"
-            name="q"
-            placeholder={t(lang, 'home.searchPlaceholder')}
-          />
-          <button class="btn btn--white search-form__submit" type="submit">
-            <Icon name="search" size="sm" />
-            {t(lang, 'home.searchSubmit')}
-          </button>
-        </form>
-      </div>
-    </div>
-  </section>
+  <HeroCarousel slides={heroSlides} lang={lang} />
 
   <section class="section" id="categorias" data-section="categorias">
     <div class="container-page">

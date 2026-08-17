@@ -1,0 +1,113 @@
+---
+import Icon from '../Icon.astro';
+import { isLocale, type Locale } from '@/shared/constants/locales';
+import { t } from '@/shared/constants/ui';
+
+interface Props {
+  lang?: Locale;
+}
+
+const lang: Locale = isLocale(Astro.props.lang) ? Astro.props.lang : 'es';
+
+const networks = [
+  { id: 'whatsapp', label: t(lang, 'share.whatsapp'), icon: 'whatsapp' },
+  { id: 'facebook', label: t(lang, 'share.facebook'), icon: 'facebook' },
+  { id: 'x', label: t(lang, 'share.x'), icon: 'x' },
+  { id: 'linkedin', label: t(lang, 'share.linkedin'), icon: 'linkedin' },
+];
+---
+
+<aside
+  class="share-rail"
+  data-copied={t(lang, 'share.copied')}
+  aria-label={t(lang, 'share.label')}
+>
+  <span class="share-rail__label" aria-hidden="true">{t(lang, 'share.label')}</span>
+
+  <div class="share-rail__actions">
+    {
+      networks.map((n) => (
+        <button
+          class="share-rail__btn"
+          type="button"
+          data-share={n.id}
+          aria-label={n.label}
+          title={n.label}
+        >
+          <Icon name={n.icon} size="sm" />
+        </button>
+      ))
+    }
+    <button
+      class="share-rail__btn"
+      type="button"
+      data-share="copy"
+      aria-label={t(lang, 'share.copy')}
+      title={t(lang, 'share.copy')}
+    >
+      <Icon name="copy" size="sm" />
+    </button>
+  </div>
+
+  <span class="share-rail__hint" aria-live="polite"></span>
+</aside>
+
+<script>
+  const rail = document.querySelector<HTMLElement>('.share-rail');
+
+  if (rail) {
+    const hint = rail.querySelector('.share-rail__hint');
+
+    const shareUrls: Record<
+      string,
+      (url: string, title: string, text: string) => string | undefined
+    > = {
+      whatsapp: (_url, _title, text) =>
+        `https://wa.me/?text=${encodeURIComponent(text)}`,
+      facebook: (url) =>
+        `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+      x: (url, title) =>
+        `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+      linkedin: (url) =>
+        `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+    };
+
+    const showCopied = () => {
+      if (!hint) return;
+      hint.textContent = rail.dataset.copied ?? '';
+      window.setTimeout(() => {
+        hint.textContent = '';
+      }, 2000);
+    };
+
+    const copyUrl = async (url: string) => {
+      try {
+        await navigator.clipboard.writeText(url);
+        showCopied();
+      } catch {
+        // Sin acceso al portapapeles: la URL queda en la barra del navegador.
+      }
+    };
+
+    rail.querySelectorAll<HTMLElement>('[data-share]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const url = window.location.href;
+        const title = document.title;
+        const text = `${title} — ${url}`;
+        const network = btn.dataset.share;
+
+        if (network === 'copy') {
+          void copyUrl(url);
+          return;
+        }
+
+        if (network && network in shareUrls) {
+          const href = shareUrls[network]?.(url, title, text);
+          if (href) {
+            window.open(href, '_blank', 'noopener,noreferrer,width=640,height=560');
+          }
+        }
+      });
+    });
+  }
+</script>

@@ -33,7 +33,10 @@ export default defineConfig({
           'menu',
           'car',
           'check',
+          'content-copy',
         ],
+        // Redes sociales para la columna global de compartir.
+        'simple-icons': ['whatsapp', 'facebook', 'x', 'linkedin'],
       },
     }),
   ],

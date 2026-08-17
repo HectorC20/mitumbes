@@ -12,7 +12,7 @@ excerpt:
   en: "The five circuits with the Safe Travels seal are promoted from September 21st to 27th."
   pt: "Os cinco circuitos com o selo Safe Travels são promovidos de 21 a 27 de setembro."
 zone: "tumbes"
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Tumbes%20tourism%20week%20Peru%20mangrove%20forest%20boats%20Puerto%20Pizarro%20beach%20Punta%20Sal%20turquoise%20sea%20travelers%20ecotourism%20photography&image_size=landscape_16_9"
+image: "src/assets/images/tumbes-centro.jpg?w=1280&h=720"
 hours:
   es: "21 al 27 de septiembre (día central 25)"
   en: "September 21st to 27th (main day 25th)"

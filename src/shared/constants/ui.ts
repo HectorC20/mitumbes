@@ -94,6 +94,15 @@ export const ui = {
     'place.relatedTitle': 'Otros lugares en {zone} y {category}',
     'place.viewZone': 'Ver zona',
 
+    // Compartir
+    'share.label': 'Compartir',
+    'share.whatsapp': 'Compartir en WhatsApp',
+    'share.facebook': 'Compartir en Facebook',
+    'share.x': 'Compartir en X',
+    'share.linkedin': 'Compartir en LinkedIn',
+    'share.copy': 'Copiar enlace',
+    'share.copied': 'Enlace copiado',
+
     // Categorías
     'categories.eyebrow': 'Explorar',
     'categories.lead':
@@ -211,6 +220,16 @@ export const ui = {
     'place.relatedTitle': 'Other places in {zone} and {category}',
     'place.viewZone': 'View zone',
 
+    // Share
+    'share.label': 'Share',
+    'share.whatsapp': 'Share on WhatsApp',
+    'share.facebook': 'Share on Facebook',
+    'share.x': 'Share on X',
+    'share.linkedin': 'Share on LinkedIn',
+    'share.copy': 'Copy link',
+    'share.copied': 'Link copied',
+
+    // Categories
     'categories.eyebrow': 'Explore',
     'categories.lead':
       'Browse the Tumbes directory by place type to find exactly what you are looking for.',
@@ -323,6 +342,16 @@ export const ui = {
     'place.relatedTitle': 'Outros lugares em {zone} e {category}',
     'place.viewZone': 'Ver zona',
 
+    // Compartilhar
+    'share.label': 'Compartilhar',
+    'share.whatsapp': 'Compartilhar no WhatsApp',
+    'share.facebook': 'Compartilhar no Facebook',
+    'share.x': 'Compartilhar no X',
+    'share.linkedin': 'Compartilhar no LinkedIn',
+    'share.copy': 'Copiar link',
+    'share.copied': 'Link copiado',
+
+    // Categorias
     'categories.eyebrow': 'Explorar',
     'categories.lead':
       'Navegue pelo diretório de Tumbes por tipo de lugar para encontrar exatamente o que procura.',

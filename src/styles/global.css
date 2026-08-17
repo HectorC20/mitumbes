@@ -155,7 +155,7 @@
   }
 
   .nav-shell__inner {
-    @apply flex h-16 items-center justify-between gap-6;
+    @apply flex h-14 items-center justify-between gap-6;
   }
 
   .nav-shell__brand {
@@ -438,5 +438,29 @@
 
   .badge--center {
     @apply mx-auto;
+  }
+
+  /* ---------- Columna global de compartir ---------- */
+  .share-rail {
+    @apply fixed h-full border-l border-ink/10 bg-white items-center justify-center top-0 px-2 right-0 z-30 flex-col my-auto gap-3 hidden md:flex;
+  }
+
+  .share-rail__label {
+    @apply text-[0.7rem] font-semibold uppercase tracking-widest text-muted;
+    writing-mode: vertical-rl;
+  }
+
+  .share-rail__actions {
+    @apply flex flex-col gap-2;
+  }
+
+  .share-rail__btn {
+    @apply inline-flex h-10 w-10 items-center justify-center rounded-sm border border-ink/15 bg-white text-secondary transition-colors duration-200
+           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary
+           hover:border-primary hover:bg-primary hover:text-white;
+  }
+
+  .share-rail__hint {
+    @apply min-h-4 text-center text-xs font-semibold text-primary;
   }
 }

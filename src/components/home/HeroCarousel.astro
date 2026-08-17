@@ -1,0 +1,160 @@
+---
+import Icon from '../Icon.astro';
+import noImage from '@/assets/images/no-image.svg';
+import type { Locale } from '@/shared/constants/locales';
+import { t } from '@/shared/constants/ui';
+import '@/styles/components/hero-carousel.css';
+
+export interface HeroSlideItem {
+  id: string;
+  title: string;
+  subtitle?: string;
+  eyebrow?: string;
+  image?: string;
+  href: string;
+}
+
+interface Props {
+  slides: HeroSlideItem[];
+  lang: Locale;
+}
+
+const { slides = [], lang } = Astro.props;
+const fallbackImage = noImage.src;
+
+// Aseguramos que cada slide tenga imagen válida o fallback
+const sanitizedSlides = slides.map((slide, index) => ({
+  ...slide,
+  number: String(index + 1).padStart(2, '0'),
+  image: slide.image && slide.image.trim() !== '' ? slide.image : fallbackImage,
+}));
+
+const nextSlide = sanitizedSlides[1] ?? sanitizedSlides[0];
+---
+
+<section class="hero-carousel" data-hero-carousel aria-roledescription="carousel" aria-label={t(lang, 'home.heroTitle')}>
+  <!-- Barra lateral izquierda fija sobre el hero -->
+  <aside class="hero-sidebar" aria-label="Navegación del carrusel y redes">
+    <a href="#" class="hero-sidebar__top" aria-label="Inicio">
+      <Icon name="anchor" size="sm" />
+    </a>
+
+    <div class="hero-sidebar__nav">
+      <span class="hero-sidebar__counter" data-hero-counter>01</span>
+      <div class="hero-sidebar__track">
+        <div class="hero-sidebar__indicator" data-hero-progress></div>
+      </div>
+    </div>
+
+    <div class="hero-sidebar__socials">
+      <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="hero-sidebar__social-link" aria-label="Facebook">
+        <Icon name="facebook" size="sm" />
+      </a>
+      <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="hero-sidebar__social-link" aria-label="Instagram">
+        <Icon name="instagram" size="sm" />
+      </a>
+      <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="hero-sidebar__social-link" aria-label="Twitter / X">
+        <Icon name="x" size="sm" />
+      </a>
+    </div>
+  </aside>
+
+  <!-- Diapositivas de fondo -->
+  <div class="hero-carousel__slides">
+    {
+      sanitizedSlides.map((slide, index) => (
+        <article
+          class:list={['hero-slide', { 'hero-slide--active': index === 0 }]}
+          data-hero-slide
+          data-index={index}
+          data-title={slide.title}
+          data-img-src={slide.image}
+          aria-hidden={index !== 0}
+        >
+          <img
+            class="hero-slide__img"
+            src={slide.image}
+            alt={slide.title}
+            loading={index === 0 ? 'eager' : 'lazy'}
+            fetchpriority={index === 0 ? 'high' : 'auto'}
+            onerror={`this.onerror=null; this.src='${fallbackImage}';`}
+          />
+          <div class="hero-slide__overlay"></div>
+          <div class="hero-slide__overlay-bottom"></div>
+
+          <!-- Contenido central de cada diapositiva -->
+          <div class="hero-carousel__main">
+            <div class="hero-carousel__content">
+              <span class="hero-carousel__eyebrow">
+                <Icon name="waves" size="sm" />
+                {slide.eyebrow || t(lang, 'home.heroEyebrow')}
+              </span>
+              <h1 class="hero-carousel__title">
+                {slide.title}
+              </h1>
+              {slide.subtitle && (
+                <p class="hero-carousel__lead">
+                  {slide.subtitle}
+                </p>
+              )}
+              <div class="hero-carousel__action">
+                <a class="hero-btn-pill" href={slide.href}>
+                  <span>{t(lang, 'place.seePlace')}</span>
+                  <Icon name="arrow-right" size="sm" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+
+  <!-- Barra inferior interactiva con los 5 apartados y preview -->
+  <nav class="hero-bottom-bar" aria-label="Selección de destinos destacados">
+    <div class="hero-bottom-bar__inner">
+      <div class="hero-bottom-bar__items" role="tablist">
+        {
+          sanitizedSlides.map((slide, index) => (
+            <button
+              type="button"
+              class:list={['hero-nav-tab', { 'hero-nav__item--active': index === 0 }]}
+              data-hero-nav-item
+              data-index={index}
+              role="tab"
+              aria-selected={index === 0}
+              aria-label={`Ir al destino ${slide.title}`}
+            >
+              <span class="hero-nav-tab__num">{slide.number}</span>
+              <strong class="hero-nav-tab__title">{slide.title}</strong>
+              {slide.subtitle && <span class="hero-nav-tab__desc">{slide.subtitle}</span>}
+            </button>
+          ))
+        }
+      </div>
+
+      <!-- Tarjeta preview miniatura a la derecha -->
+      {
+        nextSlide && (
+          <div class="hero-preview" data-hero-preview title="Siguiente destino" role="button" tabindex="0" aria-label="Ver siguiente destino">
+            <img
+              class="hero-preview__img"
+              src={nextSlide.image}
+              alt=""
+              data-hero-preview-img
+              onerror={`this.onerror=null; this.src='${fallbackImage}';`}
+            />
+            <div class="hero-preview__overlay"></div>
+            <div class="hero-preview__btn" aria-hidden="true">
+              <Icon name="play" size="sm" />
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </nav>
+</section>
+
+<script>
+  import '@/scripts/hero-carousel.ts';
+</script>

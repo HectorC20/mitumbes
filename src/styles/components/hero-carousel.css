@@ -1,0 +1,178 @@
+@reference "../global.css";
+
+/* ============================================================
+   Hero Carousel — Inspirado en diseño de viaje escénico
+   ============================================================ */
+
+.hero-carousel {
+  @apply relative w-full overflow-hidden bg-secondary text-white;
+  height: clamp(620px, 92vh, 980px);
+}
+
+/* Diapositivas de fondo */
+.hero-carousel__slides {
+  @apply absolute inset-0 h-full w-full;
+}
+
+.hero-slide {
+  @apply absolute inset-0 h-full w-full opacity-0 pointer-events-none transition-opacity duration-1000 ease-in-out;
+}
+
+.hero-slide--active {
+  @apply opacity-100 pointer-events-auto z-10;
+}
+
+.hero-slide__img {
+  @apply h-full w-full object-cover transform scale-105 transition-transform duration-[6000ms] ease-out;
+}
+
+.hero-slide--active .hero-slide__img {
+  @apply scale-100;
+}
+
+.hero-slide__overlay {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/30;
+}
+
+.hero-slide__overlay-bottom {
+  content: '';
+  @apply absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/80 to-transparent;
+}
+
+/* Barra lateral izquierda */
+.hero-sidebar {
+  @apply absolute left-0 top-0 bottom-0 z-30 hidden md:flex flex-col items-center justify-between py-8 px-4 border-r border-white/10 bg-black/15 backdrop-blur-xs w-16 lg:w-20;
+}
+
+.hero-sidebar__top {
+  @apply flex items-center justify-center text-white/80 hover:text-white transition-colors;
+}
+
+.hero-sidebar__nav {
+  @apply flex flex-col items-center gap-3 my-auto;
+}
+
+.hero-sidebar__counter {
+  @apply text-xs font-mono font-semibold tracking-wider text-white/90;
+}
+
+.hero-sidebar__track {
+  @apply relative w-[2px] h-36 bg-white/20 rounded-full overflow-hidden;
+}
+
+.hero-sidebar__indicator {
+  --progress-pos: 0%;
+  @apply absolute left-0 w-full bg-sun rounded-full transition-all duration-700 ease-out;
+  height: 28%;
+  top: var(--progress-pos);
+}
+
+.hero-sidebar__socials {
+  @apply flex flex-col items-center gap-4 text-white/70;
+}
+
+.hero-sidebar__social-link {
+  @apply text-white/70 hover:text-white transition-colors hover:scale-110 duration-200;
+}
+
+/* Contenido central del Hero */
+.hero-carousel__main {
+  @apply relative z-20 h-full flex flex-col justify-between pt-16 pb-28 md:pl-24 lg:pl-28;
+}
+
+.hero-carousel__content {
+  @apply max-w-3xl my-auto px-4 sm:px-6 lg:px-8;
+}
+
+.hero-carousel__eyebrow {
+  @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-sun drop-shadow-sm;
+}
+
+.hero-carousel__title {
+  @apply mt-2 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-sans font-extrabold tracking-tight uppercase leading-[1.05] text-white drop-shadow-md;
+}
+
+.hero-carousel__lead {
+  @apply mt-4 max-w-xl text-base sm:text-lg text-white/90 line-clamp-2 drop-shadow;
+}
+
+.hero-carousel__action {
+  @apply mt-8 flex items-center gap-4;
+}
+
+.hero-btn-pill {
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 bg-emerald-100 text-secondary font-semibold text-sm tracking-wide shadow-lg shadow-black/20 hover:bg-white hover:scale-105 active:scale-95 transition-all duration-200 no-underline;
+}
+
+/* Barra inferior del carrusel */
+.hero-bottom-bar {
+  @apply absolute bottom-0 inset-x-0 z-30 bg-black/60 backdrop-blur-md border-t border-white/10 md:pl-20 lg:pl-24;
+}
+
+.hero-bottom-bar__inner {
+  @apply flex items-stretch justify-between gap-4 max-w-7xl mx-auto px-4 sm:px-6 py-3 md:py-4;
+}
+
+.hero-bottom-bar__items {
+  @apply flex items-center gap-4 sm:gap-8 overflow-x-auto flex-1;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hero-bottom-bar__items::-webkit-scrollbar {
+  display: none;
+}
+
+.hero-nav-tab {
+  @apply flex flex-col text-left py-1 px-2 border-b-2 border-transparent transition-all duration-300 cursor-pointer min-w-[140px] sm:min-w-[180px] text-white/60 hover:text-white;
+}
+
+.hero-nav__item--active {
+  @apply text-white border-sun;
+}
+
+.hero-nav-tab__num {
+  @apply text-xs font-mono font-semibold tracking-wider text-white/50 mb-1;
+}
+
+.hero-nav__item--active .hero-nav-tab__num {
+  @apply text-sun;
+}
+
+.hero-nav-tab__title {
+  @apply text-sm sm:text-base font-semibold leading-tight line-clamp-1;
+}
+
+.hero-nav-tab__desc {
+  @apply text-xs text-white/60 line-clamp-1 mt-0.5 hidden sm:block;
+}
+
+/* Tarjeta preview a la derecha */
+.hero-preview {
+  @apply hidden lg:flex relative items-center justify-center shrink-0 w-44 h-24 rounded-lg overflow-hidden border border-white/20 shadow-xl cursor-pointer;
+}
+
+.hero-preview__img {
+  @apply absolute inset-0 w-full h-full object-cover transition-transform duration-500;
+}
+
+.hero-preview:hover .hero-preview__img {
+  @apply scale-110;
+}
+
+.hero-preview__overlay {
+  @apply absolute inset-0 bg-black/40 transition-colors;
+}
+
+.hero-preview:hover .hero-preview__overlay {
+  @apply bg-black/20;
+}
+
+.hero-preview__btn {
+  @apply relative z-10 w-10 h-10 rounded-full bg-white text-secondary flex items-center justify-center shadow-lg transition-transform duration-300;
+}
+
+.hero-preview:hover .hero-preview__btn {
+  @apply scale-110;
+}
