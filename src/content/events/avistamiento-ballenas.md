@@ -12,7 +12,7 @@ excerpt:
   en: "Humpback whales off the coasts of Zorritos and Canoas de Punta Sal, from June to October."
   pt: "Baleias jubarte no litoral de Zorritos e Canoas de Punta Sal, de junho a outubro."
 zone: "zorritos"
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Humpback%20whale%20breaching%20in%20the%20Pacific%20Ocean%20Tumbes%20Peru%20whale%20watching%20boat%20tourists%20ecotourism%20sunny%20day%20blue%20sea%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "Junio a octubre"
   en: "June to October"

@@ -12,7 +12,7 @@ excerpt:
   en: "The city of Tumbes welcomes the new year with a popular celebration in Bellavista."
   pt: "A cidade de Tumbes recebe o ano novo com festa popular em Bellavista."
 zone: "tumbes"
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=New%20Year%20celebration%20in%20the%20Bellavista%20neighborhood%20Tumbes%20Peru%20fireworks%20over%20the%20city%20crowds%20celebrating%20colorful%20lights%20festive%20night%20atmosphere%20realistic%20travel%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "1 de enero"
   en: "January 1st"

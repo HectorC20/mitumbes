@@ -12,7 +12,7 @@ excerpt:
   en: "Santa Clarita Festival in Papagayos, on August 12th and 13th."
   pt: "Festa de Santa Clarita em Papagayos, nos dias 12 e 13 de agosto."
 zone: "zorritos"
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Religious%20festival%20of%20Santa%20Clarita%20in%20Papagayos%20Zorritos%20Tumbes%20Peru%20procession%20saint%20statue%20decorated%20streets%20devotees%20coastal%20town%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "12 y 13 de agosto"
   en: "August 12th and 13th"

@@ -1,24 +1,9 @@
 ---
 import Icon from '../Icon.astro';
 import noImage from '@/assets/images/no-image.svg';
-import type { Locale } from '@/shared/constants/locales';
+import type { Props } from '@/shared/interfaces/hero.carousel';
 import { t } from '@/shared/constants/ui';
 import '@/styles/components/hero-carousel.css';
-
-export interface HeroSlideItem {
-  id: string;
-  title: string;
-  subtitle?: string;
-  eyebrow?: string;
-  image?: string;
-  href: string;
-}
-
-interface Props {
-  slides: HeroSlideItem[];
-  lang: Locale;
-}
-
 const { slides = [], lang } = Astro.props;
 const fallbackImage = noImage.src;
 
@@ -35,9 +20,9 @@ const nextSlide = sanitizedSlides[1] ?? sanitizedSlides[0];
 <section class="hero-carousel" data-hero-carousel aria-roledescription="carousel" aria-label={t(lang, 'home.heroTitle')}>
   <!-- Barra lateral izquierda fija sobre el hero -->
   <aside class="hero-sidebar" aria-label="Navegación del carrusel y redes">
-    <a href="#" class="hero-sidebar__top" aria-label="Inicio">
+    <!-- <a href="#" class="hero-sidebar__top" aria-label="Inicio">
       <Icon name="anchor" size="sm" />
-    </a>
+    </a> -->
 
     <div class="hero-sidebar__nav">
       <span class="hero-sidebar__counter" data-hero-counter>01</span>

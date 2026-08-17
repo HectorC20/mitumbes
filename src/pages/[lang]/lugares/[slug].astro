@@ -2,6 +2,7 @@
 import Layout from '@/components/layout/Layout.astro';
 import Icon from '@/components/Icon.astro';
 import PlaceCard from '@/components/place/PlaceCard.astro';
+import noImage from '@/assets/images/no-image.svg';
 import {
   imagenSrc,
   loc,
@@ -56,6 +57,7 @@ const title = loc(lugar.data.title, lang) ?? lugar.id;
 const description = loc(lugar.data.description, lang) ?? '';
 const zonaTitle = lugar.zone ? loc(lugar.zone.data.title, lang) : undefined;
 const categoriaTitle = categoria ? loc(categoria.data.title, lang) : undefined;
+const heroImg = imagenSrc(lugar.data.image) || noImage.src;
 
 const url = `${SITE.url}/${lang}/lugares/${lugar.id}/`;
 const bodyHtml = await lugaresService.renderBody(lugar, lang);
@@ -145,10 +147,10 @@ const breadcrumbs = [
         }
       </div>
       {
-        lugar.data.image && (
+        heroImg && (
           <img
             class="place-hero__img"
-            src={imagenSrc(lugar.data.image)}
+            src={heroImg}
             alt={title}
             fetchpriority="high"
             width="960"

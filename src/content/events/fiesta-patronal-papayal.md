@@ -11,7 +11,7 @@ excerpt:
   es: "Devoción y tradición en el valle de Zarumilla."
   en: "Devotion and tradition in the Zarumilla valley."
   pt: "Devoção e tradição no vale de Zarumilla."
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Colorful%20patron%20saint%20festival%20in%20Papayal%20La%20Palma%20Zarumilla%20Peru%20decorated%20village%20church%20procession%20with%20religious%20banners%20flowers%20local%20people%20celebrating%20realistic%20travel%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "11 de enero"
   en: "January 11th"

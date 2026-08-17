@@ -11,7 +11,7 @@ excerpt:
   es: "Desfiles de las fuerzas armadas y ofrendas florales en Zarumilla."
   en: "Armed forces parades and floral offerings in Zarumilla."
   pt: "Desfiles das forças armadas e ofrendas florais em Zarumilla."
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Military%20parade%20of%20the%20Peruvian%20armed%20forces%20main%20square%20of%20Zarumilla%20Tumbes%20Peru%20wreath%20laying%20ceremony%20monument%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "24 de junio"
   en: "June 24th"

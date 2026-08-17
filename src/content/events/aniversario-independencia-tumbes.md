@@ -12,7 +12,7 @@ excerpt:
   en: "Peru's first independent city celebrates its most important civic date."
   pt: "A primeira cidade independente do Peru celebra sua data cívica mais importante."
 zone: "tumbes"
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Civic%20military%20parade%20in%20Tumbes%20Peru%20Independence%20Day%20celebration%20students%20marching%20with%20Peruvian%20flags%20Plaza%20Mayor%20historic%20buildings%20fireworks%20patriotic%20festive%20atmosphere%20realistic%20travel%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "7 de enero"
   en: "January 7th"

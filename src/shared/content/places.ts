@@ -35,9 +35,18 @@ export function loc<T>(campo: Record<Locale, T> | undefined, lang: Locale): T | 
  * URL renderizable de una imagen de contenido.
  * Acepta tanto una imagen local procesada por astro:assets (ImageMetadata,
  * devuelve su `src` emitido) como una URL remota o de /public (string).
+ *
+ * Las rutas relativas se normalizan a raíz del proyecto (prefijo `/`) para que
+ * el asset no se resuelva contra la ruta actual y herede el prefijo de idioma
+ * (i18n); los assets no dependen del locale.
  */
 export function imagenSrc(imagen: ImageMetadata | string | undefined): string | undefined {
-  return typeof imagen === 'string' ? imagen : imagen?.src;
+  if (typeof imagen !== 'string') return imagen?.src;
+  const src = imagen.trim();
+  if (!src) return undefined;
+  // URLs absolutas (remotas, data:, o emitidas por astro:assets) se usan tal cual.
+  if (/^(?:https?:|data:|blob:|\/)/i.test(src)) return src;
+  return `/${src}`;
 }
 
 /** Recupera todos los contenidos de las 6 categorías (sin index.md). */

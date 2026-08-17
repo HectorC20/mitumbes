@@ -11,7 +11,7 @@ excerpt:
   es: "Fiesta patronal de cierre de noviembre en Papayal."
   en: "Patron saint festival closing November in Papayal."
   pt: "Festa da padroeira encerrando novembro em Papayal."
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Patron%20saint%20festival%20Papayal%20Zarumilla%20Tumbes%20Peru%20religious%20procession%20small%20rural%20town%20decorated%20streets%20local%20people%20festive%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "Última semana de noviembre"
   en: "Last week of November"

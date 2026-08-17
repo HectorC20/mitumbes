@@ -12,7 +12,7 @@ excerpt:
   en: "National devotion that unites the faithful of Tumbes."
   pt: "Devoção nacional que une a religiosidade tumbesina."
 zone: "tumbes"
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Religious%20devotion%20Lord%20of%20Locumba%20procession%20Tumbes%20Peru%20faithful%20crowd%20street%20statue%20of%20Christ%20candles%20prayer%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "14 de noviembre"
   en: "November 14th"

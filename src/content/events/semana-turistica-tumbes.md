@@ -12,7 +12,7 @@ excerpt:
   en: "The five circuits with the Safe Travels seal are promoted from September 21st to 27th."
   pt: "Os cinco circuitos com o selo Safe Travels são promovidos de 21 a 27 de setembro."
 zone: "tumbes"
-image: "src/assets/images/tumbes-centro.jpg?w=1280&h=720"
+image: ""
 hours:
   es: "21 al 27 de septiembre (día central 25)"
   en: "September 21st to 27th (main day 25th)"

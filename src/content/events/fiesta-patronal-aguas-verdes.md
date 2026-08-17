@@ -11,7 +11,7 @@ excerpt:
   es: "Devoción religiosa y comercio bilateral en la frontera."
   en: "Religious devotion and bilateral trade on the border."
   pt: "Devoção religiosa e comércio bilateral na fronteira."
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Patron%20saint%20festival%20in%20Aguas%20Verdes%20border%20town%20Tumbes%20Peru%20church%20procession%20street%20market%20shoppers%20festive%20banners%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "30 de mayo"
   en: "May 30th"

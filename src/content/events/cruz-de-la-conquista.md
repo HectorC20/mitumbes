@@ -11,7 +11,7 @@ excerpt:
   es: "Liturgias y ceremonias oficiales en la Caleta La Cruz."
   en: "Liturgies and official ceremonies at Caleta La Cruz."
   pt: "Liturgias e cerimônias oficiais na Caleta La Cruz."
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Coastal%20chapel%20with%20a%20large%20wooden%20cross%20at%20Caleta%20La%20Cruz%20Tumbes%20Peru%20beach%20Pacific%20Ocean%20historical%20ceremony%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "6 de mayo"
   en: "May 6th"

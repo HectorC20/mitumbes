@@ -12,7 +12,7 @@ excerpt:
   en: "Homage to San Jacinto, patron saint of the town, on August 15th and 16th."
   pt: "Homenagem a São Jacinto, padroeiro da localidade, nos dias 15 e 16 de agosto."
 zone: "zorritos"
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Festival%20honoring%20Saint%20Jacinto%20patron%20saint%20San%20Jacinto%20Tumbes%20Peru%20procession%20statue%20church%20square%20faithful%20crowd%20colorful%20decorations%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "15 y 16 de agosto"
   en: "August 15th and 16th"

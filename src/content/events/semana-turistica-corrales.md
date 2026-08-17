@@ -11,7 +11,7 @@ excerpt:
   es: "Ferias agropecuarias, folclor y agroturismo en el valle de Corrales."
   en: "Agricultural fairs, folklore and agrotourism in the Corrales valley."
   pt: "Feiras agropecuárias, folclore e agroturismo no vale de Corrales."
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Agricultural%20fair%20in%20Corrales%20Tumbes%20Peru%20fruit%20cocoa%20and%20plantain%20stalls%20local%20dancers%20folk%20music%20dry%20forest%20landscape%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "10 al 15 de enero"
   en: "January 10th to 15th"

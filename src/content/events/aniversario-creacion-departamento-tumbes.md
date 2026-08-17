@@ -12,7 +12,7 @@ excerpt:
   en: "Foundational milestone of the region with parade and serenades."
   pt: "Marco fundacional da região com desfile e serenatas."
 zone: "tumbes"
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Grand%20civic%20parade%20Plaza%20Mayor%20Tumbes%20Peru%20flags%20military%20and%20school%20march%20crowd%20celebrating%20department%20anniversary%20festive%20banners%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "25 de noviembre"
   en: "November 25th"

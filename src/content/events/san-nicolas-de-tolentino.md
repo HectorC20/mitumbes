@@ -12,7 +12,7 @@ excerpt:
   en: "The capital of Tumbes honors its patron saint on September 10th."
   pt: "A capital de Tumbes homenageia seu santo padroeiro em 10 de setembro."
 zone: "tumbes"
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Feast%20of%20Saint%20Nicholas%20of%20Tolentino%20patron%20saint%20of%20Tumbes%20Peru%20colonial%20church%20main%20square%20night%20procession%20candles%20faithful%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "10 de septiembre"
   en: "September 10th"

@@ -12,7 +12,7 @@ excerpt:
   en: "Civic anniversary of San Jacinto district."
   pt: "Aniversário cívico do distrito de San Jacinto."
 zone: "zorritos"
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Civic%20anniversary%20celebration%20San%20Jacinto%20Zorritos%20Tumbes%20Peru%20flag%20hoisting%20school%20parade%20town%20square%20community%20crowd%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "24 de noviembre"
   en: "November 24th"

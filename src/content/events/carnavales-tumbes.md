@@ -12,7 +12,7 @@ excerpt:
   en: "Comparsas, water and color to celebrate carnival throughout the region."
   pt: "Comparsas, água e cor para celebrar o carnaval em toda a região."
 zone: "tumbes"
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Carnival%20street%20parade%20in%20Tumbes%20Peru%20colorful%20costumes%20comparsas%20people%20playing%20with%20water%20and%20bright%20paint%20confetti%20joyful%20border%20town%20festive%20energy%20realistic%20travel%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "1 al 20 de febrero"
   en: "February 1st to 20th"

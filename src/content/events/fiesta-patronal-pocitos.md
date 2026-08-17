@@ -11,7 +11,7 @@ excerpt:
   es: "Fiesta patronal en la frontera con Ecuador."
   en: "Patron saint festival on the border with Ecuador."
   pt: "Festa da padroeira na fronteira com o Equador."
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Patron%20saint%20festival%20Pocitos%20Aguas%20Verdes%20Zarumilla%20Peru%20procession%20border%20town%20flowers%20local%20faithful%20religious%20band%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "2 de diciembre"
   en: "December 2nd"

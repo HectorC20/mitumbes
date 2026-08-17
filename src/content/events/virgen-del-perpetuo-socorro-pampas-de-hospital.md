@@ -11,7 +11,7 @@ excerpt:
   es: "Fiesta mariana en Pampas de Hospital."
   en: "Marian festival in Pampas de Hospital."
   pt: "Festa mariana em Pampas de Hospital."
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Virgin%20of%20Perpetual%20Help%20religious%20festival%20Pampas%20de%20Hospital%20Tumbes%20Peru%20procession%20marian%20statue%20floral%20decorations%20rural%20town%20devotees%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "13 de noviembre"
   en: "November 13th"

@@ -11,7 +11,7 @@ excerpt:
   es: "Fervor religioso y orgullo cívico en Zarumilla."
   en: "Religious fervor and civic pride in Zarumilla."
   pt: "Fervor religioso e orgulho cívico em Zarumilla."
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Patron%20saint%20festival%20Zarumilla%20Tumbes%20Peru%20main%20square%20procession%20religious%20statue%20band%20flags%20local%20crowd%20festive%20banners%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "28 de octubre"
   en: "October 28th"

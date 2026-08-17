@@ -12,7 +12,7 @@ excerpt:
   en: "Devotion, fair and cross-border trade in December."
   pt: "Devoção, feira e comércio binacional em dezembro."
 zone: "tumbes"
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Grand%20fair%20by%20the%20Tumbes%20river%20Peru%20December%20ferris%20wheel%20mechanical%20rides%20stalls%20crowds%20religious%20procession%20festive%20banners%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "Del 1 al 15 de diciembre (día central: 8)"
   en: "From December 1st to 15th (main day: 8th)"

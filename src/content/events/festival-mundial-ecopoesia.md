@@ -12,7 +12,7 @@ excerpt:
   en: "Poets from around the world gather in Tumbes to celebrate ecopoetry, during the last week of August."
   pt: "Poetas do mundo todo se reúnem em Tumbes para celebrar a ecopoesia, na última semana de agosto."
 zone: "tumbes"
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=World%20Ecopoetry%20Festival%20in%20Tumbes%20Peru%20poets%20reading%20poetry%20outdoors%20Plaza%20Mayor%20stage%20audience%20books%20nature%20conservation%20literary%20event%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "Última semana de agosto"
   en: "Last week of August"

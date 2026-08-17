@@ -11,7 +11,7 @@ excerpt:
   es: "Devoción a la Virgen de las Mercedes en Cabuyal, el 4 de septiembre."
   en: "Devotion to Our Lady of Mercy in Cabuyal, on September 4th."
   pt: "Devoção a Nossa Senhora das Mercês em Cabuyal, em 4 de setembro."
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Our%20Lady%20of%20Mercy%20procession%20in%20Pampas%20de%20Hospital%20Cabuyal%20Tumbes%20Peru%20rural%20chapel%20devotees%20candles%20religious%20feast%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "4 de septiembre"
   en: "September 4th"

@@ -11,7 +11,7 @@ excerpt:
   es: "Devoción a Santa Rosa de Lima en Matapalo, el 30 de agosto."
   en: "Devotion to Santa Rosa de Lima in Matapalo, on August 30th."
   pt: "Devoção a Santa Rosa de Lima em Matapalo, em 30 de agosto."
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Santa%20Rosa%20de%20Lima%20feast%20day%20procession%20in%20Matapalo%20Zarumilla%20Tumbes%20Peru%20devotees%20roses%20statue%20chapel%20religious%20celebration%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "30 de agosto"
   en: "August 30th"

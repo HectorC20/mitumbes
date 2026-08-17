@@ -12,7 +12,7 @@ excerpt:
   en: "Gastronomic celebration in honor of ceviche."
   pt: "Celebração gastronômica em homenagem ao cebiche."
 zone: "puerto-pizarro"
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Lively%20outdoor%20food%20festival%20in%20Tumbes%20Peru%20street%20stalls%20serving%20ceviche%20crowds%20enjoying%20local%20music%20colorful%20banners%20festive%20atmosphere%20photography&image_size=landscape_16_9"
+image: ""
 coordinates:
   lat: -3.5667
   lng: -80.4511

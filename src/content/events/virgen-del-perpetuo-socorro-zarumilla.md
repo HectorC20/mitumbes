@@ -11,7 +11,7 @@ excerpt:
   es: "La devoción más multitudinaria del norte fronterizo, del 1 al 15 de septiembre."
   en: "The most crowded devotion of the northern border, from September 1st to 15th."
   pt: "A devoção mais concorrida da fronteira norte, de 1 a 15 de setembro."
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Festival%20of%20Our%20Lady%20of%20Perpetual%20Help%20in%20Zarumilla%20Tumbes%20Peru%20procession%20over%20floral%20carpet%20decorations%20statue%20devotees%20streets%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "1 al 15 de septiembre (día central 8)"
   en: "September 1st to 15th (main day 8th)"

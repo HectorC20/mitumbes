@@ -11,7 +11,7 @@ excerpt:
   es: "Devoción a la Virgen del Carmen en Plateros, del 16 al 19 de julio."
   en: "Devotion to Our Lady of Mount Carmel in Plateros, July 16th to 19th."
   pt: "Devoção a Nossa Senhora do Carmo em Plateros, de 16 a 19 de julho."
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Procession%20of%20the%20Virgin%20of%20Carmen%20statue%20carried%20through%20streets%20of%20Plateros%20Tumbes%20Peru%20religious%20festival%20devotees%20flowers%20candles%20night%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "16 al 19 de julio"
   en: "July 16th to 19th"

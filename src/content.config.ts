@@ -14,8 +14,24 @@ const placeSchema = ({ image }: SchemaContext) =>
   icon: z.string().optional(),
   /** Solo presente en contenidos reales; el index.md no tiene zona. */
   zone: reference('zones').optional(),
-  /** Imagen local (ruta relativa al archivo, se procesa con astro:assets) o URL remota. */
-  image: z.union([image(), z.string()]).optional(),
+  /**
+   * Imagen local (ruta relativa al archivo, se procesa con astro:assets),
+   * URL absoluta (https://, /public/…) o cadena vacía (sin imagen: se muestra
+   * el fallback no-image). Se rechazan rutas relativas arbitrarias porque se
+   * resolverían contra la ruta actual (con prefijo de idioma/i18n) y no contra
+   * un asset: los assets no deben depender del locale.
+   */
+  image: z
+    .union([
+      image(),
+      z
+        .string()
+        .refine(
+          (s) => s === '' || /^(?:https?:|data:|blob:|\/)/i.test(s),
+          'Debe ser una URL absoluta (https://, /public/…) o una cadena vacía.',
+        ),
+    ])
+    .optional(),
   gallery: z.array(z.string()).optional(),
   coordinates: z
     .object({ lat: z.number(), lng: z.number() })
@@ -51,8 +67,20 @@ const zonaSchema = ({ image }: SchemaContext) =>
   /** Solo presente en zonas reales; el index.md de zones no lo tiene. */
   type: z.enum(['ciudad', 'playa', 'zona', 'distrito']).optional(),
   description: loc(z.string()),
-  /** Imagen local (ruta relativa al archivo, se procesa con astro:assets) o URL remota. */
-  image: z.union([image(), z.string()]).optional(),
+  /** Imagen local (ruta relativa al archivo, se procesa con astro:assets),
+   * URL absoluta o cadena vacía. Se rechazan rutas relativas arbitrarias
+   * (resolverían contra la ruta de idioma, no contra un asset). */
+  image: z
+    .union([
+      image(),
+      z
+        .string()
+        .refine(
+          (s) => s === '' || /^(?:https?:|data:|blob:|\/)/i.test(s),
+          'Debe ser una URL absoluta (https://, /public/…) o una cadena vacía.',
+        ),
+    ])
+    .optional(),
   icon: z.string().optional(),
   body: loc(z.string()).optional(),
 });

@@ -11,7 +11,7 @@ excerpt:
   es: "Fiesta patronal de diciembre en Matapalo."
   en: "December patron saint festival in Matapalo."
   pt: "Festa da padroeira de dezembro em Matapalo."
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Patron%20saint%20festival%20Matapalo%20Zarumilla%20Tumbes%20Peru%20Sunday%20procession%20rural%20village%20street%20decorations%20community%20gathering%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "Segundo domingo de diciembre"
   en: "Second Sunday of December"

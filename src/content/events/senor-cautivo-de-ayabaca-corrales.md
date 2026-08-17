@@ -11,7 +11,7 @@ excerpt:
   es: "Devoción religiosa en Corrales con procesión y misas."
   en: "Religious devotion in Corrales with procession and masses."
   pt: "Devoção religiosa em Corrales com procissão e missas."
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Religious%20procession%20Lord%20of%20Ayabaca%20Cautivo%20festival%20Corrales%20Tumbes%20Peru%20devotees%20carrying%20statue%20on%20shoulders%20flowers%20candles%20colonial%20church%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "12 de octubre"
   en: "October 12th"

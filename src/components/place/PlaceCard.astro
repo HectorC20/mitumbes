@@ -10,6 +10,7 @@ import { COLLECTION_ICONS } from '../../shared/constants/collections';
 import { isLocale, localizePath, type Locale } from '../../shared/constants/locales';
 import { t } from '../../shared/constants/ui';
 import Icon from '../Icon.astro';
+import noImage from '@/assets/images/no-image.svg';
 
 interface Props {
   lugar: ContenidoConRelaciones;
@@ -25,6 +26,7 @@ const description = loc(lugar.data.description, lang) ?? '';
 const excerpt = loc(lugar.data.excerpt, lang) ?? description;
 const zoneTitle = lugar.zone ? loc(lugar.zone.data.title, lang) : undefined;
 const categoriaTitle = categoria ? loc(categoria.data.title, lang) : undefined;
+const imagen = imagenSrc(lugar.data.image) || noImage.src;
 ---
 
 <article
@@ -37,17 +39,13 @@ const categoriaTitle = categoria ? loc(categoria.data.title, lang) : undefined;
   data-search={textoDeBusqueda(lugar, lang)}
 >
   <div class="card__media">
-    {
-      lugar.data.image && (
-        <img
-          src={imagenSrc(lugar.data.image)}
-          alt={title}
-          loading="lazy"
-          width="640"
-          height="360"
-        />
-      )
-    }
+    <img
+      src={imagen}
+      alt={title}
+      loading="lazy"
+      width="640"
+      height="360"
+    />
     {
       categoriaTitle && (
         <span class="card__badge badge badge--primary">

@@ -11,7 +11,7 @@ excerpt:
   es: "Tres días de fe y peregrinación en San Juan de la Virgen."
   en: "Three days of faith and pilgrimage in San Juan de la Virgen."
   pt: "Três dias de fé e peregrinação em San Juan de la Virgen."
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Religious%20pilgrimage%20in%20San%20Juan%20de%20la%20Virgen%20Tumbes%20Peru%20devotees%20carrying%20the%20image%20of%20Christ%20in%20procession%20candles%20flowers%20rural%20village%20street%20faith%20devotion%20realistic%20travel%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "10 al 12 de enero"
   en: "January 10th to 12th"

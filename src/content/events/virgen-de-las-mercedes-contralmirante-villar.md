@@ -12,7 +12,7 @@ excerpt:
   en: "Devotion to Our Lady of Mercy on the coast of Zorritos, on September 24th."
   pt: "Devoção a Nossa Senhora das Mercês no litoral de Zorritos, em 24 de setembro."
 zone: "zorritos"
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Our%20Lady%20of%20Mercy%20celebration%20in%20Contralmirante%20Villar%20Zorritos%20Tumbes%20Peru%20coastal%20town%20procession%20devotees%20sea%20breeze%20religious%20festival%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "24 de septiembre"
   en: "September 24th"

@@ -5,7 +5,7 @@
    ============================================================ */
 
 .hero-carousel {
-  @apply relative w-full overflow-hidden bg-secondary text-white;
+  @apply relative w-full overflow-hidden mt-0.5 bg-secondary text-white;
   height: clamp(620px, 92vh, 980px);
 }
 
@@ -107,15 +107,17 @@
 
 /* Barra inferior del carrusel */
 .hero-bottom-bar {
-  @apply absolute bottom-0 inset-x-0 z-30 bg-black/60 backdrop-blur-md border-t border-white/10 md:pl-20 lg:pl-24;
+  @apply absolute bottom-0 pb-2 inset-x-0 z-30 mb-0 bg-black/60 backdrop-blur-md border-t border-white/10 md:pl-20 lg:pl-24;
 }
 
 .hero-bottom-bar__inner {
-  @apply flex items-stretch justify-between gap-4 max-w-7xl mx-auto px-4 sm:px-6 py-3 md:py-4;
+  @apply items-stretch justify-between gap-4 max-w-7xl mx-auto px-4 sm:px-6 py-3 md:py-4;
 }
 
 .hero-bottom-bar__items {
-  @apply flex items-center gap-4 sm:gap-8 overflow-x-auto flex-1;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  @apply  items-center gap-4 sm:gap-8 overflow-x-auto flex-1;
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -150,7 +152,7 @@
 
 /* Tarjeta preview a la derecha */
 .hero-preview {
-  @apply hidden lg:flex relative items-center justify-center shrink-0 w-44 h-24 rounded-lg overflow-hidden border border-white/20 shadow-xl cursor-pointer;
+  @apply hidden lg:flex absolute justify-center right-14  bottom-0  items-center w-58 h-44 rounded-t-lg overflow-hidden border border-white/20 shadow-xl cursor-pointer;
 }
 
 .hero-preview__img {

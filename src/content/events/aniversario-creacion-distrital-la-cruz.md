@@ -11,7 +11,7 @@ excerpt:
   es: "Ceremonias cívico-institucionales en La Cruz y Pampas de Hospital."
   en: "Civic and institutional ceremonies in La Cruz and Pampas de Hospital."
   pt: "Cerimônias cívico-institucionais em La Cruz e Pampas de Hospital."
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Civic%20parade%20with%20flags%20and%20marching%20students%20main%20square%20of%20La%20Cruz%20Tumbes%20Peru%20municipal%20building%20official%20ceremony%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "18 de junio"
   en: "June 18th"

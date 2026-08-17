@@ -12,7 +12,7 @@ excerpt:
   en: "Open-sea procession and the fishermen's devotion."
   pt: "Procissão em alto-mar e a devoção dos pescadores."
 zone: "puerto-pizarro"
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Festive%20procession%20of%20decorated%20fishing%20boats%20at%20open%20sea%20Puerto%20Pizarro%20Tumbes%20Peru%20statues%20of%20Saint%20Peter%20and%20Saint%20Paul%20aboard%20boats%20flotilla%20of%20vessels%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "28 y 29 de junio"
   en: "June 28th and 29th"

@@ -12,7 +12,7 @@ excerpt:
   en: "Religious recollection and syncretism throughout the Tumbes region."
   pt: "Recolhimento e sincretismo religioso em toda a região de Tumbes."
 zone: "tumbes"
-image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Holy%20Week%20silent%20procession%20in%20Tumbes%20Peru%20at%20night%20penitents%20carrying%20a%20religious%20float%20candles%20illuminating%20the%20street%20solemn%20devotional%20atmosphere%20realistic%20travel%20photography&image_size=landscape_16_9"
+image: ""
 hours:
   es: "Movible (marzo - abril)"
   en: "Movable (March - April)"
