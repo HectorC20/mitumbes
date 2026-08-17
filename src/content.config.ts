@@ -16,10 +16,11 @@ const placeSchema = ({ image }: SchemaContext) =>
   zone: reference('zones').optional(),
   /**
    * Imagen local (ruta relativa al archivo, se procesa con astro:assets),
-   * URL absoluta (https://, /public/…) o cadena vacía (sin imagen: se muestra
-   * el fallback no-image). Se rechazan rutas relativas arbitrarias porque se
-   * resolverían contra la ruta actual (con prefijo de idioma/i18n) y no contra
-   * un asset: los assets no deben depender del locale.
+   * URL absoluta (https://, ruta raíz del sitio como /favicon.svg) o cadena
+   * vacía (sin imagen: se muestra el fallback no-image). Se rechazan rutas
+   * relativas arbitrarias porque se resolverían contra la ruta actual (con
+   * prefijo de idioma/i18n) y no contra un asset: los assets no deben
+   * depender del locale.
    */
   image: z
     .union([
@@ -28,7 +29,7 @@ const placeSchema = ({ image }: SchemaContext) =>
         .string()
         .refine(
           (s) => s === '' || /^(?:https?:|data:|blob:|\/)/i.test(s),
-          'Debe ser una URL absoluta (https://, /public/…) o una cadena vacía.',
+          'Debe ser una URL absoluta (https://, ruta raíz del sitio) o una cadena vacía.',
         ),
     ])
     .optional(),
@@ -77,7 +78,7 @@ const zonaSchema = ({ image }: SchemaContext) =>
         .string()
         .refine(
           (s) => s === '' || /^(?:https?:|data:|blob:|\/)/i.test(s),
-          'Debe ser una URL absoluta (https://, /public/…) o una cadena vacía.',
+          'Debe ser una URL absoluta (https://, ruta raíz del sitio) o una cadena vacía.',
         ),
     ])
     .optional(),

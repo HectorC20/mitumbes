@@ -1,8 +1,8 @@
 ---
 title:
-  es: "Servicios de turismo"
-  en: "Tourism services"
-  pt: "Serviços de turismo"
+  es: "Servicios "
+  en: "Services"
+  pt: "Serviços"
 description:
   es: "Agencias, oficinas de información, transporte y servicios útiles para el viajero."
   en: "Agencies, information offices, transport and useful services for travelers."
