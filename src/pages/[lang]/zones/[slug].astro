@@ -5,25 +5,16 @@ import { zonasService } from '@/services/zonas.service';
 import { categoriasService } from '@/services/categorias.service';
 import { imagenSrc, loc } from '@/shared/content/places';
 import { breadcrumbJsonLd } from '@/lib/seo/jsonld';
-import { LOCALES, localizePath, type Locale } from '@/shared/constants/locales';
+import { localizePath, isLocale, type Locale } from '@/shared/constants/locales';
 import { t } from '@/shared/constants/ui';
 import '@/styles/pages/zona.css';
 
-export async function getStaticPaths() {
-  const zonas = await zonasService.listar();
-  const params: { params: { lang: Locale; slug: string } }[] = [];
-  for (const lang of LOCALES) {
-    for (const zona of zonas) {
-      params.push({ params: { lang, slug: zona.id } });
-    }
-  }
-  return params;
-}
-
-export const prerender = true;
-
 const lang = Astro.params.lang as Locale;
 const { slug } = Astro.params;
+
+if (!isLocale(lang)) {
+  return Astro.redirect('/404/', 301);
+}
 
 const zona = await zonasService.buscarPorId(slug!);
 
@@ -42,7 +33,7 @@ const description = loc(zona.data.description, lang) ?? '';
 
 const breadcrumbs = [
   { name: t(lang, 'nav.home'), url: localizePath('/', lang) },
-  { name: t(lang, 'nav.zones'), url: localizePath('/zonas/', lang) },
+  { name: t(lang, 'nav.zones'), url: localizePath('/zones/', lang) },
   { name: title },
 ];
 ---
@@ -78,9 +69,9 @@ const breadcrumbs = [
   </nav>
 
   {
-    zona.data.image && (
+    zona.data.image ? (
       <section class="zona-hero">
-        <img class="zona-hero__img" src={imagenSrc(zona.data.image)} alt="" />
+        <img class="zona-hero__img" src={imagenSrc(zona.data.image)} alt={t(lang, 'zones.imageAlt').replace('{zone}', title)} />
         <div class="zona-hero__overlay"></div>
         <div class="zona-hero__inner">
           <h1 class="zona-hero__title">
@@ -88,14 +79,24 @@ const breadcrumbs = [
           </h1>
         </div>
       </section>
+    ) : (
+      <section class="section section--sand">
+        <div class="container-page">
+          <h1 class="page-title">{title}</h1>
+        </div>
+      </section>
     )
   }
 
-  <section class={zona.data.image ? 'section' : 'section section--sand'}>
-    <div class="container-page">
-      <p class="lead">{description}</p>
-    </div>
-  </section>
+  {
+    zona.data.image && (
+      <section class="section">
+        <div class="container-page">
+          <p class="lead">{description}</p>
+        </div>
+      </section>
+    )
+  }
 
   <section class="section zona-list">
     <div class="container-page">

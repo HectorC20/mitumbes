@@ -22,7 +22,7 @@ interface Props {
 const { lugares, categorias, zonas, params } = Astro.props;
 const lang: Locale = isLocale(Astro.props.lang) ? Astro.props.lang : 'es';
 const total = lugares.length;
-const action = localizePath('/lugares/', lang);
+const action = localizePath('/places/', lang);
 const populares = ['lugares', 'playa', 'cebiche', 'manglares', 'surf'];
 
 const categoriasPorId = new Map(categorias.map((c) => [c.collection, c]));

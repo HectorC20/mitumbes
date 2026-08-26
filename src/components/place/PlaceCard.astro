@@ -20,7 +20,7 @@ interface Props {
 
 const { lugar, categoria } = Astro.props;
 const lang: Locale = isLocale(Astro.props.lang) ? Astro.props.lang : 'es';
-const href = localizePath(`/lugares/${lugar.id}/`, lang);
+const href = localizePath(rutaContenido(lugar), lang);
 const title = loc(lugar.data.title, lang) ?? lugar.id;
 const description = loc(lugar.data.description, lang) ?? '';
 const excerpt = loc(lugar.data.excerpt, lang) ?? description;

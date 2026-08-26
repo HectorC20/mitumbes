@@ -3,17 +3,16 @@ import Layout from '@/components/layout/Layout.astro';
 import { imagenSrc, loc } from '@/shared/content/places';
 import { zonasService } from '@/services/zonas.service';
 import { conteosService } from '@/services/conteos.service';
-import { LOCALES, localizePath, type Locale } from '@/shared/constants/locales';
+import { localizePath, type Locale, isLocale } from '@/shared/constants/locales';
 import { t } from '@/shared/constants/ui';
 import '@/styles/pages/home.css';
 
-export async function getStaticPaths() {
-  return LOCALES.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Locale;
+
+if (!isLocale(lang)) {
+  return Astro.redirect('/404/', 301);
 }
 
-export const prerender = true;
-
-const lang = Astro.params.lang as Locale;
 const [zonas, conteos] = await Promise.all([
   zonasService.listar(),
   conteosService.obtener(),
@@ -38,11 +37,11 @@ const [zonas, conteos] = await Promise.all([
               class="zone-card"
               data-section="zonas"
               data-id={z.id}
-              href={localizePath(`/zonas/${z.id}/`, lang)}
+              href={localizePath(`/zones/${z.id}/`, lang)}
             >
               {
                 z.data.image && (
-                  <img class="zone-card__img" src={imagenSrc(z.data.image)} alt="" loading="lazy" />
+                  <img class="zone-card__img" src={imagenSrc(z.data.image)} alt={t(lang, 'zones.imageAlt').replace('{zone}', loc(z.data.title, lang) ?? z.id)} loading="lazy" />
                 )
               }
               <div class="zone-card__body">

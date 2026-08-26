@@ -39,8 +39,16 @@ const lang: Locale =
   (isLocale(Astro.params.lang) ? Astro.params.lang : getLocaleFromPath(Astro.url.pathname) ?? DEFAULT_LOCALE);
 
 const internalPath = stripLocale(Astro.url.pathname);
-const canonical = new URL(localizePath(internalPath, lang), SITE.url).href;
+const localized = localizePath(internalPath, lang);
+const isHome = internalPath === '/';
+const canonicalPath = isHome && lang === DEFAULT_LOCALE ? '/' : localized;
+const canonical = new URL(canonicalPath, SITE.url).href;
 const alternates = alternatePaths(internalPath);
+const alternatesHref: Record<Locale, string> = {
+  es: new URL(isHome ? '/' : alternates.es, SITE.url).href,
+  en: new URL(alternates.en, SITE.url).href,
+  pt: new URL(alternates.pt, SITE.url).href,
+};
 
 const fullTitle = title === SITE.name ? title : `${title} | ${SITE.name}`;
 const gtag = import.meta.env.PUBLIC_GA4_ID;
@@ -61,17 +69,17 @@ const schemas = [
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate" type="application/rss+xml" title={`${SITE.name} — Sitemap`} href={`${SITE.url}/sitemap.xml`} />
-    {(Object.keys(alternates) as Locale[]).map((l) => (
+    {(Object.keys(alternatesHref) as Locale[]).map((l) => (
       <link
         rel="alternate"
         hreflang={LOCALE_BCP47[l]}
-        href={new URL(alternates[l], SITE.url).href}
+        href={alternatesHref[l]}
       />
     ))}
     <link
       rel="alternate"
       hreflang="x-default"
-      href={new URL(alternates.es, SITE.url).href}
+      href={alternatesHref.es}
     />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE.name} />

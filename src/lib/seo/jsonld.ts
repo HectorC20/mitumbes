@@ -42,7 +42,7 @@ export function lugarJsonLd(lugar: ContenidoConRelaciones, lang: Locale) {
     '@context': 'https://schema.org',
     '@type': type,
     name: title,
-    url: `${SITE.url}/${lang}/lugares/${lugar.id}/`,
+    url: `${SITE.url}/${lang}/${lugar.collection}/${lugar.id}/`,
     image: lugar.data.image,
     description: loc(lugar.data.description, lang),
     ...(lugar.data.coordinates && {

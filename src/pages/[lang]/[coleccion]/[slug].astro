@@ -11,35 +11,27 @@ import {
 import { lugaresService } from '@/services/lugares.service';
 import { categoriasService } from '@/services/categorias.service';
 import { lugarJsonLd, breadcrumbJsonLd } from '@/lib/seo/jsonld';
-import {
-  LOCALES,
-  LOCALE_BCP47,
-  localizePath,
-  type Locale,
-} from '@/shared/constants/locales';
+import { LOCALE_BCP47, localizePath, isLocale, type Locale } from '@/shared/constants/locales';
 import { t, interpolate } from '@/shared/constants/ui';
-import { COLLECTION_ICONS } from '@/shared/constants/collections';
+import { COLLECTION_ICONS, CONTENT_COLLECTIONS } from '@/shared/constants/collections';
 import { SITE } from '@/shared/constants/site';
 import '@/styles/pages/place.css';
 
-export async function getStaticPaths() {
-  const contenidos = await lugaresService.listarTodos();
-  const params: { params: { lang: Locale; slug: string } }[] = [];
-  for (const lang of LOCALES) {
-    for (const item of contenidos) {
-      params.push({ params: { lang, slug: item.id } });
-    }
-  }
-  return params;
+const lang = Astro.params.lang as Locale;
+const { slug, coleccion } = Astro.params;
+
+if (!isLocale(lang)) {
+  return Astro.redirect('/404/', 301);
 }
 
-export const prerender = true;
-
-const lang = Astro.params.lang as Locale;
-const { slug } = Astro.params;
+if (!(CONTENT_COLLECTIONS as readonly string[]).includes(coleccion!)) {
+  return Astro.redirect(`/${lang}/404/`);
+}
 
 const todos = await lugaresService.listarTodos();
-const lugar = todos.find((item) => item.id === slug);
+const lugar = todos.find(
+  (item) => item.id === slug && item.collection === coleccion,
+);
 
 if (!lugar) {
   return Astro.redirect(`/${lang}/404/`);
@@ -59,7 +51,7 @@ const zonaTitle = lugar.zone ? loc(lugar.zone.data.title, lang) : undefined;
 const categoriaTitle = categoria ? loc(categoria.data.title, lang) : undefined;
 const heroImg = imagenSrc(lugar.data.image) || noImage.src;
 
-const url = `${SITE.url}/${lang}/lugares/${lugar.id}/`;
+const url = `${SITE.url}/${lang}/${lugar.collection}/${lugar.id}/`;
 const bodyHtml = await lugaresService.renderBody(lugar, lang);
 
 const formatFecha = (fecha: Date | undefined) =>
@@ -79,12 +71,12 @@ const waShare = `https://wa.me/?text=${encodeURIComponent(`${title} — ${url}`)
 
 const breadcrumbs = [
   { name: t(lang, 'nav.home'), url: localizePath('/', lang) },
-  { name: t(lang, 'nav.places'), url: localizePath('/lugares/', lang) },
+  { name: t(lang, 'nav.places'), url: localizePath('/places/', lang) },
   ...(categoria
     ? [
         {
           name: categoriaTitle ?? '',
-          url: localizePath(`/categorias/${lugar.collection}/`, lang),
+          url: localizePath(`/categories/${lugar.collection}/`, lang),
         },
       ]
     : []),
@@ -396,7 +388,7 @@ const breadcrumbs = [
               lugar.zone && (
                 <a
                   class="section-head__link"
-                  href={localizePath(`/zonas/${lugar.zone.id}/`, lang)}
+                  href={localizePath(`/zones/${lugar.zone.id}/`, lang)}
                 >
                   {t(lang, 'place.viewZone')}
                   <Icon name="arrow-right" size="sm" />

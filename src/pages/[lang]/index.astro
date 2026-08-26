@@ -1,152 +1,18 @@
 ---
-import Layout from '@/components/layout/Layout.astro';
-import Icon from '@/components/Icon.astro';
-import PlaceCard from '@/components/place/PlaceCard.astro';
-import HeroCarousel from '@/components/home/HeroCarousel.astro';
-import noImage from '@/assets/images/no-image.svg';
-import { lugaresService } from '@/services/lugares.service';
-import { categoriasService } from '@/services/categorias.service';
-import { zonasService } from '@/services/zonas.service';
-import { conteosService } from '@/services/conteos.service';
-import { imagenSrc, loc } from '@/shared/content/places';
-import {
-  LOCALES,
-  localizePath,
-  type Locale,
-} from '@/shared/constants/locales';
-import { t } from '@/shared/constants/ui';
-import { COLLECTION_ICONS } from '@/shared/constants/collections';
-import '@/styles/pages/home.css';
-
-export async function getStaticPaths() {
-  return LOCALES.map((lang) => ({ params: { lang } }));
-}
-
-export const prerender = true;
+import HomeView from '@/components/home/HomeView.astro';
+import { DEFAULT_LOCALE, isLocale, type Locale } from '@/shared/constants/locales';
 
 const lang = Astro.params.lang as Locale;
-const [destacados, categorias, zonas, conteos] = await Promise.all([
-  lugaresService.listarDestacados(6),
-  categoriasService.listar(),
-  zonasService.listar(),
-  conteosService.obtener(),
-]);
 
-const categoriasPorId = new Map(categorias.map((c) => [c.collection, c]));
+if (!isLocale(lang)) {
+  return Astro.redirect('/404/', 301);
+}
 
-const carouselPlaces = destacados.slice(0, 5);
-const fallbackHeroImg = noImage.src;
-const heroImg =
-  imagenSrc(carouselPlaces[0]?.data?.image) || fallbackHeroImg;
-
-const heroSlides = carouselPlaces.map((item) => ({
-  id: item.id,
-  title: loc(item.data.title, lang) ?? '',
-  subtitle: loc(item.data.excerpt, lang) ?? loc(item.data.description, lang) ?? '',
-  eyebrow: item.zone ? loc(item.zone.data.title, lang) : undefined,
-  image: imagenSrc(item.data.image) || fallbackHeroImg,
-  href: localizePath(`/lugares/${item.id}/`, lang),
-}));
-
-const lugaresHref = localizePath('/lugares/', lang);
-const categoriasHref = localizePath('/categorias/', lang);
-const zonasHref = localizePath('/zonas/', lang);
+// El idioma por defecto (es) vive en la raíz (/), así que /es/ redirige ahí
+// para evitar contenido duplicado y consolidar el canonical.
+if (lang === DEFAULT_LOCALE) {
+  return Astro.redirect('/', 301);
+}
 ---
 
-<Layout lang={lang} title={t(lang, 'seo.homeTitle')} description={t(lang, 'seo.homeDescription')} image={heroImg}>
-  <HeroCarousel slides={heroSlides} lang={lang} />
-
-  <section class="section" id="categorias" data-section="categorias">
-    <div class="container-page">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">{t(lang, 'home.categoriesEyebrow')}</p>
-          <h2 class="section-head__title">{t(lang, 'home.categoriesTitle')}</h2>
-        </div>
-        <a class="section-head__link" href={categoriasHref}>
-          {t(lang, 'home.viewAll')}
-          <Icon name="arrow-right" size="sm" />
-        </a>
-      </div>
-      <div class="category-grid">
-        {
-          categorias.map((c) => (
-            <a class="category-tile" href={localizePath(`/categorias/${c.collection}/`, lang)}>
-              <span class="category-tile__icon">
-                <Icon name={COLLECTION_ICONS[c.collection] ?? 'pin'} />
-              </span>
-              <span>
-                <span class="category-tile__title">
-                  {loc(c.data.title, lang)}
-                </span>
-                <span class="category-tile__count">
-                  {conteos.porCategoria.get(c.collection) ?? 0} {t(lang, 'count.places')}
-                </span>
-              </span>
-            </a>
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
-  <section class="section section--sand" id="destacados">
-    <div class="container-page">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">{t(lang, 'home.featuredEyebrow')}</p>
-          <h2 class="section-head__title">{t(lang, 'home.featuredTitle')}</h2>
-        </div>
-        <a class="section-head__link" href={lugaresHref}>
-          {t(lang, 'home.viewAll')}
-          <Icon name="arrow-right" size="sm" />
-        </a>
-      </div>
-      <div class="place-grid">
-        {
-          destacados.map((lugar) => (
-            <PlaceCard
-              lugar={lugar}
-              categoria={categoriasPorId.get(lugar.collection)}
-              lang={lang}
-            />
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="zonas" data-section="zonas">
-    <div class="container-page">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">{t(lang, 'home.zonesEyebrow')}</p>
-          <h2 class="section-head__title">{t(lang, 'home.zonesTitle')}</h2>
-        </div>
-        <a class="section-head__link" href={zonasHref}>
-          {t(lang, 'home.viewZones')}
-          <Icon name="arrow-right" size="sm" />
-        </a>
-      </div>
-      <div class="zone-grid">
-        {
-          zonas.map((z) => (
-            <a class="zone-card" href={localizePath(`/zonas/${z.id}/`, lang)}>
-              {
-                z.data.image && (
-                  <img class="zone-card__img" src={imagenSrc(z.data.image)} alt="" loading="lazy" />
-                )
-              }
-              <div class="zone-card__body">
-                <p class="zone-card__title">{loc(z.data.title, lang)}</p>
-                <p class="zone-card__count">
-                  {conteos.porZona.get(z.id) ?? 0} {t(lang, 'count.places')}
-                </p>
-              </div>
-            </a>
-          ))
-        }
-      </div>
-    </div>
-  </section>
-</Layout>
+<HomeView lang={lang} />

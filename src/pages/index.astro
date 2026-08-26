@@ -1,7 +1,7 @@
 ---
-// Redirige la raíz al idioma por defecto (español).
-// Los apartados viven bajo /[lang]/...
-export const prerender = false;
-
-return Astro.redirect('/es/', 301);
+// La raíz (/) sirve directamente la home en español (idioma por defecto).
+// Los demás idiomas viven bajo /[lang]/ (p. ej. /en/, /pt/).
+import HomeView from '@/components/home/HomeView.astro';
 ---
+
+<HomeView lang="es" />

@@ -16,9 +16,9 @@ export interface Section {
 
 export const SECTIONS: Section[] = [
   { id: 'inicio', path: '/' },
-  { id: 'lugares', path: '/lugares/' },
-  { id: 'categorias', path: '/categorias/' },
-  { id: 'zonas', path: '/zonas/' },
+  { id: 'lugares', path: '/places/' },
+  { id: 'categorias', path: '/categories/' },
+  { id: 'zonas', path: '/zones/' },
 ];
 
 export function getSection(id: string): Section | undefined {

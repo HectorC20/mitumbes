@@ -31,7 +31,7 @@ const lang: Locale = getLocaleFromPath(Astro.url.pathname);
           <Icon name="compass" size="sm" />
           {t(lang, 'notFound.goHome')}
         </a>
-        <a class="btn btn--outline" href={localizePath('/lugares/', lang)}>
+        <a class="btn btn--outline" href={localizePath('/places/', lang)}>
           <Icon name="pin" size="sm" />
           {t(lang, 'notFound.explorePlaces')}
         </a>

@@ -6,6 +6,8 @@ import {
   type ContentCollectionName,
 } from '../constants/collections';
 import type { Locale } from '../constants/locales';
+import { getContenidoApi, getCategoriasApi } from '../../services/contenido-api';
+import type { ZonaLigera } from '../../services/contrato-web';
 
 /**
  * Helpers de contenido para las colecciones multilingües.
@@ -51,10 +53,15 @@ export function imagenSrc(imagen: ImageMetadata | string | undefined): string | 
 
 /** Recupera todos los contenidos de las 6 categorías (sin index.md). */
 export async function getAllContenidos(): Promise<ContenidoConRelaciones[]> {
+  const zonas = new Map((await getCollection('zones')).map((z) => [z.id, z]));
+
+  // Fuente API (contrato del backend). Si no responde se cae al markdown.
+  const api = await getContenidoApi([...zonas.values()] as unknown as ZonaLigera[]);
+  if (api) return api as unknown as ContenidoConRelaciones[];
+
   const listas = await Promise.all(
     CONTENT_COLLECTIONS.map((name) => getCollection(name)),
   );
-  const zonas = new Map((await getCollection('zones')).map((z) => [z.id, z]));
   const contenidos: ContenidoConRelaciones[] = [];
   for (const lista of listas) {
     for (const item of lista) {
@@ -69,8 +76,11 @@ export async function getAllContenidos(): Promise<ContenidoConRelaciones[]> {
   );
 }
 
-/** Categorías = index.md de cada colección. */
+/** Categorías = index.md de cada colección (o /categories si hay API). */
 export async function getCategorias(): Promise<Categoria[]> {
+  const api = await getCategoriasApi();
+  if (api) return api as unknown as Categoria[];
+
   const resultados = await Promise.all(
     CONTENT_COLLECTIONS.map((name) => getEntry(name, 'index')),
   );
@@ -80,6 +90,8 @@ export async function getCategorias(): Promise<Categoria[]> {
 export async function getCategoriaPorId(
   id: ContentCollectionName,
 ): Promise<Categoria | undefined> {
+  const api = await getCategoriasApi();
+  if (api) return api.find((c) => c.collection === id) as Categoria | undefined;
   return getEntry(id, 'index');
 }
 
@@ -87,6 +99,12 @@ export async function getContenidoPorId(
   collection: ContentCollectionName,
   id: string,
 ): Promise<Contenido | undefined> {
+  const api = await getContenidoApi();
+  if (api) {
+    return api.find((c) => c.collection === collection && c.id === id) as
+      | Contenido
+      | undefined;
+  }
   return getEntry(collection, id);
 }
 
@@ -218,7 +236,7 @@ export function textoDeBusqueda(
   const d = item.data;
   return normalizarTexto(
     [
-      'lugares', // identificador del apartado
+      'places', // identificador del apartado
       item.collection, // identificador de categoría (places, restaurants, …)
       item.id,
       loc(d.title, lang) ?? '',

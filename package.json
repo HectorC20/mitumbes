@@ -10,6 +10,7 @@
     "build": "astro build",
     "check": "astro check",
     "preview": "astro preview",
+    "test": "vitest run",
     "astro": "astro"
   },
   "dependencies": {
@@ -19,12 +20,14 @@
     "@iconify-json/mdi": "^1.2.3",
     "@iconify-json/simple-icons": "^1.2.93",
     "@tailwindcss/vite": "^4.3.3",
+    "@vercel/kv": "^3.0.0",
     "astro": "^7.2.2",
     "astro-icon": "^1.1.5",
     "marked": "^18.0.9"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.11"
   }
 }

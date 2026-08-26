@@ -1,0 +1,103 @@
+{
+  "models": [
+    {
+      "id": "gptbot",
+      "name": "OpenAI GPTBot",
+      "vendor": "OpenAI",
+      "patterns": {
+        "userAgents": ["GPTBot", "ChatGPT-User", "OAI-SearchBot"],
+        "referrers": ["chatgpt.com"]
+      }
+    },
+    {
+      "id": "claudebot",
+      "name": "Anthropic ClaudeBot",
+      "vendor": "Anthropic",
+      "patterns": {
+        "userAgents": ["ClaudeBot", "Claude-Web", "anthropic-ai"],
+        "referrers": ["claude.ai"]
+      }
+    },
+    {
+      "id": "perplexitybot",
+      "name": "PerplexityBot",
+      "vendor": "Perplexity",
+      "patterns": {
+        "userAgents": ["PerplexityBot", "Perplexity-User", "PplxBot"],
+        "referrers": ["perplexity.ai"]
+      }
+    },
+    {
+      "id": "google-gemini",
+      "name": "Google Gemini",
+      "vendor": "Google",
+      "patterns": {
+        "userAgents": ["Google-Extended", "Google-Other", "APIs-Google"],
+        "referrers": ["gemini.google.com"]
+      }
+    },
+    {
+      "id": "bing-copilot",
+      "name": "Microsoft Copilot / Bing",
+      "vendor": "Microsoft",
+      "patterns": {
+        "userAgents": ["Bingbot", "BingPreview"],
+        "referrers": ["bing.com", "copilot.microsoft.com"]
+      }
+    },
+    {
+      "id": "applebot-extended",
+      "name": "Applebot-Extended",
+      "vendor": "Apple",
+      "patterns": {
+        "userAgents": ["Applebot-Extended"],
+        "referrers": []
+      }
+    },
+    {
+      "id": "amazonbot",
+      "name": "Amazonbot",
+      "vendor": "Amazon",
+      "patterns": {
+        "userAgents": ["Amazonbot"],
+        "referrers": []
+      }
+    },
+    {
+      "id": "coherebot",
+      "name": "Cohere AI",
+      "vendor": "Cohere",
+      "patterns": {
+        "userAgents": ["cohere-ai"],
+        "referrers": ["cohere.com"]
+      }
+    },
+    {
+      "id": "meta-ai",
+      "name": "Meta AI Crawler",
+      "vendor": "Meta",
+      "patterns": {
+        "userAgents": ["Meta-ExternalAgent", "Meta-ExternalFetcher"],
+        "referrers": ["meta.ai", "facebook.com"]
+      }
+    },
+    {
+      "id": "bytespider",
+      "name": "ByteDance",
+      "vendor": "ByteDance",
+      "patterns": {
+        "userAgents": ["Bytespider"],
+        "referrers": []
+      }
+    },
+    {
+      "id": "ccbot",
+      "name": "Common Crawl",
+      "vendor": "Common Crawl",
+      "patterns": {
+        "userAgents": ["CCBot"],
+        "referrers": []
+      }
+    }
+  ]
+}

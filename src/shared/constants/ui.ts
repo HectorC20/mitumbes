@@ -117,6 +117,7 @@ export const ui = {
       'Elige tu base: desde la ciudad capital hasta los balnearios y playas de la costa norte.',
     'zones.emptyTitle': 'Aún no hay lugares registrados en esta zona',
     'zones.emptyBody': 'Muy pronto agregaremos más información.',
+    'zones.imageAlt': 'Paisaje de {zone}, Tumbes',
 
     // 404
     'notFound.title': 'Página no encontrada',
@@ -138,6 +139,10 @@ export const ui = {
       'Información turística de la región Tumbes.',
     'footer.verification': '',
     'footer.report': 'reportar datos',
+
+    // Geolocalización del visitante
+    'geo.location': 'Visitando desde',
+    'geo.detecting': 'Detectando ubicación…',
   },
   en: {
     'nav.home': 'Home',
@@ -242,6 +247,7 @@ export const ui = {
       'Choose your base: from the capital city to the beach resorts of the northern coast.',
     'zones.emptyTitle': 'No places registered in this zone yet',
     'zones.emptyBody': 'We will add more information soon.',
+    'zones.imageAlt': 'Landscape of {zone}, Tumbes',
 
     'notFound.title': 'Page not found',
     'notFound.lead':
@@ -260,6 +266,10 @@ export const ui = {
     'footer.note': 'Tourist information for the Tumbes region.',
     'footer.verification': 'Content under verification — report data.',
     'footer.report': 'report data',
+
+    // Visitor geolocation
+    'geo.location': 'Visiting from',
+    'geo.detecting': 'Detecting location…',
   },
   pt: {
     'nav.home': 'Início',
@@ -364,6 +374,7 @@ export const ui = {
       'Escolha sua base: desde a cidade capital até os balneários e praias do litoral norte.',
     'zones.emptyTitle': 'Ainda não há lugares cadastrados nesta zona',
     'zones.emptyBody': 'Em breve adicionaremos mais informações.',
+    'zones.imageAlt': 'Paisagem de {zone}, Tumbes',
 
     'notFound.title': 'Página não encontrada',
     'notFound.lead':
@@ -382,6 +393,10 @@ export const ui = {
     'footer.note': 'Informações turísticas da região de Tumbes.',
     'footer.verification': 'Conteúdo em verificação — reportar dados.',
     'footer.report': 'reportar dados',
+
+    // Geolocalização do visitante
+    'geo.location': 'Visitando de',
+    'geo.detecting': 'Detectando localização…',
   },
 } as const;
 

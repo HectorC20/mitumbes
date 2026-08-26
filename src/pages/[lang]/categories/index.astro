@@ -4,18 +4,17 @@ import Icon from '@/components/Icon.astro';
 import { categoriasService } from '@/services/categorias.service';
 import { conteosService } from '@/services/conteos.service';
 import { loc } from '@/shared/content/places';
-import { LOCALES, localizePath, type Locale } from '@/shared/constants/locales';
+import { localizePath, type Locale, isLocale } from '@/shared/constants/locales';
 import { t } from '@/shared/constants/ui';
 import { COLLECTION_ICONS } from '@/shared/constants/collections';
 import '@/styles/pages/home.css';
 
-export async function getStaticPaths() {
-  return LOCALES.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Locale;
+
+if (!isLocale(lang)) {
+  return Astro.redirect('/404/', 301);
 }
 
-export const prerender = true;
-
-const lang = Astro.params.lang as Locale;
 const [categorias, conteos] = await Promise.all([
   categoriasService.listar(),
   conteosService.obtener(),
@@ -40,7 +39,7 @@ const [categorias, conteos] = await Promise.all([
               class="category-tile"
               data-section="categorias"
               data-id={c.collection}
-              href={localizePath(`/categorias/${c.collection}/`, lang)}
+              href={localizePath(`/categories/${c.collection}/`, lang)}
             >
               <span class="category-tile__icon">
                 <Icon name={COLLECTION_ICONS[c.collection] ?? 'pin'} />

@@ -32,31 +32,31 @@ const link = (path: string) => localizePath(path, lang);
       </div>
       <nav aria-label={t(lang, 'footer.placesHeading')}>
         <p class="site-footer__heading">{t(lang, 'footer.placesHeading')}</p>
-        <a class="site-footer__link" href={link('/lugares/')}>
+        <a class="site-footer__link" href={link('/places/')}>
           {t(lang, 'footer.viewAllPlaces')}
         </a>
-        <a class="site-footer__link" href={link('/categorias/places/')}>
+        <a class="site-footer__link" href={link('/categories/places/')}>
           {t(lang, 'footer.placesType1')}
         </a>
-        <a class="site-footer__link" href={link('/categorias/restaurants/')}>
+        <a class="site-footer__link" href={link('/categories/restaurants/')}>
           {t(lang, 'footer.placesType2')}
         </a>
-        <a class="site-footer__link" href={link('/categorias/hotels/')}>
+        <a class="site-footer__link" href={link('/categories/hotels/')}>
           {t(lang, 'footer.placesType3')}
         </a>
       </nav>
       <nav aria-label={t(lang, 'footer.exploreHeading')}>
         <p class="site-footer__heading">{t(lang, 'footer.exploreHeading')}</p>
-        <a class="site-footer__link" href={link('/categorias/')}>
+        <a class="site-footer__link" href={link('/categories/')}>
           {t(lang, 'footer.categories')}
         </a>
-        <a class="site-footer__link" href={link('/zonas/')}>
+        <a class="site-footer__link" href={link('/zones/')}>
           {t(lang, 'footer.zones')}
         </a>
-        <a class="site-footer__link" href={link('/zonas/zorritos/')}>
+        <a class="site-footer__link" href={link('/zones/zorritos/')}>
           Zorritos
         </a>
-        <a class="site-footer__link" href={link('/zonas/punta-sal/')}>
+        <a class="site-footer__link" href={link('/zones/punta-sal/')}>
           Punta Sal
         </a>
       </nav>

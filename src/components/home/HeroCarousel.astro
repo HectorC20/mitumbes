@@ -74,9 +74,15 @@ const nextSlide = sanitizedSlides[1] ?? sanitizedSlides[0];
                 <Icon name="waves" size="sm" />
                 {slide.eyebrow || t(lang, 'home.heroEyebrow')}
               </span>
-              <h1 class="hero-carousel__title">
-                {slide.title}
-              </h1>
+              {index === 0 ? (
+                <h1 class="hero-carousel__title">
+                  {slide.title}
+                </h1>
+              ) : (
+                <h2 class="hero-carousel__title" aria-hidden="true">
+                  {slide.title}
+                </h2>
+              )}
               {slide.subtitle && (
                 <p class="hero-carousel__lead">
                   {slide.subtitle}
@@ -125,7 +131,7 @@ const nextSlide = sanitizedSlides[1] ?? sanitizedSlides[0];
             <img
               class="hero-preview__img"
               src={nextSlide.image}
-              alt=""
+              alt={nextSlide.title}
               data-hero-preview-img
               onerror={`this.onerror=null; this.src='${fallbackImage}';`}
             />

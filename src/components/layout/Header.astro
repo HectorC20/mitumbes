@@ -31,7 +31,7 @@ const isActive = (href: string) => {
   return current === href.replace(/\/$/, '');
 };
 
-const searchHref = localizePath('/lugares/', lang);
+const searchHref = localizePath('/places/', lang);
 ---
 
 <header class="nav-shell">
@@ -86,6 +86,16 @@ const searchHref = localizePath('/lugares/', lang);
         <Icon name="search" size="sm" />
       </button>
     </form>
+
+    <!-- Geolocalización del visitante (cabeceras Vercel) -->
+    <span
+      class="nav-geo"
+      data-visitor-geo
+      data-visitor-geo-aria={t(lang, 'geo.location')}
+      hidden
+    >
+      {t(lang, 'geo.detecting')}
+    </span>
 
     <!-- Selector de idioma -->
     <details class="nav-lang">
@@ -174,3 +184,7 @@ const searchHref = localizePath('/lugares/', lang);
     </details>
   </div>
 </header>
+
+<script>
+  import '@/scripts/visitor-geo.ts';
+</script>
