@@ -8,7 +8,13 @@ import { lugaresService } from '@/services/lugares.service';
 import { categoriasService } from '@/services/categorias.service';
 import { zonasService } from '@/services/zonas.service';
 import { conteosService } from '@/services/conteos.service';
-import { imagenSrc, loc } from '@/shared/content/places';
+import {
+  imagenSrc,
+  loc,
+  rutaCategoria,
+  rutaContenido,
+  rutaZona,
+} from '@/shared/content/places';
 import {
   localizePath,
   type Locale,
@@ -43,12 +49,12 @@ const heroSlides = carouselPlaces.map((item) => ({
   subtitle: loc(item.data.excerpt, lang) ?? loc(item.data.description, lang) ?? '',
   eyebrow: item.zone ? loc(item.zone.data.title, lang) : undefined,
   image: imagenSrc(item.data.image) || fallbackHeroImg,
-  href: localizePath(`/lugares/${item.id}/`, lang),
+  href: localizePath(rutaContenido(item), lang),
 }));
 
-const lugaresHref = localizePath('/lugares/', lang);
-const categoriasHref = localizePath('/categorias/', lang);
-const zonasHref = localizePath('/zonas/', lang);
+const lugaresHref = localizePath('/places/', lang);
+const categoriasHref = localizePath('/categories/', lang);
+const zonasHref = localizePath('/zones/', lang);
 ---
 
 <Layout lang={lang} title={t(lang, 'seo.homeTitle')} description={t(lang, 'seo.homeDescription')} image={heroImg}>

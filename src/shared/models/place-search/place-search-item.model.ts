@@ -1,7 +1,7 @@
 /** Datos que PlaceCard publica como data-attributes en el DOM. */
 export interface PlaceSearchItemData {
   slug: string;
-  /** Identificador de apartado (lugares/categorias/zonas). */
+  /** Identificador de sección (places/categories/zones). */
   seccion: string;
   categoria: string;
   zona: string;

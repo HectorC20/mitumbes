@@ -19,7 +19,7 @@ export function webSiteJsonLd(lang: Locale) {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${SITE.url}/${lang}/lugares/?q={search_term_string}`,
+        urlTemplate: `${SITE.url}/${lang}/places/?q={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },

@@ -51,6 +51,24 @@ export function imagenSrc(imagen: ImageMetadata | string | undefined): string | 
   return `/${src}`;
 }
 
+/**
+ * Ruta interna (sin idioma) del detalle de un contenido, según su colección real.
+ * Ej.: un hotel → /hotels/slug/, un evento → /events/slug/.
+ */
+export function rutaContenido(c: { collection: string; id: string }): string {
+  return `/${c.collection}/${c.id}/`;
+}
+
+/** Ruta interna (sin idioma) de una categoría (colección). */
+export function rutaCategoria(collection: string): string {
+  return `/categories/${collection}/`;
+}
+
+/** Ruta interna (sin idioma) de una zona. */
+export function rutaZona(id: string): string {
+  return `/zones/${id}/`;
+}
+
 /** Recupera todos los contenidos de las 6 categorías (sin index.md). */
 export async function getAllContenidos(): Promise<ContenidoConRelaciones[]> {
   const zonas = new Map((await getCollection('zones')).map((z) => [z.id, z]));
