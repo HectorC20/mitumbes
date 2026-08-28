@@ -12,6 +12,7 @@ excerpt:
   en: "Lessons and board rentals facing the beach."
   pt: "Aulas e aluguel de pranchas de frente para a praia."
 zone: "punta-sal"
+place: "punta-sal"
 image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Surfers%20riding%20waves%20at%20Punta%20Sal%20beach%20Tumbes%20Peru%20action%20shot%20from%20the%20shore%20surfboard%20under%20the%20arm%20sunset%20golden%20light%20ocean%20sports%20photography&image_size=landscape_16_9"
 coordinates:
   lat: -3.9843

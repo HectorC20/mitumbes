@@ -9,6 +9,12 @@ export default defineConfig({
   output: 'server',
   adapter: vercel(),
   site: 'https://mitumbes.com',
+  security: {
+    // Los endpoints /api/* (revalidate, images) son autenticados por clave
+    // (Authorization: Bearer) y los llama mitumbes-server vía POST sin header
+    // Origin; con checkOrigin activo (default de Astro) responde 403.
+    checkOrigin: false,
+  },
   integrations: [
     // Íconos vía astro-icon + iconify. Solo se empaquetan los íconos mdi usados.
     // simple-icons queda disponible para redes sociales (se agrega al include cuando se use).

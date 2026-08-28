@@ -12,6 +12,7 @@ excerpt:
   en: "Guided tour through channels and wildlife."
   pt: "Passeio guiado entre canais e vida selvagem."
 zone: "puerto-pizarro"
+place: "manglares-de-puerto-pizarro"
 image: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Small%20wooden%20boat%20trip%20through%20mangrove%20channels%20Puerto%20Pizarro%20Tumbes%20Peru%20passengers%20watching%20birds%20and%20wildlife%20calm%20green%20water%20ecotour%20photography&image_size=landscape_16_9"
 coordinates:
   lat: -3.5167
