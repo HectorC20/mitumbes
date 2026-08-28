@@ -42,7 +42,11 @@ export async function getContenidoApi(
       .map((e) => normalizarEntrada(e, zonas))
       .sort(porActualizacionDesc);
     return data;
-  } catch {
+  } catch (error) {
+    console.error(
+      `[contenido-api] No se pudo consultar la API (${API_BASE}/places, /events):`,
+      error instanceof Error ? error.message : error,
+    );
     return undefined;
   }
 }
@@ -53,7 +57,11 @@ export async function getCategoriasApi(): Promise<EntradaContenido[] | undefined
   try {
     const categorias = await api.get<ContratoEntry[]>('/categories');
     return categorias.map((c) => normalizarEntrada(c));
-  } catch {
+  } catch (error) {
+    console.error(
+      `[contenido-api] No se pudo consultar la API (${API_BASE}/categories):`,
+      error instanceof Error ? error.message : error,
+    );
     return undefined;
   }
 }
