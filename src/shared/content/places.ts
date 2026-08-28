@@ -1,32 +1,26 @@
-import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 import type { ImageMetadata } from 'astro';
 import { marked } from 'marked';
-import {
-  CONTENT_COLLECTIONS,
-  type ContentCollectionName,
-} from '../constants/collections';
+import type { ContentCollectionName } from '../constants/collections';
 import type { Locale } from '../constants/locales';
-import { getContenidoApi, getCategoriasApi } from '../../services/contenido-api';
-import type { ZonaLigera } from '../../services/contrato-web';
+import {
+  getContenidoApi,
+  getCategoriasApi,
+  getZonasApi,
+} from '../../services/contenido-api';
+import type { EntradaContenido, ZonaLigera } from '../../services/contrato-web';
 
 /**
- * Helpers de contenido para las colecciones multilingües.
- * Cada carpeta (places, restaurants, hotels, activities, events, services)
- * es una categoría; su index.md contiene la metadata de la categoría y el
- * resto de archivos son los contenidos. zones es una colección aparte.
+ * Helpers de contenido. La web ya no tiene contenido local: todas las
+ * operaciones consultan mitumbes-server (places, events, categories, zones).
+ * Si la API no está configurada o falla, devuelven listas vacías.
  */
 
-export type Contenido = CollectionEntry<ContentCollectionName>;
-export type Categoria = Contenido;
-export type Zona = CollectionEntry<'zones'>;
+export type Contenido = EntradaContenido;
+export type Categoria = EntradaContenido;
+export type Zona = ZonaLigera;
 
-/**
- * Contenido con su zona resuelta.
- * Se declara como type alias (no interface) porque la base es un tipo
- * condicional distribuido (CollectionEntry sobre unión de colecciones);
- * una interface no puede extender ese tipo (TS2312).
- */
-export type ContenidoConRelaciones = Contenido & { zone?: Zona };
+/** Contenido con su zona resuelta (ya incluida en EntradaContenido). */
+export type ContenidoConRelaciones = Contenido;
 
 /** Acceso seguro a un campo localizado con respaldo en español. */
 export function loc<T>(campo: Record<Locale, T> | undefined, lang: Locale): T | undefined {
@@ -69,48 +63,47 @@ export function rutaZona(id: string): string {
   return `/zones/${id}/`;
 }
 
-/** Recupera todos los contenidos de las 6 categorías (sin index.md). */
+/** Recupera todos los contenidos de las 6 categorías + eventos, desde la API. */
 export async function getAllContenidos(): Promise<ContenidoConRelaciones[]> {
-  const zonas = new Map((await getCollection('zones')).map((z) => [z.id, z]));
-
-  // Fuente API (contrato del backend). Si no responde se cae al markdown.
-  const api = await getContenidoApi([...zonas.values()] as unknown as ZonaLigera[]);
-  if (api) return api as unknown as ContenidoConRelaciones[];
-
-  const listas = await Promise.all(
-    CONTENT_COLLECTIONS.map((name) => getCollection(name)),
-  );
-  const contenidos: ContenidoConRelaciones[] = [];
-  for (const lista of listas) {
-    for (const item of lista) {
-      if (item.id === 'index') continue;
-      const ref = item.data.zone as { collection: 'zones'; id: string } | undefined;
-      contenidos.push({ ...item, zone: ref ? zonas.get(ref.id) : undefined });
-    }
-  }
-  return contenidos.sort(
-    (a, b) =>
-      (b.data.updatedAt?.getTime() ?? 0) - (a.data.updatedAt?.getTime() ?? 0),
-  );
+  return (await getContenidoApi()) ?? [];
 }
 
-/** Categorías = index.md de cada colección (o /categories si hay API). */
+/** Categorías desde la API (/categories). */
 export async function getCategorias(): Promise<Categoria[]> {
-  const api = await getCategoriasApi();
-  if (api) return api as unknown as Categoria[];
-
-  const resultados = await Promise.all(
-    CONTENT_COLLECTIONS.map((name) => getEntry(name, 'index')),
-  );
-  return resultados.filter((c): c is Categoria => !!c);
+  return (await getCategoriasApi()) ?? [];
 }
 
 export async function getCategoriaPorId(
-  id: ContentCollectionName,
+  id: string,
 ): Promise<Categoria | undefined> {
-  const api = await getCategoriasApi();
-  if (api) return api.find((c) => c.collection === id) as Categoria | undefined;
-  return getEntry(id, 'index');
+  const categorias = await getCategoriasApi();
+  return categorias?.find((c) => c.collection === id);
+}
+
+/** ¿Es categoría raíz (nivel 1, sin padre en la jerarquía del backend)? */
+export function esCategoriaRaiz(c: Categoria): boolean {
+  return !c.data.parent;
+}
+
+/** Categorías raíz (nivel 1 del backend): places, restaurants, hotels, … */
+export async function getCategoriasRaiz(): Promise<Categoria[]> {
+  return (await getCategorias()).filter(esCategoriaRaiz);
+}
+
+/** Subcategorías (nivel 2) que cuelgan de una categoría raíz. */
+export async function getSubcategorias(
+  collection: string,
+): Promise<Categoria[]> {
+  const categorias = await getCategorias();
+  return categorias.filter((c) => c.data.parent === collection);
+}
+
+/** Lugares cuya subcategoría hoja (backend) coincide con el slug dado. */
+export async function getContenidosPorSubcategoria(
+  subcategoria: string,
+): Promise<ContenidoConRelaciones[]> {
+  const todos = await getAllContenidos();
+  return todos.filter((c) => c.data.subcategory === subcategoria);
 }
 
 export async function getContenidoPorId(
@@ -118,12 +111,7 @@ export async function getContenidoPorId(
   id: string,
 ): Promise<Contenido | undefined> {
   const api = await getContenidoApi();
-  if (api) {
-    return api.find((c) => c.collection === collection && c.id === id) as
-      | Contenido
-      | undefined;
-  }
-  return getEntry(collection, id);
+  return api?.find((c) => c.collection === collection && c.id === id);
 }
 
 export async function getContenidosPorCategoria(
@@ -169,34 +157,43 @@ export async function getRelacionados(
     .slice(0, limit);
 }
 
+/** Zonas desde la API (/zones), ordenadas por título en español. */
 export async function getZonas(): Promise<Zona[]> {
-  return (await getCollection('zones'))
+  return ((await getZonasApi()) ?? [])
     .filter((z) => z.id !== 'index')
     .sort((a, b) => a.data.title.es.localeCompare(b.data.title.es));
 }
 
 export async function getZonaPorId(id: string): Promise<Zona | undefined> {
-  return getEntry('zones', id);
+  return (await getZonasApi())?.find((z) => z.id === id);
 }
 
-/** Conteo de contenidos por categoría y por zona. */
+/** Conteo de contenidos por categoría, por subcategoría y por zona. */
 export async function getConteos(): Promise<{
   porCategoria: Map<string, number>;
+  porSubcategoria: Map<string, number>;
   porZona: Map<string, number>;
 }> {
   const todos = await getAllContenidos();
   const porCategoria = new Map<string, number>();
+  const porSubcategoria = new Map<string, number>();
   const porZona = new Map<string, number>();
   for (const item of todos) {
     porCategoria.set(
       item.collection,
       (porCategoria.get(item.collection) ?? 0) + 1,
     );
+    if (item.data.subcategory) {
+      porSubcategoria.set(
+        item.data.subcategory,
+        (porSubcategoria.get(item.data.subcategory) ?? 0) + 1,
+      );
+    }
     if (item.zone) {
       porZona.set(item.zone.id, (porZona.get(item.zone.id) ?? 0) + 1);
     }
   }
-  return { porCategoria, porZona };
+  return { porCategoria, porSubcategoria, porZona };
 }
 
 /** Renderiza el body localizado (markdown) a HTML. */

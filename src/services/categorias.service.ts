@@ -8,17 +8,24 @@
 import {
   getCategorias,
   getCategoriaPorId,
+  getCategoriasRaiz,
+  getSubcategorias,
   type Categoria,
 } from '@/shared/content/places';
-import type { ContentCollectionName } from '@/shared/constants/collections';
 import type { Locale } from '@/shared/constants/locales';
 
-export type { Categoria, ContentCollectionName, Locale };
+export type { Categoria, Locale };
 
 export const categoriasService = {
-  /** Todas las categorías (index.md de cada colección). */
+  /** Todas las categorías del backend (raíces + subcategorías). */
   listar: getCategorias,
 
-  /** Categoría por id de colección (places, restaurants, …). */
+  /** Categoría por id (slug del backend: places, playas, …). */
   buscarPorId: getCategoriaPorId,
+
+  /** Categorías raíz (nivel 1): places, restaurants, hotels, … */
+  listarRaices: getCategoriasRaiz,
+
+  /** Subcategorías (nivel 2) que cuelgan de una categoría raíz. */
+  listarSubcategorias: getSubcategorias,
 };

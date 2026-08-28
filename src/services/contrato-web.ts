@@ -1,4 +1,5 @@
 import type { Locale } from '@/shared/constants/locales';
+import type { ContentCollectionName } from '@/shared/constants/collections';
 
 /**
  * Mapeo puro del contrato web (backend → shape CollectionEntry).
@@ -15,7 +16,10 @@ export type Localizado<T = string> = Record<Locale, T>;
 /** Entrada normalizada (compatible estructuralmente con CollectionEntry). */
 export interface EntradaContenido {
   id: string;
-  collection: string;
+  collection: ContentCollectionName;
+  /** Zona resuelta (misma referencia que data.zone) para acceso tipo
+   *  `item.zone.data.title`, igual que el CollectionEntry con relaciones. */
+  zone?: ZonaLigera;
   data: {
     title: Localizado<string>;
     description: Localizado<string>;
@@ -42,12 +46,22 @@ export interface EntradaContenido {
     createdAt?: Date;
     updatedAt?: Date;
     body?: Localizado<string>;
+    /** Subcategoría hoja del lugar (slug; backend places). */
+    subcategory?: string;
+    /** Solo categorías: slug de la categoría padre (ausente = raíz). */
+    parent?: string;
+    /** Solo categorías: UUID del padre (referencia cruda del backend). */
+    parentId?: string | null;
+    /** Solo categorías: ruta materializada del árbol (ej. /places/playas). */
+    path?: string;
+    /** Solo categorías: profundidad (0 = raíz, 1+ = subcategoría). */
+    depth?: number;
     /** Solo categorías (index.md del markdown). */
     icon?: string;
   };
 }
 
-/** Zona ligera (no existe tabla zones en el backend; se resuelve localmente). */
+/** Zona ligera (shape de GET /zones del backend; id = slug). */
 export interface ZonaLigera {
   id: string;
   collection: 'zones';
@@ -106,7 +120,7 @@ function campoLocalizadoArr(
 
 /**
  * Normaliza una entrada del contrato al shape de contenido de la web.
- * `zonas` son las zonas locales (markdown); si `data.zone` es un string,
+ * `zonas` son las zonas de la API (GET /zones); si `data.zone` es un string,
  * se resuelve contra ellas (con respaldo por id si no hay match).
  */
 export function normalizarEntrada(
@@ -116,6 +130,7 @@ export function normalizarEntrada(
   const d = entry.data;
   const simple = <T>(key: string): T | undefined => d[key] as T | undefined;
   const zoneId = simple<string>('zone');
+  const zone = zoneId ? resolverZona(zoneId, zonas) : undefined;
   // El backend expone el slug del contenido en metadata.slug; se usa como id
   // para conservar las rutas amigables (en markdown el id ya es el slug).
   const metadata = simple<Record<string, unknown>>('metadata');
@@ -124,12 +139,13 @@ export function normalizarEntrada(
 
   return {
     id,
-    collection: entry.collection,
+    collection: entry.collection as ContentCollectionName,
+    zone,
     data: {
       title: campoLocalizado(d, 'title') ?? { es: id, en: id, pt: id },
       description: campoLocalizado(d, 'description') ?? { es: '', en: '', pt: '' },
       excerpt: campoLocalizado(d, 'excerpt'),
-      zone: zoneId ? resolverZona(zoneId, zonas) : undefined,
+      zone,
       image: simple<string>('image'),
       gallery: simple<string[]>('gallery'),
       coordinates: simple<{ lat: number; lng: number }>('coordinates'),
@@ -151,6 +167,11 @@ export function normalizarEntrada(
       createdAt: aDate(d.createdAt),
       updatedAt: aDate(d.updatedAt),
       body: campoLocalizado(d, 'body'),
+      subcategory: simple<string>('subcategory'),
+      parent: simple<string>('parent'),
+      parentId: simple<string>('parentId') ?? null,
+      path: simple<string>('path'),
+      depth: simple<number>('depth'),
       icon: simple<string>('icon'),
     },
   };

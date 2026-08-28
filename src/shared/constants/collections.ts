@@ -1,7 +1,7 @@
 /**
  * Colecciones de contenido por categoría.
- * Cada carpeta en src/content es una categoría y su index.md es la
- * metadata de esa categoría (título/descripción/icono en 3 idiomas).
+ * La web consume estas categorías desde la API de mitumbes-server
+ * (categorías del backend, antes index.md en src/content).
  */
 export const CONTENT_COLLECTIONS = [
   'places',

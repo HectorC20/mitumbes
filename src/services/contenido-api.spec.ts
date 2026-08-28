@@ -23,7 +23,7 @@ const place = {
   },
 };
 
-describe('contenido-api (adaptador con fallback)', () => {
+describe('contenido-api (adaptador a la API)', () => {
   afterEach(() => {
     vi.unstubAllEnvs();
     vi.unstubAllGlobals();
@@ -41,12 +41,13 @@ describe('contenido-api (adaptador con fallback)', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('consume /places y /events y normaliza al shape web', async () => {
+  it('consume /places, /events y /zones y normaliza al shape web', async () => {
     vi.stubEnv('PUBLIC_API_URL', 'http://api.test');
     const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
       const url = String(input);
       if (url.endsWith('/places')) return respuestaJson({ items: [place] });
       if (url.endsWith('/events')) return respuestaJson({ items: [] });
+      if (url.endsWith('/zones')) return respuestaJson([]);
       return respuestaJson({});
     });
     vi.stubGlobal('fetch', fetchMock);
@@ -66,7 +67,7 @@ describe('contenido-api (adaptador con fallback)', () => {
     );
   });
 
-  it('cae a markdown (undefined) si la API falla', async () => {
+  it('devuelve undefined si la API falla', async () => {
     vi.stubEnv('PUBLIC_API_URL', 'http://api.test');
     vi.stubGlobal('fetch', vi.fn(async () => {
       throw new Error('network down');
@@ -75,9 +76,10 @@ describe('contenido-api (adaptador con fallback)', () => {
     const mod = await cargarModulo();
     expect(await mod.getContenidoApi()).toBeUndefined();
     expect(await mod.getCategoriasApi()).toBeUndefined();
+    expect(await mod.getZonasApi()).toBeUndefined();
   });
 
-  it('cae a markdown (undefined) si la API responde con error HTTP', async () => {
+  it('devuelve undefined si la API responde con error HTTP', async () => {
     vi.stubEnv('PUBLIC_API_URL', 'http://api.test');
     vi.stubGlobal('fetch', vi.fn(async () => ({ ok: false, status: 503 }) as Response));
 
@@ -109,5 +111,32 @@ describe('contenido-api (adaptador con fallback)', () => {
     const categorias = await mod.getCategoriasApi();
     expect(categorias).toHaveLength(1);
     expect(categorias?.[0].data.icon).toBe('utensils');
+  });
+
+  it('normaliza las zonas de /zones (id = slug)', async () => {
+    vi.stubEnv('PUBLIC_API_URL', 'http://api.test');
+    const zona = {
+      id: 'punta-sal',
+      collection: 'zones',
+      data: {
+        title: { es: 'Punta Sal', en: 'Punta Sal Beach', pt: 'Punta Sal' },
+        type: 'playa',
+        description: { es: 'Playa del norte', en: 'Northern beach', pt: 'Praia do norte' },
+      },
+    };
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url.endsWith('/zones')) return respuestaJson([zona]);
+        return respuestaJson({});
+      }),
+    );
+
+    const mod = await cargarModulo();
+    const zonas = await mod.getZonasApi();
+    expect(zonas).toHaveLength(1);
+    expect(zonas?.[0].id).toBe('punta-sal');
+    expect(zonas?.[0].data.title.en).toBe('Punta Sal Beach');
   });
 });

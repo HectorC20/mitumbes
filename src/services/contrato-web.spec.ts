@@ -107,6 +107,44 @@ describe('normalizarEntrada', () => {
     const entrada = normalizarEntrada(entradaPlace, zonas);
     expect(entrada.id).toBe('playa-zorritos');
   });
+
+  it('mapea la subcategoría hoja del lugar', () => {
+    const entrada = normalizarEntrada(
+      { ...entradaPlace, data: { ...entradaPlace.data, subcategory: 'playas' } },
+      zonas,
+    );
+    expect(entrada.data.subcategory).toBe('playas');
+  });
+
+  it('mapea la jerarquía de las categorías (parent, path, depth)', () => {
+    const entrada = normalizarEntrada({
+      id: 'playas',
+      collection: 'categories',
+      data: {
+        title: { es: 'Playas', en: 'Beaches', pt: 'Praias' },
+        description: { es: '', en: '', pt: '' },
+        parent: 'places',
+        parentId: 'uuid-padre',
+        path: '/places/playas',
+        depth: 1,
+      },
+    });
+    expect(entrada.data.parent).toBe('places');
+    expect(entrada.data.parentId).toBe('uuid-padre');
+    expect(entrada.data.path).toBe('/places/playas');
+    expect(entrada.data.depth).toBe(1);
+  });
+
+  it('categoría raíz: sin parent, parentId null', () => {
+    const entrada = normalizarEntrada({
+      id: 'places',
+      collection: 'categories',
+      data: { title: { es: 'Lugares', en: 'Places', pt: 'Lugares' } },
+    });
+    expect(entrada.data.parent).toBeUndefined();
+    expect(entrada.data.parentId).toBeNull();
+    expect(entrada.data.depth).toBeUndefined();
+  });
 });
 
 describe('porActualizacionDesc', () => {

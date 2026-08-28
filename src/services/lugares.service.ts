@@ -9,6 +9,7 @@
 import {
   getAllContenidos,
   getContenidosPorCategoria,
+  getContenidosPorSubcategoria,
   getContenidosPorZona,
   getDestacados,
   getRelacionados,
@@ -44,6 +45,9 @@ export const lugaresService = {
 
   /** Lugares de una categoría concreta (places, restaurants, …). */
   listarPorCategoria: getContenidosPorCategoria,
+
+  /** Lugares de una subcategoría hoja (playas, surf, cevicherias, …). */
+  listarPorSubcategoria: getContenidosPorSubcategoria,
 
   /** Lugares de una zona concreta. */
   listarPorZona: getContenidosPorZona,

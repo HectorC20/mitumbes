@@ -6,14 +6,13 @@ import HeroCarousel from '@/components/home/HeroCarousel.astro';
 import noImage from '@/assets/images/no-image.svg';
 import { lugaresService } from '@/services/lugares.service';
 import { categoriasService } from '@/services/categorias.service';
-import { zonasService } from '@/services/zonas.service';
 import { conteosService } from '@/services/conteos.service';
+import { clicksService } from '@/services/clicks.service';
 import {
   imagenSrc,
   loc,
   rutaCategoria,
   rutaContenido,
-  rutaZona,
 } from '@/shared/content/places';
 import {
   localizePath,
@@ -29,14 +28,20 @@ interface Props {
 
 const { lang } = Astro.props;
 
-const [destacados, categorias, zonas, conteos] = await Promise.all([
+// El home solo muestra categorías raíz (nivel 1 del backend). Las
+// subcategorías se exploran dentro de cada página de categoría.
+const [destacados, categorias, conteos] = await Promise.all([
   lugaresService.listarDestacados(6),
-  categoriasService.listar(),
-  zonasService.listar(),
+  categoriasService.listarRaices(),
   conteosService.obtener(),
 ]);
 
 const categoriasPorId = new Map(categorias.map((c) => [c.collection, c]));
+
+// Categorías del home: 4 con más clics + 2 al azar de las restantes (si la API
+// responde con el ranking; si no, se mantiene el orden original).
+const clicks = await clicksService.obtenerClicks();
+const categoriasHome = clicksService.reordenarPorClics(categorias, clicks);
 
 const carouselPlaces = destacados.slice(0, 5);
 const fallbackHeroImg = noImage.src;
@@ -54,7 +59,6 @@ const heroSlides = carouselPlaces.map((item) => ({
 
 const lugaresHref = localizePath('/places/', lang);
 const categoriasHref = localizePath('/categories/', lang);
-const zonasHref = localizePath('/zones/', lang);
 ---
 
 <Layout lang={lang} title={t(lang, 'seo.homeTitle')} description={t(lang, 'seo.homeDescription')} image={heroImg}>
@@ -74,7 +78,7 @@ const zonasHref = localizePath('/zones/', lang);
       </div>
       <div class="category-grid">
         {
-          categorias.map((c) => (
+          categoriasHome.map((c) => (
             <a class="category-tile" href={localizePath(rutaCategoria(c.collection), lang)}>
               <span class="category-tile__icon">
                 <Icon name={COLLECTION_ICONS[c.collection] ?? 'pin'} />
@@ -114,45 +118,6 @@ const zonasHref = localizePath('/zones/', lang);
               categoria={categoriasPorId.get(lugar.collection)}
               lang={lang}
             />
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="zonas" data-section="zonas">
-    <div class="container-page">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">{t(lang, 'home.zonesEyebrow')}</p>
-          <h2 class="section-head__title">{t(lang, 'home.zonesTitle')}</h2>
-        </div>
-        <a class="section-head__link" href={zonasHref}>
-          {t(lang, 'home.viewZones')}
-          <Icon name="arrow-right" size="sm" />
-        </a>
-      </div>
-      <div class="zone-grid">
-        {
-          zonas.map((z) => (
-            <a class="zone-card" href={localizePath(rutaZona(z.id), lang)}>
-              {
-                z.data.image && (
-                  <img
-                    class="zone-card__img"
-                    src={imagenSrc(z.data.image)}
-                    alt={t(lang, 'zones.imageAlt').replace('{zone}', loc(z.data.title, lang) ?? z.id)}
-                    loading="lazy"
-                  />
-                )
-              }
-              <div class="zone-card__body">
-                <p class="zone-card__title">{loc(z.data.title, lang)}</p>
-                <p class="zone-card__count">
-                  {conteos.porZona.get(z.id) ?? 0} {t(lang, 'count.places')}
-                </p>
-              </div>
-            </a>
           ))
         }
       </div>

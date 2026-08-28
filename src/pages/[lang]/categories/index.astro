@@ -16,7 +16,7 @@ if (!isLocale(lang)) {
 }
 
 const [categorias, conteos] = await Promise.all([
-  categoriasService.listar(),
+  categoriasService.listarRaices(),
   conteosService.obtener(),
 ]);
 ---

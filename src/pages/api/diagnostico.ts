@@ -1,11 +1,10 @@
 /**
- * Endpoint de diagnóstico: responde qué fuente de datos usa la web en este
- * momento y qué ve de un contenido puntual.
+ * Endpoint de diagnóstico: responde la fuente de datos que usa la web y qué
+ * ve de un contenido puntual.
  *
- * Útil cuando "la web no se actualiza": si `fuenteUsada` es "markdown", la web
- * NO está consumiendo mitumbes-server (PUBLIC_API_URL mal configurada o la API
- * no responde / no devuelve el shape esperado), así que solo un redeploy
- * actualiza el contenido.
+ * Útil cuando "la web no se actualiza": la web ya no tiene contenido local,
+ * así que si `apiResponde` es false (PUBLIC_API_URL mal configurada o la API
+ * no responde), las páginas quedan vacías.
  *
  * Uso: `curl https://www.mitumbes.com/api/diagnostico`
  */
@@ -15,7 +14,7 @@ import { apiHabilitada, getCategoriasApi, getContenidoApi } from '@/services/con
 export const prerender = false;
 
 export const GET: APIRoute = async () => {
-  const publicApiUrl = import.meta.env.PUBLIC_API_URL ?? '(no configurada → markdown)';
+  const publicApiUrl = import.meta.env.PUBLIC_API_URL ?? '(no configurada)';
 
   const contenidos = apiHabilitada() ? await getContenidoApi() : undefined;
   const categorias = apiHabilitada() ? await getCategoriasApi() : undefined;
@@ -28,7 +27,7 @@ export const GET: APIRoute = async () => {
     apiHabilitada: apiHabilitada(),
     apiResponde: contenidos !== undefined,
     categoriasApiResponde: categorias !== undefined,
-    fuenteUsada: contenidos ? 'api' : 'markdown',
+    fuenteUsada: 'api',
     totalContenidos: contenidos?.length ?? null,
     totalCategorias: categorias?.length ?? null,
     eventoPapayal: evento
