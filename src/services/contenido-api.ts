@@ -21,6 +21,26 @@ import {
 
 const API_BASE = import.meta.env.PUBLIC_API_URL ?? '';
 
+/**
+ * Caché en memoria SOLO para `astro dev`.
+ * En producción (serverless de Vercel) la memoria es por instancia y no se
+ * comparte, así que ahí cada render consulta el backend (datos frescos). En
+ * `astro dev` es un único proceso y esta caché evita repetir fetchs a la API
+ * en cada navegación — la demora principal del dev server.
+ */
+const DEV_CACHE_TTL_MS = 15_000;
+const devCache = new Map<string, { expiresAt: number; value: unknown }>();
+
+async function cachedGet<T>(path: string): Promise<T> {
+  if (!import.meta.env.DEV) return api.get<T>(path);
+  const now = Date.now();
+  const hit = devCache.get(path);
+  if (hit && hit.expiresAt > now) return hit.value as T;
+  const value = await api.get<T>(path);
+  devCache.set(path, { expiresAt: now + DEV_CACHE_TTL_MS, value });
+  return value;
+}
+
 /** Indica si el backend de contenido está configurado. */
 export function apiHabilitada(): boolean {
   return Boolean(API_BASE);
@@ -35,8 +55,8 @@ export async function getContenidoApi(): Promise<EntradaContenido[] | undefined>
   if (!apiHabilitada()) return undefined;
   try {
     const [places, events, zonas] = await Promise.all([
-      api.get<{ items: ContratoEntry[] }>('/places'),
-      api.get<{ items: ContratoEntry[] }>('/events'),
+      cachedGet<{ items: ContratoEntry[] }>('/places'),
+      cachedGet<{ items: ContratoEntry[] }>('/events'),
       getZonasApi(),
     ]);
     const data = [...places.items, ...events.items]
@@ -56,7 +76,7 @@ export async function getContenidoApi(): Promise<EntradaContenido[] | undefined>
 export async function getCategoriasApi(): Promise<EntradaContenido[] | undefined> {
   if (!apiHabilitada()) return undefined;
   try {
-    const categorias = await api.get<ContratoEntry[]>('/categories');
+    const categorias = await cachedGet<ContratoEntry[]>('/categories');
     return categorias.map((c) => normalizarEntrada(c));
   } catch (error) {
     console.error(
@@ -71,7 +91,7 @@ export async function getCategoriasApi(): Promise<EntradaContenido[] | undefined
 export async function getZonasApi(): Promise<ZonaLigera[] | undefined> {
   if (!apiHabilitada()) return undefined;
   try {
-    const zonas = await api.get<ZonaLigera[]>('/zones');
+    const zonas = await cachedGet<ZonaLigera[]>('/zones');
     return Array.isArray(zonas) ? zonas.filter((z) => z && typeof z.id === 'string') : [];
   } catch (error) {
     console.error(
