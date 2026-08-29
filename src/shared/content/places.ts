@@ -46,11 +46,14 @@ export function imagenSrc(imagen: ImageMetadata | string | undefined): string | 
 }
 
 /**
- * Ruta interna (sin idioma) del detalle de un contenido, según su colección real.
- * Ej.: un hotel → /hotels/slug/, un evento → /events/slug/.
+ * Ruta interna (sin idioma) del detalle de un contenido, según su subcategoría
+ * hoja (si tiene) o, en su defecto, su colección (familia/nivel 1).
+ * Ej.: una cevichería (restaurants → cevicherias) → /cevicherias/slug/;
+ * un lugar sin subcategoría → /places/slug/.
  */
-export function rutaContenido(c: { collection: string; id: string }): string {
-  return `/${c.collection}/${c.id}/`;
+export function rutaContenido(c: { collection: string; id: string; data?: { subcategory?: string } }): string {
+  const segmento = c.data?.subcategory ?? c.collection;
+  return `/${segmento}/${c.id}/`;
 }
 
 /** Ruta interna (sin idioma) de una categoría (colección). */

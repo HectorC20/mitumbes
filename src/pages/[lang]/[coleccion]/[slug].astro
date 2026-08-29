@@ -13,7 +13,7 @@ import { categoriasService } from '@/services/categorias.service';
 import { lugarJsonLd, breadcrumbJsonLd } from '@/lib/seo/jsonld';
 import { LOCALE_BCP47, localizePath, isLocale, type Locale } from '@/shared/constants/locales';
 import { t, interpolate } from '@/shared/constants/ui';
-import { COLLECTION_ICONS, CONTENT_COLLECTIONS } from '@/shared/constants/collections';
+import { COLLECTION_ICONS } from '@/shared/constants/collections';
 import { SITE } from '@/shared/constants/site';
 import '@/styles/pages/place.css';
 
@@ -24,17 +24,19 @@ if (!isLocale(lang)) {
   return Astro.redirect('/404/', 301);
 }
 
-if (!(CONTENT_COLLECTIONS as readonly string[]).includes(coleccion!)) {
-  return Astro.redirect(`/${lang}/404/`);
-}
-
 const todos = await lugaresService.listarTodos();
-const lugar = todos.find(
-  (item) => item.id === slug && item.collection === coleccion,
-);
+const lugar = todos.find((item) => item.id === slug);
 
 if (!lugar) {
   return Astro.redirect(`/${lang}/404/`);
+}
+
+// Segmento canónico de la URL: subcategoría hoja si existe, si no la familia.
+// Si la URL usó la familia (ej. /restaurants/...) y el lugar tiene subcategoría,
+// se redirige 301 a la URL canónica (/cevicherias/...). No rompe URLs antiguas.
+const segmento = lugar.data.subcategory ?? lugar.collection;
+if (segmento !== coleccion) {
+  return Astro.redirect(`/${lang}/${segmento}/${slug}/`, 301);
 }
 
 const [categorias, relacionados] = await Promise.all([
@@ -51,7 +53,7 @@ const zonaTitle = lugar.zone ? loc(lugar.zone.data.title, lang) : undefined;
 const categoriaTitle = categoria ? loc(categoria.data.title, lang) : undefined;
 const heroImg = imagenSrc(lugar.data.image) || noImage.src;
 
-const url = `${SITE.url}/${lang}/${lugar.collection}/${lugar.id}/`;
+const url = `${SITE.url}/${lang}/${segmento}/${lugar.id}/`;
 const bodyHtml = await lugaresService.renderBody(lugar, lang);
 
 const formatFecha = (fecha: Date | undefined) =>
