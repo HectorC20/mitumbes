@@ -142,14 +142,16 @@ const breadcrumbs = [
       </div>
       {
         heroImg && (
-          <img
-            class="place-hero__img"
-            src={heroImg}
-            alt={title}
-            fetchpriority="high"
-            width="960"
-            height="540"
-          />
+          <figure class="place-hero__media">
+            <img
+              class="place-hero__img"
+              src={heroImg}
+              alt={title}
+              fetchpriority="high"
+              width="960"
+              height="540"
+            />
+          </figure>
         )
       }
     </div>

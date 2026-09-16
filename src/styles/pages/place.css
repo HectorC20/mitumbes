@@ -17,8 +17,17 @@
   @apply mt-3 inline-flex items-center gap-1.5 text-sm text-white/85;
 }
 
+.place-hero__media {
+  @apply overflow-hidden rounded-md;
+}
+
 .place-hero__img {
-  @apply aspect-[16/9] w-full rounded-md object-cover;
+  @apply aspect-[16/9] h-auto w-full object-cover transition-transform duration-700 ease-out will-change-transform;
+}
+
+.place-hero__media:hover .place-hero__img,
+.place-hero__media:focus-within .place-hero__img {
+  @apply scale-105;
 }
 
 /* ---------- Barra de datos rápidos ---------- */
