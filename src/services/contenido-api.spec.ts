@@ -41,12 +41,11 @@ describe('contenido-api (adaptador a la API)', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('consume /places, /events y /zones y normaliza al shape web', async () => {
+  it('consume /items y /zones y normaliza al shape web', async () => {
     vi.stubEnv('PUBLIC_API_URL', 'http://api.test');
     const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
       const url = String(input);
-      if (url.endsWith('/places')) return respuestaJson({ items: [place] });
-      if (url.endsWith('/events')) return respuestaJson({ items: [] });
+      if (url.endsWith('/items')) return respuestaJson({ items: [place] });
       if (url.endsWith('/zones')) return respuestaJson([]);
       return respuestaJson({});
     });
@@ -62,7 +61,7 @@ describe('contenido-api (adaptador a la API)', () => {
     });
     expect(contenidos?.[0].data.updatedAt).toBeInstanceOf(Date);
     expect(fetchMock).toHaveBeenCalledWith(
-      expect.stringContaining('/places'),
+      expect.stringContaining('/items'),
       expect.anything(),
     );
   });

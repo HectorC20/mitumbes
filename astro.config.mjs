@@ -35,6 +35,7 @@ export default defineConfig({
           'pulse',
           'calendar',
           'information',
+          'scale-balance',
           'compass',
           'menu',
           'car',

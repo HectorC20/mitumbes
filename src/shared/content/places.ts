@@ -11,7 +11,7 @@ import type { EntradaContenido, ZonaLigera } from '../../services/contrato-web';
 
 /**
  * Helpers de contenido. La web ya no tiene contenido local: todas las
- * operaciones consultan mitumbes-server (places, events, categories, zones).
+ * operaciones consultan mitumbes-server (items, categories, zones).
  * Si la API no está configurada o falla, devuelven listas vacías.
  */
 
@@ -66,7 +66,7 @@ export function rutaZona(id: string): string {
   return `/zones/${id}/`;
 }
 
-/** Recupera todos los contenidos de las 6 categorías + eventos, desde la API. */
+/** Recupera todos los contenidos del catálogo unificado, desde la API. */
 export async function getAllContenidos(): Promise<ContenidoConRelaciones[]> {
   return (await getContenidoApi()) ?? [];
 }

@@ -10,6 +10,7 @@ export const CONTENT_COLLECTIONS = [
   'activities',
   'events',
   'services',
+  'abogados',
 ] as const;
 
 export type ContentCollectionName = (typeof CONTENT_COLLECTIONS)[number];
@@ -22,4 +23,5 @@ export const COLLECTION_ICONS: Record<ContentCollectionName, string> = {
   activities: 'activity',
   events: 'calendar',
   services: 'info',
+  abogados: 'scale',
 };

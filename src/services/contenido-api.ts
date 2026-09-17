@@ -47,25 +47,22 @@ export function apiHabilitada(): boolean {
 }
 
 /**
- * Contenidos desde la API (places + events), con su zona resuelta desde
- * /zones. Devuelve undefined si el backend no está configurado o falla la
- * petición (la capa de datos lo traduce a lista vacía).
+ * Contenidos desde la API (`/items`, catálogo unificado), con su zona resuelta
+ * desde /zones. `/places` y `/events` quedaron como legado: solo devolvían una
+ * parte del catálogo. Devuelve undefined si el backend no está configurado o
+ * falla la petición (la capa de datos lo traduce a lista vacía).
  */
 export async function getContenidoApi(): Promise<EntradaContenido[] | undefined> {
   if (!apiHabilitada()) return undefined;
   try {
-    const [places, events, zonas] = await Promise.all([
-      cachedGet<{ items: ContratoEntry[] }>('/places'),
-      cachedGet<{ items: ContratoEntry[] }>('/events'),
+    const [items, zonas] = await Promise.all([
+      cachedGet<{ items: ContratoEntry[] }>('/items'),
       getZonasApi(),
     ]);
-    const data = [...places.items, ...events.items]
-      .map((e) => normalizarEntrada(e, zonas ?? []))
-      .sort(porActualizacionDesc);
-    return data;
+    return items.items.map((e) => normalizarEntrada(e, zonas ?? [])).sort(porActualizacionDesc);
   } catch (error) {
     console.error(
-      `[contenido-api] No se pudo consultar la API (${API_BASE}/places, /events):`,
+      `[contenido-api] No se pudo consultar la API (${API_BASE}/items):`,
       error instanceof Error ? error.message : error,
     );
     return undefined;
