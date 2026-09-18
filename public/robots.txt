@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mitumbes.com/sitemap.xml
+Sitemap: https://www.mitumbes.com/sitemap.xml

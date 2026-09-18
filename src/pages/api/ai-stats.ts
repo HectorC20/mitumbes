@@ -8,7 +8,7 @@
  * Si la variable no está definida o la key no coincide, responde 401.
  *
  * Uso:
- *   curl -H "Authorization: Bearer <key>" https://mitumbes.com/api/ai-stats
+ *   curl -H "Authorization: Bearer <key>" https://www.mitumbes.com/api/ai-stats
  */
 import type { APIRoute } from 'astro';
 import { getAiStats } from '@/services/ai-tracking.service';

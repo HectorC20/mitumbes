@@ -22,9 +22,12 @@ const link = (path: string) => localizePath(path, lang);
           href={link('/')}
           aria-label={`MiTumbes — ${t(lang, 'nav.home')}`}
         >
-          <span class="nav-shell__logo"><img src="/favicon.svg" alt="ISOTIPO MI TUMBES">
+          <span class="nav-shell__logo">
+            <img src="/isotipo.png" alt="ISOTIPO MI TUMBES" width="36" height="36" />
           </span>
-          <span class="nav-shell__wordmark"><img src="/logo-text.svg" alt="LOGO MI TUMBES"></span>
+          <span class="nav-shell__wordmark">
+            <img src="/logo-text.png" alt="LOGO MI TUMBES" width="197" height="28" />
+          </span>
         </a>
         <p class="site-footer__desc">
           {t(lang, 'seo.homeDescription')}

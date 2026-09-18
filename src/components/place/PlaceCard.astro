@@ -85,6 +85,7 @@ const imagen = imagenSrc(lugar.data.image) || noImage.src;
   <div class="card__footer">
     <a class="card__link" href={href}>
       {t(lang, 'place.seePlace')}
+      <span class="sr-only"> — {title}</span>
       <Icon name="arrow-right" size="sm" />
     </a>
     {

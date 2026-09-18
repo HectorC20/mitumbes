@@ -166,12 +166,29 @@
     @apply flex h-9 w-9 items-center justify-center rounded-sm bg-primary text-white;
   }
 
+  /* Los logos son PNG (antes eran SVG con ráster embebido de 1,4 MB cada uno):
+     el tamaño se fija aquí para no depender de las dimensiones del fichero. */
+  .nav-shell__logo img {
+    @apply h-9 w-9;
+  }
+
   .nav-shell__wordmark {
     @apply font-display text-xl font-semibold tracking-tight;
   }
 
+  .nav-shell__wordmark img {
+    @apply h-7 w-auto;
+  }
+
+  /* Navegación: en línea en escritorio, panel desplegable en móvil. */
   .nav-shell__nav {
-    @apply hidden items-center gap-1 md:flex;
+    @apply absolute inset-x-0 top-full hidden flex-col gap-1 border-t border-ink/10
+           bg-white px-4 py-3 md:static md:flex md:flex-row md:items-center
+           md:border-0 md:bg-transparent md:p-0;
+  }
+
+  .nav-shell[data-nav-open='true'] .nav-shell__nav {
+    @apply flex;
   }
 
   .nav-link {
@@ -186,17 +203,9 @@
     @apply inline-flex h-10 w-10 items-center justify-center rounded-sm text-secondary hover:bg-sand md:hidden;
   }
 
-  .nav-shell__mobile {
-    @apply md:hidden;
-  }
-
-  .nav-shell__mobile-list {
-    @apply flex flex-col gap-1 border-t border-ink/10 bg-white px-4 py-3;
-  }
-
   /* ---------- Selector de idioma ---------- */
   .nav-lang {
-    @apply relative hidden md:block;
+    @apply relative block;
   }
 
   .nav-lang__toggle {
@@ -400,28 +409,16 @@
 
   /* ---------- Búsqueda del header ---------- */
   .nav-search {
-    @apply hidden items-center gap-1 md:flex;
-  }
-
-  .nav-search--mobile {
-    @apply mb-2 flex gap-1;
+    @apply flex items-center gap-1;
   }
 
   .nav-search__input {
-    @apply w-44 rounded-sm border-2 border-ink/15 bg-white px-3 py-2 text-sm text-ink
-           placeholder:text-muted focus:border-primary focus:outline-none;
-  }
-
-  .nav-search__input--mobile {
-    @apply w-full;
+    @apply w-full rounded-sm border-2 border-ink/15 bg-white px-3 py-2 text-sm text-ink
+           placeholder:text-muted focus:border-primary focus:outline-none md:w-44;
   }
 
   .nav-search__submit {
-    @apply inline-flex h-9 w-9 items-center justify-center rounded-sm bg-primary text-white hover:bg-secondary;
-  }
-
-  .nav-search__submit--mobile {
-    @apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-sm bg-primary text-white;
+    @apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-sm bg-primary text-white hover:bg-secondary;
   }
 
   /* ---------- Geolocalización del visitante ---------- */
@@ -431,15 +428,6 @@
 
   .nav-geo[hidden] {
     display: none;
-  }
-
-  /* ---------- Selector de idioma móvil ---------- */
-  .mobile-lang__label {
-    @apply mt-2 border-t border-ink/10 px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wider text-muted;
-  }
-
-  .mobile-lang {
-    @apply flex gap-1;
   }
 
   /* ---------- Footer ---------- */

@@ -34,19 +34,38 @@ const isActive = (href: string) => {
 const searchHref = localizePath('/places/', lang);
 ---
 
-<header class="nav-shell">
+<header class="nav-shell" data-nav-shell>
   <div class="container-page nav-shell__inner">
     <a
       class="nav-shell__brand"
       href={localizePath('/', lang)}
       aria-label={`MiTumbes — ${t(lang, 'nav.home')}`}
     >
-      <span class="nav-shell__logo"><img src="/favicon.svg" alt="ISOTIPO MI TUMBES">
+      <span class="nav-shell__logo">
+        <img src="/isotipo.png" alt="ISOTIPO MI TUMBES" width="36" height="36" />
       </span>
-      <span class="nav-shell__wordmark"><img src="/logo-text.svg" alt="LOGO MI TUMBES"></span>
+      <span class="nav-shell__wordmark">
+        <img src="/logo-text.png" alt="LOGO MI TUMBES" width="197" height="28" />
+      </span>
     </a>
 
-    <nav class="nav-shell__nav" aria-label={t(lang, 'nav.home')}>
+    <!--
+      Un único bloque de navegación: en escritorio se muestra en línea y en
+      móvil se despliega como panel, de modo que cada enlace existe una sola
+      vez en el HTML (evita textos ancla repetidos).
+    -->
+    <button
+      class="nav-shell__toggle"
+      type="button"
+      data-nav-toggle
+      aria-controls="nav-principal"
+      aria-expanded="false"
+      aria-label={t(lang, 'nav.menu')}
+    >
+      <Icon name="menu" />
+    </button>
+
+    <nav id="nav-principal" class="nav-shell__nav" aria-label={t(lang, 'nav.home')}>
       {
         links.map((link) => (
           <a
@@ -61,31 +80,51 @@ const searchHref = localizePath('/places/', lang);
           </a>
         ))
       }
-    </nav>
 
-    <!-- Búsqueda -->
-    <form
-      class="nav-search"
-      role="search"
-      action={searchHref}
-      method="get"
-    >
-      <label class="sr-only" for="nav-search">{t(lang, 'nav.search')}</label>
-      <input
-        id="nav-search"
-        class="nav-search__input"
-        type="search"
-        name="q"
-        placeholder={t(lang, 'nav.searchPlaceholder')}
-      />
-      <button
-        class="nav-search__submit"
-        type="submit"
-        aria-label={t(lang, 'nav.search')}
-      >
-        <Icon name="search" size="sm" />
-      </button>
-    </form>
+      <!-- Búsqueda -->
+      <form class="nav-search" role="search" action={searchHref} method="get">
+        <label class="sr-only" for="nav-search">{t(lang, 'nav.search')}</label>
+        <input
+          id="nav-search"
+          class="nav-search__input"
+          type="search"
+          name="q"
+          placeholder={t(lang, 'nav.searchPlaceholder')}
+        />
+        <button
+          class="nav-search__submit"
+          type="submit"
+          aria-label={t(lang, 'nav.search')}
+        >
+          <Icon name="search" size="sm" />
+        </button>
+      </form>
+
+      <!-- Selector de idioma -->
+      <details class="nav-lang">
+        <summary class="nav-lang__toggle" aria-label={t(lang, 'nav.language')}>
+          <Icon name="globe" size="sm" />
+          {LOCALE_SHORT[lang]}
+        </summary>
+        <div class="nav-lang__menu">
+          {
+            LOCALES.map((l) => (
+              <a
+                class:list={[
+                  'nav-lang__item',
+                  { 'nav-lang__item--active': l === lang },
+                ]}
+                href={localizePath(base, l)}
+                lang={l}
+                aria-current={l === lang ? 'true' : undefined}
+              >
+                {LOCALE_LABELS[l]}
+              </a>
+            ))
+          }
+        </div>
+      </details>
+    </nav>
 
     <!-- Geolocalización del visitante (cabeceras Vercel) -->
     <span
@@ -96,95 +135,10 @@ const searchHref = localizePath('/places/', lang);
     >
       {t(lang, 'geo.detecting')}
     </span>
-
-    <!-- Selector de idioma -->
-    <details class="nav-lang">
-      <summary class="nav-lang__toggle" aria-label={t(lang, 'nav.language')}>
-        <Icon name="globe" size="sm" />
-        {LOCALE_SHORT[lang]}
-      </summary>
-      <div class="nav-lang__menu">
-        {
-          LOCALES.map((l) => (
-            <a
-              class:list={[
-                'nav-lang__item',
-                { 'nav-lang__item--active': l === lang },
-              ]}
-              href={localizePath(base, l)}
-              lang={l}
-              aria-current={l === lang ? 'true' : undefined}
-            >
-              {LOCALE_LABELS[l]}
-            </a>
-          ))
-        }
-      </div>
-    </details>
-
-    <!--
-      EXPLORAR: deshabilitado por ahora — no cumple una buena función.
-    <a class="btn btn--primary btn--sm" href={searchHref}>Explorar</a>
-    -->
-
-    <details class="nav-shell__mobile">
-      <summary class="nav-shell__toggle" aria-label={t(lang, 'nav.menu')}>
-        <Icon name="menu" />
-      </summary>
-      <nav class="nav-shell__mobile-list" aria-label={t(lang, 'nav.home')}>
-        <form role="search" action={searchHref} method="get" class="nav-search--mobile">
-          <input
-            class="nav-search__input nav-search__input--mobile"
-            type="search"
-            name="q"
-            placeholder={t(lang, 'nav.searchPlaceholder')}
-          />
-          <button
-            class="nav-search__submit nav-search__submit--mobile"
-            type="submit"
-            aria-label={t(lang, 'nav.search')}
-          >
-            <Icon name="search" size="sm" />
-          </button>
-        </form>
-        {
-          links.map((link) => (
-            <a
-              class:list={[
-                'nav-link',
-                { 'nav-link--active': isActive(link.href) },
-              ]}
-              href={link.href}
-              aria-current={isActive(link.href) ? 'page' : undefined}
-            >
-              {link.label}
-            </a>
-          ))
-        }
-        <p class="mobile-lang__label">
-          {t(lang, 'nav.language')}
-        </p>
-        <div class="mobile-lang">
-          {
-            LOCALES.map((l) => (
-              <a
-                class:list={[
-                  'nav-link',
-                  { 'nav-link--active': l === lang },
-                ]}
-                href={localizePath(base, l)}
-                lang={l}
-              >
-                {LOCALE_LABELS[l]}
-              </a>
-            ))
-          }
-        </div>
-      </nav>
-    </details>
   </div>
 </header>
 
 <script>
   import '@/scripts/visitor-geo.ts';
+  import '@/scripts/nav-menu.ts';
 </script>

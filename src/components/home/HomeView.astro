@@ -21,6 +21,7 @@ import {
 } from '@/shared/constants/locales';
 import { t } from '@/shared/constants/ui';
 import { COLLECTION_ICONS } from '@/shared/constants/collections';
+import { HOME_GUIDE } from '@/shared/content/home-guide';
 import '@/styles/pages/home.css';
 
 interface Props {
@@ -61,6 +62,10 @@ const heroSlides = carouselPlaces.map((item) => ({
 const lugaresHref = localizePath('/places/', lang);
 const categoriasHref = localizePath('/categories/', lang);
 const partnersHref = localizePath('/partners/', lang);
+
+// Guía de la región: texto estable (no depende del backend) que da contexto
+// real a la portada antes de cerrar con los partners.
+const guia = HOME_GUIDE[lang];
 ---
 
 <Layout lang={lang} title={t(lang, 'seo.homeTitle')} description={t(lang, 'seo.homeDescription')} image={heroImg}>
@@ -108,7 +113,7 @@ const partnersHref = localizePath('/partners/', lang);
           <h2 class="section-head__title">{t(lang, 'home.featuredTitle')}</h2>
         </div>
         <a class="section-head__link" href={lugaresHref}>
-          {t(lang, 'home.viewAll')}
+          {t(lang, 'search.viewAllPlaces')}
           <Icon name="arrow-right" size="sm" />
         </a>
       </div>
@@ -122,6 +127,34 @@ const partnersHref = localizePath('/partners/', lang);
             />
           ))
         }
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="guia" data-section="guia">
+    <div class="container-page">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">{guia.eyebrow}</p>
+          <h2 class="section-head__title">{guia.title}</h2>
+        </div>
+      </div>
+      <div class="guide">
+        <div class="guide__intro">
+          {guia.intro.map((parrafo) => <p>{parrafo}</p>)}
+        </div>
+        <div class="guide__grid">
+          {
+            guia.sections.map((apartado) => (
+              <article class="guide__item">
+                <h3 class="guide__item-title">{apartado.title}</h3>
+                {apartado.paragraphs.map((parrafo) => (
+                  <p>{parrafo}</p>
+                ))}
+              </article>
+            ))
+          }
+        </div>
       </div>
     </div>
   </section>

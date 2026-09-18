@@ -18,6 +18,12 @@ const nextSlide = sanitizedSlides[1] ?? sanitizedSlides[0];
 ---
 
 <section class="hero-carousel" data-hero-carousel aria-roledescription="carousel" aria-label={t(lang, 'home.heroTitle')}>
+  <!--
+    Un único H1 por página con el título descriptivo del home; los títulos de
+    las diapositivas van en <p> para no repetir encabezados (coinciden con los
+    H3 de las tarjetas de lugares destacados).
+  -->
+  <h1 class="sr-only">{t(lang, 'home.heroTitle')}</h1>
   <!-- Barra lateral izquierda fija sobre el hero -->
   <aside class="hero-sidebar" aria-label="Navegación del carrusel y redes">
     <!-- <a href="#" class="hero-sidebar__top" aria-label="Inicio">
@@ -75,13 +81,11 @@ const nextSlide = sanitizedSlides[1] ?? sanitizedSlides[0];
                 {slide.eyebrow || t(lang, 'home.heroEyebrow')}
               </span>
               {index === 0 ? (
-                <h1 class="hero-carousel__title">
-                  {slide.title}
-                </h1>
+                <p class="hero-carousel__title">{slide.title}</p>
               ) : (
-                <h2 class="hero-carousel__title" aria-hidden="true">
+                <p class="hero-carousel__title" aria-hidden="true">
                   {slide.title}
-                </h2>
+                </p>
               )}
               {slide.subtitle && (
                 <p class="hero-carousel__lead">
@@ -90,7 +94,7 @@ const nextSlide = sanitizedSlides[1] ?? sanitizedSlides[0];
               )}
               <div class="hero-carousel__action">
                 <a class="hero-btn-pill" href={slide.href}>
-                  <span>{t(lang, 'place.seePlace')}</span>
+                  <span>{t(lang, 'place.seePlace')}<span class="sr-only"> — {slide.title}</span></span>
                   <Icon name="arrow-right" size="sm" />
                 </a>
               </div>

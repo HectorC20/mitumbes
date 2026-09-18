@@ -60,6 +60,27 @@
   @apply flex items-center gap-4;
 }
 
+/* ---------- Guía de la región (contenido de la portada) ---------- */
+.guide__intro {
+  @apply mb-8 grid gap-4 text-base leading-relaxed text-ink/80 md:grid-cols-2;
+}
+
+.guide__grid {
+  @apply grid gap-8 md:grid-cols-2;
+}
+
+.guide__item {
+  @apply border-t border-ink/10 pt-4;
+}
+
+.guide__item-title {
+  @apply mb-2 font-display text-lg leading-snug text-secondary;
+}
+
+.guide__item p {
+  @apply mb-3 text-sm leading-relaxed text-ink/80 last:mb-0;
+}
+
 /* ---------- Cards de zona ---------- */
 .zone-grid {
   @apply grid gap-4 sm:grid-cols-2 lg:grid-cols-3;

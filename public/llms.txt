@@ -8,26 +8,42 @@ MiTumbes es una plataforma de información turística estructurada sobre la regi
 
 ## Enlaces principales
 
-- [Inicio](https://mitumbes.com/)
-- [Lugares en Tumbes](https://mitumbes.com/lugares/)
-- [Categorías](https://mitumbes.com/categorias/)
-- [Zonas](https://mitumbes.com/zonas/)
-- [Sitemap](https://mitumbes.com/sitemap.xml)
+- [Inicio](https://www.mitumbes.com/)
+- [Lugares en Tumbes](https://www.mitumbes.com/places/)
+- [Categorías](https://www.mitumbes.com/categories/)
+- [Zonas](https://www.mitumbes.com/zones/)
+- [Partners](https://www.mitumbes.com/partners/)
+- [Sitemap](https://www.mitumbes.com/sitemap.xml)
 
 ## Categorías
 
-- [Lugares turísticos](https://mitumbes.com/categorias/turisticos/)
-- [Restaurantes](https://mitumbes.com/categorias/restaurantes/)
-- [Hoteles y alojamientos](https://mitumbes.com/categorias/hoteles/)
-- [Actividades y experiencias](https://mitumbes.com/categorias/actividades/)
-- [Eventos](https://mitumbes.com/categorias/eventos/)
-- [Servicios de turismo](https://mitumbes.com/categorias/servicios/)
+- [Lugares turísticos](https://www.mitumbes.com/categories/places/)
+- [Playas](https://www.mitumbes.com/categories/playas/)
+- [Manglares](https://www.mitumbes.com/categories/manglares/)
+- [Malecones](https://www.mitumbes.com/categories/malecones/)
+- [Restaurantes](https://www.mitumbes.com/categories/restaurants/)
+- [Cevicherías](https://www.mitumbes.com/categories/cevicherias/)
+- [Marisquerías](https://www.mitumbes.com/categories/marisquerias/)
+- [Hoteles y alojamientos](https://www.mitumbes.com/categories/hotels/)
+- [Hostales](https://www.mitumbes.com/categories/hostales/)
+- [Actividades y experiencias](https://www.mitumbes.com/categories/activities/)
+- [Deportes acuáticos](https://www.mitumbes.com/categories/surf/)
+- [Paseos en lancha](https://www.mitumbes.com/categories/paseos-en-lancha/)
+- [Eventos](https://www.mitumbes.com/categories/events/)
+- [Servicios de turismo](https://www.mitumbes.com/categories/services/)
+- [Oficinas turísticas](https://www.mitumbes.com/categories/oficinas-turisticas/)
 
 ## Zonas
 
-- [Tumbes (ciudad)](https://mitumbes.com/zonas/tumbes/)
-- [Zorritos](https://mitumbes.com/zonas/zorritos/)
-- [Punta Sal](https://mitumbes.com/zonas/punta-sal/)
-- [Cancas](https://mitumbes.com/zonas/cancas/)
-- [Bocapán](https://mitumbes.com/zonas/bocapan/)
-- [Puerto Pizarro](https://mitumbes.com/zonas/puerto-pizarro/)
+- [Tumbes (ciudad)](https://www.mitumbes.com/zones/tumbes/)
+- [Zorritos](https://www.mitumbes.com/zones/zorritos/)
+- [Punta Sal](https://www.mitumbes.com/zones/punta-sal/)
+- [Cancas](https://www.mitumbes.com/zones/cancas/)
+- [Bocapán](https://www.mitumbes.com/zones/bocapan/)
+- [Puerto Pizarro](https://www.mitumbes.com/zones/puerto-pizarro/)
+- [Zarumilla](https://www.mitumbes.com/zones/zarumilla/)
+- [Aguas Verdes](https://www.mitumbes.com/zones/aguas-verdes/)
+
+## Idiomas
+
+El sitio está disponible en español (por defecto, en la raíz), inglés (`/en/`) y portugués (`/pt/`).

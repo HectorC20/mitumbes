@@ -8,7 +8,8 @@ import icon from 'astro-icon';
 export default defineConfig({
   output: 'server',
   adapter: vercel(),
-  site: 'https://mitumbes.com',
+  // Dominio canónico con www (mitumbes.com redirige 308 a www.mitumbes.com).
+  site: 'https://www.mitumbes.com',
   security: {
     // Los endpoints /api/* (revalidate, images) son autenticados por clave
     // (Authorization: Bearer) y los llama mitumbes-server vía POST sin header
