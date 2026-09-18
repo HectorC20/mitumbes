@@ -3,8 +3,8 @@ import { ui } from './ui';
 
 /**
  * Apartados del sitio con su identificador estable.
- * Cada identificador (inicio, lugares, categorias, zonas) se usa en la
- * navegación, en las URLs y en el índice de búsqueda para mejorar la
+ * Cada identificador (inicio, lugares, categorias, zonas) se usa en
+ * la navegación, en las URLs y en el índice de búsqueda para mejorar la
  * accesibilidad del contenido administrado.
  */
 export interface Section {

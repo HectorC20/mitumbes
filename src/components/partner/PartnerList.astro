@@ -1,0 +1,54 @@
+---
+import Icon from '@/components/Icon.astro';
+import { PARTNERS, partnerInitials } from '@/shared/content/partners';
+import { loc } from '@/shared/content/places';
+import { isLocale, type Locale } from '@/shared/constants/locales';
+import { interpolate, t } from '@/shared/constants/ui';
+import '@/styles/pages/partners.css';
+
+interface Props {
+  lang?: Locale;
+}
+
+const lang: Locale = isLocale(Astro.props.lang) ? Astro.props.lang : 'es';
+---
+
+<div class="partner-grid">
+  {
+    PARTNERS.map((partner) => (
+      <a
+        class="partner-card"
+        data-section="partners"
+        data-id={partner.id}
+        href={partner.url}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span class="partner-card__logo">
+          {partner.logo ? (
+            <img
+              class="partner-card__img"
+              src={partner.logo}
+              alt={interpolate(t(lang, 'partners.imageAlt'), { partner: partner.name })}
+              loading="lazy"
+            />
+          ) : (
+            <span class="partner-card__monogram" aria-hidden="true">
+              {partnerInitials(partner.name)}
+            </span>
+          )}
+        </span>
+        <span class="partner-card__body">
+          <span class="partner-card__title">{partner.name}</span>
+          {loc(partner.description, lang) && (
+            <span class="partner-card__text">{loc(partner.description, lang)}</span>
+          )}
+          <span class="partner-card__link">
+            {t(lang, 'partners.visit')}
+            <Icon name="arrow-right" size="sm" />
+          </span>
+        </span>
+      </a>
+    ))
+  }
+</div>

@@ -3,6 +3,7 @@ import Layout from '@/components/layout/Layout.astro';
 import Icon from '@/components/Icon.astro';
 import PlaceCard from '@/components/place/PlaceCard.astro';
 import HeroCarousel from '@/components/home/HeroCarousel.astro';
+import PartnerList from '@/components/partner/PartnerList.astro';
 import noImage from '@/assets/images/no-image.svg';
 import { lugaresService } from '@/services/lugares.service';
 import { categoriasService } from '@/services/categorias.service';
@@ -59,6 +60,7 @@ const heroSlides = carouselPlaces.map((item) => ({
 
 const lugaresHref = localizePath('/places/', lang);
 const categoriasHref = localizePath('/categories/', lang);
+const partnersHref = localizePath('/partners/', lang);
 ---
 
 <Layout lang={lang} title={t(lang, 'seo.homeTitle')} description={t(lang, 'seo.homeDescription')} image={heroImg}>
@@ -121,6 +123,22 @@ const categoriasHref = localizePath('/categories/', lang);
           ))
         }
       </div>
+    </div>
+  </section>
+
+  <section class="section" id="partners" data-section="partners">
+    <div class="container-page">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">{t(lang, 'partners.eyebrow')}</p>
+          <h2 class="section-head__title">{t(lang, 'seo.partnersTitle')}</h2>
+        </div>
+        <a class="section-head__link" href={partnersHref}>
+          {t(lang, 'partners.viewAll')}
+          <Icon name="arrow-right" size="sm" />
+        </a>
+      </div>
+      <PartnerList lang={lang} />
     </div>
   </section>
 </Layout>

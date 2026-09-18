@@ -1,0 +1,32 @@
+---
+import Layout from '@/components/layout/Layout.astro';
+import PartnerList from '@/components/partner/PartnerList.astro';
+import { isLocale, type Locale } from '@/shared/constants/locales';
+import { t } from '@/shared/constants/ui';
+
+const lang = Astro.params.lang as Locale;
+
+if (!isLocale(lang)) {
+  return Astro.redirect('/404/', 301);
+}
+---
+
+<Layout
+  lang={lang}
+  title={t(lang, 'seo.partnersTitle')}
+  description={t(lang, 'seo.partnersDescription')}
+>
+  <section class="section section--sand">
+    <div class="container-page">
+      <p class="eyebrow">{t(lang, 'partners.eyebrow')}</p>
+      <h1 class="page-title">{t(lang, 'seo.partnersTitle')}</h1>
+      <p class="lead">{t(lang, 'partners.lead')}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-page">
+      <PartnerList lang={lang} />
+    </div>
+  </section>
+</Layout>

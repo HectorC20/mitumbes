@@ -33,6 +33,7 @@ export const GET: APIRoute = async () => {
     urls.push({ url: l('/places/'), priority: 0.9 });
     urls.push({ url: l('/categories/'), priority: 0.6 });
     urls.push({ url: l('/zones/'), priority: 0.6 });
+    urls.push({ url: l('/partners/'), priority: 0.5 });
 
     for (const item of contenidos) {
       urls.push({

@@ -48,6 +48,9 @@ export const ui = {
     'seo.zonesTitle': 'Zonas de Tumbes',
     'seo.zonesDescription':
       'Explora las zonas de Tumbes: la ciudad, Zorritos, Punta Sal, Cancas, Bocapán y los manglares de Puerto Pizarro.',
+    'seo.partnersTitle': 'Partners de MiTumbes',
+    'seo.partnersDescription':
+      'Empresas y proyectos que colaboran con MiTumbes para promover el turismo en la región.',
     'seo.notFoundTitle': 'Página no encontrada',
     'seo.notFoundDescription': 'La página que buscas no existe.',
 
@@ -125,6 +128,14 @@ export const ui = {
     'zones.emptyBody': 'Muy pronto agregaremos más información.',
     'zones.imageAlt': 'Paisaje de {zone}, Tumbes',
 
+    // Partners
+    'partners.eyebrow': 'Colaboramos con',
+    'partners.lead':
+      'Empresas y proyectos que acompañan a MiTumbes y aportan herramientas y servicios para la guía turística de la región.',
+    'partners.visit': 'Visitar sitio',
+    'partners.viewAll': 'Ver todos',
+    'partners.imageAlt': 'Logo de {partner}',
+
     // 404
     'notFound.title': 'Página no encontrada',
     'notFound.lead':
@@ -141,6 +152,7 @@ export const ui = {
     'footer.exploreHeading': 'Explorar',
     'footer.categories': 'Categorías',
     'footer.zones': 'Zonas',
+    'footer.partners': 'Partners',
     'footer.note':
       'Información turística de la región Tumbes.',
     'footer.verification': '',
@@ -189,6 +201,9 @@ export const ui = {
     'seo.zonesTitle': 'Zones of Tumbes',
     'seo.zonesDescription':
       'Explore the zones of Tumbes: the city, Zorritos, Punta Sal, Cancas, Bocapán and the Puerto Pizarro mangroves.',
+    'seo.partnersTitle': 'MiTumbes partners',
+    'seo.partnersDescription':
+      'Companies and projects collaborating with MiTumbes to promote tourism in the region.',
     'seo.notFoundTitle': 'Page not found',
     'seo.notFoundDescription': 'The page you are looking for does not exist.',
 
@@ -260,6 +275,15 @@ export const ui = {
     'zones.emptyBody': 'We will add more information soon.',
     'zones.imageAlt': 'Landscape of {zone}, Tumbes',
 
+    // Partners
+    'partners.eyebrow': 'We collaborate with',
+    'partners.lead':
+      'Companies and projects supporting MiTumbes with tools and services for the travel guide of the region.',
+    'partners.visit': 'Visit website',
+    'partners.viewAll': 'View all',
+    'partners.imageAlt': '{partner} logo',
+
+    // 404
     'notFound.title': 'Page not found',
     'notFound.lead':
       'The link you followed does not exist or the content was moved. Go back home or explore the Tumbes place directory.',
@@ -274,6 +298,7 @@ export const ui = {
     'footer.exploreHeading': 'Explore',
     'footer.categories': 'Categories',
     'footer.zones': 'Zones',
+    'footer.partners': 'Partners',
     'footer.note': 'Tourist information for the Tumbes region.',
     'footer.verification': 'Content under verification — report data.',
     'footer.report': 'report data',
@@ -321,6 +346,9 @@ export const ui = {
     'seo.zonesTitle': 'Zonas de Tumbes',
     'seo.zonesDescription':
       'Explore as zonas de Tumbes: a cidade, Zorritos, Punta Sal, Cancas, Bocapán e os manguezais de Puerto Pizarro.',
+    'seo.partnersTitle': 'Parceiros do MiTumbes',
+    'seo.partnersDescription':
+      'Empresas e projetos que colaboram com o MiTumbes para promover o turismo na região.',
     'seo.notFoundTitle': 'Página não encontrada',
     'seo.notFoundDescription': 'A página que você procura não existe.',
 
@@ -392,6 +420,15 @@ export const ui = {
     'zones.emptyBody': 'Em breve adicionaremos mais informações.',
     'zones.imageAlt': 'Paisagem de {zone}, Tumbes',
 
+    // Partners
+    'partners.eyebrow': 'Colaboramos com',
+    'partners.lead':
+      'Empresas e projetos que acompanham o MiTumbes e contribuem com ferramentas e serviços para o guia turístico da região.',
+    'partners.visit': 'Visitar site',
+    'partners.viewAll': 'Ver todos',
+    'partners.imageAlt': 'Logo de {partner}',
+
+    // 404
     'notFound.title': 'Página não encontrada',
     'notFound.lead':
       'O link que você seguiu não existe ou o conteúdo foi movido. Volte ao início ou explore o diretório de lugares de Tumbes.',
@@ -406,6 +443,7 @@ export const ui = {
     'footer.exploreHeading': 'Explorar',
     'footer.categories': 'Categorias',
     'footer.zones': 'Zonas',
+    'footer.partners': 'Parceiros',
     'footer.note': 'Informações turísticas da região de Tumbes.',
     'footer.verification': 'Conteúdo em verificação — reportar dados.',
     'footer.report': 'reportar dados',
