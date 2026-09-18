@@ -14,15 +14,20 @@ if (!isLocale(lang)) {
   return Astro.redirect('/404/', 301);
 }
 
-const params = Object.fromEntries(Astro.url.searchParams) as FiltroContenidos;
+const search = Astro.url.searchParams;
+const filtro: FiltroContenidos = {
+  q: search.get('q') ?? undefined,
+  categoria: search.get('categoria') ?? undefined,
+  zona: search.get('zona') ?? undefined,
+};
+const page = Number.parseInt(search.get('page') ?? '1', 10);
 
-const [todos, categorias, zonas] = await Promise.all([
-  lugaresService.listarTodos(),
-  categoriasService.listar(),
+// El filtro, el orden y el troceado a 20 por página los resuelve el backend.
+const [listado, categorias, zonas] = await Promise.all([
+  lugaresService.listarPagina(filtro, Number.isNaN(page) ? 1 : page),
+  categoriasService.listarRaices(),
   zonasService.listar(),
 ]);
-
-const filtrados = lugaresService.filtrar(todos, params, lang);
 ---
 
 <Layout lang={lang} title={t(lang, 'seo.placesTitle')} description={t(lang, 'seo.placesDescription')}>
@@ -37,10 +42,13 @@ const filtrados = lugaresService.filtrar(todos, params, lang);
   <section class="section">
     <div class="container-page">
       <PlaceSearch
-        lugares={filtrados}
+        lugares={listado.items}
         categorias={categorias}
         zonas={zonas}
-        params={params}
+        params={filtro}
+        total={listado.total}
+        page={listado.page}
+        totalPaginas={listado.totalPaginas}
         lang={lang}
       />
     </div>

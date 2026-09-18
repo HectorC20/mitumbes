@@ -12,14 +12,15 @@ import {
   getContenidosPorSubcategoria,
   getContenidosPorZona,
   getDestacados,
+  getPaginaContenidos,
   getRelacionados,
-  filtrarContenidos,
   renderBody,
   textoDeBusqueda,
   normalizarTexto,
   type Contenido,
   type ContenidoConRelaciones,
   type FiltroContenidos,
+  type PaginaListado,
 } from '@/shared/content/places';
 import type { ContentCollectionName } from '@/shared/constants/collections';
 import type { Locale } from '@/shared/constants/locales';
@@ -28,6 +29,7 @@ export type {
   Contenido,
   ContenidoConRelaciones,
   FiltroContenidos,
+  PaginaListado,
   ContentCollectionName,
   Locale,
 };
@@ -36,6 +38,12 @@ export { normalizarTexto, textoDeBusqueda };
 export const lugaresService = {
   /** Todos los lugares de las 6 categorías, ordenados por última actualización. */
   listarTodos: getAllContenidos,
+
+  /**
+   * Una página del listado público (20 por página): el filtro, el orden y el
+   * troceado los resuelve el backend, no la web.
+   */
+  listarPagina: getPaginaContenidos,
 
   /** Busca un lugar por id recorriendo todas las categorías. */
   buscarPorId: async (id: string): Promise<ContenidoConRelaciones | undefined> => {
@@ -57,9 +65,6 @@ export const lugaresService = {
 
   /** Lugares relacionados a uno dado, con límite. */
   listarRelacionados: getRelacionados,
-
-  /** Filtro combinado (q / categoria / zona), idéntico al buscador client-side. */
-  filtrar: filtrarContenidos,
 
   /** Renderiza el body markdown localizado a HTML. */
   renderBody,

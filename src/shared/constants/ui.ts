@@ -72,6 +72,12 @@ export const ui = {
       'Prueba con otras palabras, otra categoría o explora todas las zonas.',
     'search.viewAllPlaces': 'Ver todos los lugares',
 
+    // Paginación del listado
+    'pagination.label': 'Paginación de resultados',
+    'pagination.previous': 'Anterior',
+    'pagination.next': 'Siguiente',
+    'pagination.goToPage': 'Ir a la página {page}',
+
     // Detalle de contenido
     'place.about': 'Sobre este lugar',
     'place.howToGet': 'Cómo llegar',
@@ -204,6 +210,11 @@ export const ui = {
       'Try other words, another category, or explore all zones.',
     'search.viewAllPlaces': 'View all places',
 
+    'pagination.label': 'Results pagination',
+    'pagination.previous': 'Previous',
+    'pagination.next': 'Next',
+    'pagination.goToPage': 'Go to page {page}',
+
     'place.about': 'About this place',
     'place.howToGet': 'How to get there',
     'place.activities': 'Activities',
@@ -330,6 +341,11 @@ export const ui = {
     'search.emptyBody':
       'Tente outras palavras, outra categoria ou explore todas as zonas.',
     'search.viewAllPlaces': 'Ver todos os lugares',
+
+    'pagination.label': 'Paginação de resultados',
+    'pagination.previous': 'Anterior',
+    'pagination.next': 'Próxima',
+    'pagination.goToPage': 'Ir para a página {page}',
 
     'place.about': 'Sobre este lugar',
     'place.howToGet': 'Como chegar',

@@ -47,6 +47,57 @@ export function apiHabilitada(): boolean {
 }
 
 /**
+ * Tope de ítems que se piden al backend cuando se necesita el catálogo completo
+ * (inicio, relacionados, conteos, sitemap). El listado público de /places/ NO
+ * usa esto: allí el backend pagina y solo devuelve la página pedida.
+ */
+const LIMITE_CATALOGO = 500;
+
+/** Página del catálogo pedida al backend (filtrado, orden y paginado en el servidor). */
+export interface ConsultaContenidos {
+  /** Texto libre (`search` en la API: nombre o descripción). */
+  q?: string;
+  /** Slug de categoría (`categorySlug`). */
+  categoria?: string;
+  /** Slug de zona (`zoneSlug`). */
+  zona?: string;
+  /** Página pedida, base 1. */
+  page?: number;
+  /** Tamaño de página. */
+  limit?: number;
+}
+
+/** Resultado paginado del backend. */
+export interface PaginaContenidos {
+  items: EntradaContenido[];
+  /** Total de coincidencias en el servidor (no solo las de esta página). */
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+/** Respuesta cruda de GET /items. */
+interface RespuestaItems {
+  items?: ContratoEntry[];
+  total?: number;
+  limit?: number;
+  offset?: number;
+}
+
+/** Traduce los filtros de la web a los parámetros de GET /items. */
+function queryItems(consulta: ConsultaContenidos): URLSearchParams {
+  const limit = consulta.limit ?? LIMITE_CATALOGO;
+  const page = consulta.page && consulta.page > 0 ? consulta.page : 1;
+  const params = new URLSearchParams();
+  params.set('limit', String(limit));
+  params.set('offset', String((page - 1) * limit));
+  if (consulta.q) params.set('search', consulta.q);
+  if (consulta.categoria) params.set('categorySlug', consulta.categoria);
+  if (consulta.zona) params.set('zoneSlug', consulta.zona);
+  return params;
+}
+
+/**
  * Contenidos desde la API (`/items`, catálogo unificado), con su zona resuelta
  * desde /zones. `/places` y `/events` quedaron como legado: solo devolvían una
  * parte del catálogo. Devuelve undefined si el backend no está configurado o
@@ -56,13 +107,45 @@ export async function getContenidoApi(): Promise<EntradaContenido[] | undefined>
   if (!apiHabilitada()) return undefined;
   try {
     const [items, zonas] = await Promise.all([
-      cachedGet<{ items: ContratoEntry[] }>('/items'),
+      cachedGet<RespuestaItems>(`/items?${queryItems({})}`),
       getZonasApi(),
     ]);
-    return items.items.map((e) => normalizarEntrada(e, zonas ?? [])).sort(porActualizacionDesc);
+    return (items.items ?? [])
+      .map((e) => normalizarEntrada(e, zonas ?? []))
+      .sort(porActualizacionDesc);
   } catch (error) {
     console.error(
       `[contenido-api] No se pudo consultar la API (${API_BASE}/items):`,
+      error instanceof Error ? error.message : error,
+    );
+    return undefined;
+  }
+}
+
+/**
+ * Una página del catálogo, filtrada y paginada **en el backend**: la petición
+ * solo trae `limit` ítems (más el total de coincidencias), no el catálogo
+ * completo. Devuelve undefined si el backend no está configurado o falla.
+ */
+export async function getPaginaContenidosApi(
+  consulta: ConsultaContenidos = {},
+): Promise<PaginaContenidos | undefined> {
+  if (!apiHabilitada()) return undefined;
+  const params = queryItems(consulta);
+  try {
+    const [pagina, zonas] = await Promise.all([
+      cachedGet<RespuestaItems>(`/items?${params}`),
+      getZonasApi(),
+    ]);
+    return {
+      items: (pagina.items ?? []).map((e) => normalizarEntrada(e, zonas ?? [])),
+      total: pagina.total ?? 0,
+      limit: pagina.limit ?? Number(params.get('limit')),
+      offset: pagina.offset ?? Number(params.get('offset')),
+    };
+  } catch (error) {
+    console.error(
+      `[contenido-api] No se pudo consultar la API (${API_BASE}/items?${params}):`,
       error instanceof Error ? error.message : error,
     );
     return undefined;

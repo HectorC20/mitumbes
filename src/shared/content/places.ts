@@ -5,6 +5,7 @@ import type { Locale } from '../constants/locales';
 import {
   getContenidoApi,
   getCategoriasApi,
+  getPaginaContenidosApi,
   getZonasApi,
 } from '../../services/contenido-api';
 import type { EntradaContenido, ZonaLigera } from '../../services/contrato-web';
@@ -71,6 +72,44 @@ export async function getAllContenidos(): Promise<ContenidoConRelaciones[]> {
   return (await getContenidoApi()) ?? [];
 }
 
+/** Tamaño de página del listado público de lugares. */
+export const LUGARES_POR_PAGINA = 20;
+
+/** Una página del listado público, ya filtrada, ordenada y contada por el backend. */
+export interface PaginaListado {
+  items: ContenidoConRelaciones[];
+  /** Total de coincidencias en el servidor (no solo las de esta página). */
+  total: number;
+  page: number;
+  totalPaginas: number;
+}
+
+/**
+ * Página del listado de lugares. El filtro (texto, categoría, zona), el orden y
+ * el troceado los hace el backend: esta petición solo trae `LUGARES_POR_PAGINA`
+ * ítems y el total de coincidencias.
+ */
+export async function getPaginaContenidos(
+  filtro: FiltroContenidos,
+  page = 1,
+): Promise<PaginaListado> {
+  const paginaActual = page > 0 ? page : 1;
+  const pagina = await getPaginaContenidosApi({
+    q: filtro.q,
+    categoria: filtro.categoria,
+    zona: filtro.zona,
+    page: paginaActual,
+    limit: LUGARES_POR_PAGINA,
+  });
+  const total = pagina?.total ?? 0;
+  return {
+    items: pagina?.items ?? [],
+    total,
+    page: paginaActual,
+    totalPaginas: Math.max(1, Math.ceil(total / LUGARES_POR_PAGINA)),
+  };
+}
+
 /** Categorías desde la API (/categories). */
 export async function getCategorias(): Promise<Categoria[]> {
   return (await getCategoriasApi()) ?? [];
@@ -83,9 +122,13 @@ export async function getCategoriaPorId(
   return categorias?.find((c) => c.collection === id);
 }
 
-/** ¿Es categoría raíz (nivel 1, sin padre en la jerarquía del backend)? */
+/**
+ * ¿Es categoría raíz (nivel 1, sin padre en la jerarquía del backend)?
+ * `/categories` incluye la pseudo-categoría `zones` (las zonas se listan desde
+ * `/zones`, no son una familia de contenidos), así que se excluye aquí.
+ */
 export function esCategoriaRaiz(c: Categoria): boolean {
-  return !c.data.parent;
+  return !c.data.parent && (c.collection as string) !== 'zones';
 }
 
 /** Categorías raíz (nivel 1 del backend): places, restaurants, hotels, … */
@@ -215,31 +258,11 @@ export function normalizarTexto(texto: string): string {
     .replace(/[\u0300-\u036f]/g, '');
 }
 
+/** Filtros del listado público (viajan como query string al backend). */
 export interface FiltroContenidos {
   q?: string;
   categoria?: string;
   zona?: string;
-}
-
-/** Filtro server-side con la misma lógica que el buscador client-side. */
-export function filtrarContenidos(
-  contenidos: ContenidoConRelaciones[],
-  filtro: FiltroContenidos,
-  lang: Locale,
-): ContenidoConRelaciones[] {
-  const termino = filtro.q ? normalizarTexto(filtro.q) : '';
-  return contenidos.filter((item) => {
-    if (filtro.categoria && item.collection !== filtro.categoria) {
-      return false;
-    }
-    if (filtro.zona && item.zone?.id !== filtro.zona) {
-      return false;
-    }
-    if (termino && !textoDeBusqueda(item, lang).includes(termino)) {
-      return false;
-    }
-    return true;
-  });
 }
 
 /**

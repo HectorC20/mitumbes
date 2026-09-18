@@ -27,6 +27,8 @@ export default defineConfig({
           'tag-outline',
           'star',
           'arrow-right',
+          'chevron-left',
+          'chevron-right',
           'phone',
           'earth',
           'waves',
