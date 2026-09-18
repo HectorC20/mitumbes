@@ -8,6 +8,13 @@ import {
   loc,
   type ContenidoConRelaciones,
 } from '@/shared/content/places';
+import {
+  linkDeMapa,
+  resolverCoordenadas,
+  urlComoLlegar,
+  urlMapa,
+  urlMapaEmbed,
+} from '@/shared/content/maps';
 import { lugaresService } from '@/services/lugares.service';
 import { categoriasService } from '@/services/categorias.service';
 import { lugarJsonLd, breadcrumbJsonLd } from '@/lib/seo/jsonld';
@@ -65,9 +72,14 @@ const formatFecha = (fecha: Date | undefined) =>
       })
     : '';
 
-const mapsUrl = lugar.data.coordinates
-  ? `https://www.google.com/maps?q=${lugar.data.coordinates.lat},${lugar.data.coordinates.lng}`
-  : undefined;
+// Ubicación: coordenadas del backend o, si solo hay enlace de Google Maps
+// (normalmente acortado), se resuelven siguiendo su redirect.
+const linkMapa = linkDeMapa(lugar.data.links);
+const coordenadas =
+  lugar.data.coordinates ?? (linkMapa ? await resolverCoordenadas(linkMapa) : undefined);
+const mapsUrl = linkMapa ?? (coordenadas ? urlMapa(coordenadas) : undefined);
+const comoLlegarUrl = coordenadas ? urlComoLlegar(coordenadas) : mapsUrl;
+const mapaEmbedUrl = coordenadas ? urlMapaEmbed(coordenadas) : undefined;
 
 const waShare = `https://wa.me/?text=${encodeURIComponent(`${title} — ${url}`)}`;
 
@@ -306,7 +318,7 @@ const breadcrumbs = [
                 )
               }
               {
-                lugar.data.coordinates && (
+                mapsUrl && (
                   <div class="info-item">
                     <Icon class="info-item__icon" name="compass" />
                     <div>
@@ -345,10 +357,33 @@ const breadcrumbs = [
             </div>
           </div>
 
+          {
+            mapaEmbedUrl && (
+              <div class="place-panel place-map">
+                <iframe
+                  class="place-map__frame"
+                  src={mapaEmbedUrl}
+                  title={`${t(lang, 'place.location')} — ${title}`}
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                />
+                <a
+                  class="place-map__link"
+                  href={mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Icon name="pin" size="sm" />
+                  {t(lang, 'place.viewMap')}
+                </a>
+              </div>
+            )
+          }
+
           <div class="place-actions">
             {
-              mapsUrl && (
-                <a class="btn btn--primary" href={mapsUrl} target="_blank" rel="noopener noreferrer">
+              comoLlegarUrl && (
+                <a class="btn btn--primary" href={comoLlegarUrl} target="_blank" rel="noopener noreferrer">
                   <Icon name="pin" size="sm" />
                   {t(lang, 'place.getDirections')}
                 </a>

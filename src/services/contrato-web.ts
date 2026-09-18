@@ -13,6 +13,13 @@ import type { ContentCollectionName } from '@/shared/constants/collections';
 
 export type Localizado<T = string> = Record<Locale, T>;
 
+/** Enlace externo del backend (sitio, redes, teléfono, mapa, …). */
+export interface EnlaceContenido {
+  type: string;
+  url: string;
+  label?: string;
+}
+
 /** Entrada normalizada (compatible estructuralmente con CollectionEntry). */
 export interface EntradaContenido {
   id: string;
@@ -35,6 +42,8 @@ export interface EntradaContenido {
     email?: string;
     website?: string;
     social?: { instagram?: string; facebook?: string };
+    /** Enlaces externos del backend (incluye el de Google Maps). */
+    links?: EnlaceContenido[];
     services?: Localizado<string[]>;
     howToGet?: Localizado<string>;
     activities?: Localizado<string[]>;
@@ -156,6 +165,7 @@ export function normalizarEntrada(
       email: simple<string>('email'),
       website: simple<string>('website'),
       social: simple<{ instagram?: string; facebook?: string }>('social'),
+      links: simple<EnlaceContenido[]>('links'),
       services: campoLocalizadoArr(d, 'services'),
       howToGet: campoLocalizado(d, 'howToGet'),
       activities: campoLocalizadoArr(d, 'activities'),

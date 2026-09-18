@@ -100,6 +100,19 @@
   @apply text-primary no-underline hover:text-secondary;
 }
 
+/* ---------- Mapa del aside ---------- */
+.place-map {
+  @apply overflow-hidden p-0;
+}
+
+.place-map__frame {
+  @apply block aspect-[4/3] w-full border-0;
+}
+
+.place-map__link {
+  @apply flex items-center gap-2 border-t border-ink/10 px-6 py-3 text-sm font-semibold text-primary no-underline hover:text-secondary;
+}
+
 /* ---------- Listas con check ---------- */
 .check-list {
   @apply grid gap-2 sm:grid-cols-2;
