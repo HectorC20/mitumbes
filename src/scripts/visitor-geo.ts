@@ -43,17 +43,24 @@ export async function initVisitorGeo(): Promise<void> {
     const { geo, hasData } = (await res.json()) as VisitorGeoResponse;
     if (!hasData || !geo.country) return;
 
-    const flag = countryFlag(geo.country);
+    const countryCode = geo.country.toUpperCase();
+    const flag = countryFlag(countryCode);
 
-    // Prioridad de visualización: ciudad, región, país.
-    // En Vercel los nombres de ciudad/región vienen en inglés; los mostramos
-    // tal cual porque no hay un servicio de traducción de topónimos aquí.
-    const parts = [geo.city, geo.region, geo.country].filter(Boolean);
-    const label = parts.join(', ');
-    const ariaLabel = badge.getAttribute('data-visitor-geo-aria') || label;
+    // Solo se muestran las siglas del país en el badge (ej: 🇦🇷 AR o 🇵🇪 PE)
+    badge.textContent = flag ? `${flag} ${countryCode}` : countryCode;
 
-    badge.textContent = flag ? `${flag} ${label}` : label;
-    badge.setAttribute('aria-label', ariaLabel);
+    // Ubicación completa decodificada para el tooltip (title) y accesibilidad (aria-label)
+    let decodedCity = geo.city ?? '';
+    let decodedRegion = geo.region ?? '';
+    try { decodedCity = decodeURIComponent(decodedCity); } catch {}
+    try { decodedRegion = decodeURIComponent(decodedRegion); } catch {}
+
+    const parts = [decodedCity, decodedRegion, countryCode].filter(Boolean);
+    const fullLocation = parts.join(', ');
+    const ariaBase = badge.getAttribute('data-visitor-geo-aria');
+
+    badge.setAttribute('title', fullLocation);
+    badge.setAttribute('aria-label', ariaBase ? `${ariaBase}: ${fullLocation}` : fullLocation);
     badge.removeAttribute('hidden');
   } catch {
     // Silencioso: si la geolocalización falla, simplemente no se muestra.
