@@ -1,13 +1,11 @@
 ---
 import Layout from '@/components/layout/Layout.astro';
-import Icon from '@/components/Icon.astro';
-import { categoriasService } from '@/services/categorias.service';
-import { conteosService } from '@/services/conteos.service';
-import { loc } from '@/shared/content/places';
-import { localizePath, type Locale, isLocale } from '@/shared/constants/locales';
+import PageHeader from '@/components/layout/PageHeader.astro';
+import CategoryCard from '@/components/category/CategoryCard.astro';
+import AdBanner from '@/shared/components/ads/AdBanner.astro';
+import { contentService } from '@/services/content.service';
+import { type Locale, isLocale } from '@/shared/constants/locales';
 import { t } from '@/shared/constants/ui';
-import { COLLECTION_ICONS } from '@/shared/constants/collections';
-import '@/styles/pages/home.css';
 
 const lang = Astro.params.lang as Locale;
 
@@ -16,41 +14,31 @@ if (!isLocale(lang)) {
 }
 
 const [categorias, conteos] = await Promise.all([
-  categoriasService.listarRaices(),
-  conteosService.obtener(),
+  contentService.categorias.listarRaices(),
+  contentService.conteos.obtener(),
 ]);
 ---
 
 <Layout lang={lang} title={t(lang, 'seo.categoriesTitle')} description={t(lang, 'seo.categoriesDescription')}>
-  <section class="section section--sand">
-    <div class="container-page">
-      <p class="eyebrow">{t(lang, 'categories.eyebrow')}</p>
-      <h1 class="page-title">{t(lang, 'nav.categories')}</h1>
-      <p class="lead">{t(lang, 'categories.lead')}</p>
-    </div>
-  </section>
+  <PageHeader
+    eyebrow={t(lang, 'categories.eyebrow')}
+    title={t(lang, 'nav.categories')}
+    lead={t(lang, 'categories.lead')}
+  />
+
+  <AdBanner lang={lang} id="categories-index-ad" variant="minimal" />
 
   <section class="section">
     <div class="container-page">
       <div class="category-grid">
         {
           categorias.map((c) => (
-            <a
-              class="category-tile"
-              data-section="categorias"
-              data-id={c.collection}
-              href={localizePath(`/categories/${c.collection}/`, lang)}
-            >
-              <span class="category-tile__icon">
-                <Icon name={COLLECTION_ICONS[c.collection] ?? 'pin'} />
-              </span>
-              <span>
-                <span class="category-tile__title">{loc(c.data.title, lang)}</span>
-                <span class="category-tile__count">
-                  {conteos.porCategoria.get(c.collection) ?? 0} {t(lang, 'count.places')}
-                </span>
-              </span>
-            </a>
+            <CategoryCard
+              categoria={c}
+              count={conteos.porCategoria.get(c.collection) ?? 0}
+              lang={lang}
+              section="categorias"
+            />
           ))
         }
       </div>

@@ -1,9 +1,9 @@
 ---
 import Layout from '@/components/layout/Layout.astro';
+import PageHeader from '@/components/layout/PageHeader.astro';
 import PlaceSearch from '@/components/search/PlaceSearch.astro';
-import { lugaresService } from '@/services/lugares.service';
-import { categoriasService } from '@/services/categorias.service';
-import { zonasService } from '@/services/zonas.service';
+import AdBanner from '@/shared/components/ads/AdBanner.astro';
+import { contentService } from '@/services/content.service';
 import type { FiltroContenidos } from '@/shared/content/places';
 import { type Locale, isLocale } from '@/shared/constants/locales';
 import { t } from '@/shared/constants/ui';
@@ -22,22 +22,22 @@ const filtro: FiltroContenidos = {
 };
 const page = Number.parseInt(search.get('page') ?? '1', 10);
 
-// El filtro, el orden y el troceado a 20 por página los resuelve el backend.
+// El filtro, el orden y el troceado a 12 por página los resuelve el backend.
 const [listado, categorias, zonas] = await Promise.all([
-  lugaresService.listarPagina(filtro, Number.isNaN(page) ? 1 : page),
-  categoriasService.listarRaices(),
-  zonasService.listar(),
+  contentService.lugares.listarPagina(filtro, Number.isNaN(page) ? 1 : page),
+  contentService.categorias.listarRaices(),
+  contentService.zonas.listar(),
 ]);
 ---
 
 <Layout lang={lang} title={t(lang, 'seo.placesTitle')} description={t(lang, 'seo.placesDescription')}>
-  <section class="section section--sand">
-    <div class="container-page">
-      <p class="eyebrow">{t(lang, 'categories.eyebrow')}</p>
-      <h1 class="page-title">{t(lang, 'seo.placesTitle')}</h1>
-      <p class="lead">{t(lang, 'seo.placesDescription')}</p>
-    </div>
-  </section>
+  <PageHeader
+    eyebrow={t(lang, 'categories.eyebrow')}
+    title={t(lang, 'seo.placesTitle')}
+    lead={t(lang, 'seo.placesDescription')}
+  />
+
+  <AdBanner lang={lang} id="places-catalog-ad" variant="minimal" />
 
   <section class="section">
     <div class="container-page">

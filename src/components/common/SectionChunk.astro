@@ -1,0 +1,43 @@
+---
+export interface Props {
+  id: string;
+  class?: string;
+  minHeight?: string;
+  as?: string;
+  [key: string]: any;
+}
+
+const {
+  id,
+  class: className = '',
+  minHeight = '500px',
+  as: Tag = 'section',
+  ...rest
+} = Astro.props;
+---
+
+<Tag
+  id={id}
+  class:list={[className, 'section-chunk']}
+  data-chunk-id={id}
+  data-chunk-status="pending"
+  style={`--chunk-min-height: ${minHeight};`}
+  {...rest}
+>
+  <!-- Placeholder con altura reservada para evitar CLS mientras no se hace scroll -->
+  <div class="chunk-placeholder" aria-hidden="true">
+    <div class="chunk-skeleton">
+      <div class="chunk-skeleton__shimmer"></div>
+    </div>
+  </div>
+
+  <!-- Contenedor inactivo en carga inicial: el navegador NO descarga imágenes ni ejecuta scripts -->
+  <template data-chunk-template={id}>
+    <slot />
+  </template>
+
+  <!-- Respaldo para motores de búsqueda o navegadores sin JavaScript -->
+  <noscript>
+    <slot />
+  </noscript>
+</Tag>

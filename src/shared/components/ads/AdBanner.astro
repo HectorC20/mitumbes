@@ -1,0 +1,287 @@
+---
+import Icon from '@/shared/components/design/Icon.astro';
+import { localizePath} from '@/shared/constants/locales';
+import { type Props } from '@/shared/interfaces/ads-banner';
+import { adsService } from '@/services/ads.service';
+import '@/styles/components/ads-banner.css';
+
+const {
+  lang = 'es',
+  variant = 'card',
+  image = 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+  imageAlt,
+  badgeText,
+  sponsorName,
+  title,
+  description,
+  ctaText,
+  ctaHref,
+  icon = 'sparkles',
+  id = 'home-initial-ad',
+  dismissible = true,
+  mode = 'auto',
+  groupId,
+} = Astro.props;
+
+// Intentar recuperar campaña dinámica configurada por MCP o seleccionada al azar
+const dynamicAd = await adsService.obtenerBanner(id, lang, { mode, groupId });
+
+// Textos regionales y patrocinio por defecto según el idioma
+const defaults = {
+  es: {
+    badge: 'Publicidad',
+    sponsor: 'Aliado Oficial',
+    title: 'Escápate a Tumbes: Vuelos & Hoteles con hasta 30% OFF',
+    description: 'Aprovecha tarifas especiales en rutas directas a TBP, alojamientos frente al mar y traslados oficiales a Zorritos y Punta Sal.',
+    cta: 'Ver Promoción',
+    href: localizePath('/partners/', 'es'),
+  },
+  en: {
+    badge: 'Sponsored',
+    sponsor: 'Official Partner',
+    title: 'Escape to Tumbes: Direct Flights & Beach Stays up to 30% OFF',
+    description: 'Exclusive seasonal deals on direct routes to TBP, verified beachfront hotels, and airport transfers to Punta Sal.',
+    cta: 'Explore Deals',
+    href: localizePath('/partners/', 'en'),
+  },
+  pt: {
+    badge: 'Publicidade',
+    sponsor: 'Parceiro Oficial',
+    title: 'Fuja para Tumbes: Voos & Hotéis com até 30% OFF',
+    description: 'Tarifas especiais de temporada para TBP, resorts à beira-mar e traslados oficiais para Zorritos e Punta Sal.',
+    cta: 'Ver Ofertas',
+    href: localizePath('/partners/', 'pt'),
+  },
+};
+
+const current = defaults[lang] ?? defaults.es;
+const finalBadge = dynamicAd?.badgeText ?? badgeText ?? current.badge;
+const finalSponsor = dynamicAd?.sponsorName ?? sponsorName ?? current.sponsor;
+const finalTitle = dynamicAd?.title ?? title ?? current.title;
+const finalDesc = dynamicAd?.description ?? description ?? current.description;
+const finalCta = dynamicAd?.ctaText ?? ctaText ?? current.cta;
+const finalHref = dynamicAd?.ctaHref ?? ctaHref ?? current.href;
+const finalImage = dynamicAd?.image ?? image;
+const finalAlt = dynamicAd?.imageAlt ?? imageAlt ?? finalTitle;
+---
+
+{
+  variant === 'card' && (
+    <aside
+      class="home-ad-banner home-ad-banner--card-wrap"
+      data-ad-banner
+      data-ad-id={id}
+      aria-label={finalBadge}
+    >
+      <div class="container-page">
+        <div class="home-ad-card">
+          
+          <!-- Imagen Rectangular (16:9) con diseño limpio -->
+          <div class="home-ad-card__media">
+            <img
+              src={finalImage}
+              alt={finalAlt}
+              class="home-ad-card__img"
+              loading="lazy"
+              width="640"
+              height="360"
+            />
+            <span class="home-ad-card__badge badge badge--sun">
+              <Icon name={icon} size="sm" class="text-amber-600" />
+              <span>{finalBadge}</span>
+            </span>
+          </div>
+
+          <!-- Contenido Informativo y CTA -->
+          <div class="home-ad-card__body">
+            <div class="home-ad-card__header">
+              <span class="home-ad-card__sponsor">{finalSponsor}</span>
+              {
+                dismissible && (
+                  <button
+                    type="button"
+                    class="home-ad-card__close"
+                    data-ad-close
+                    aria-label={lang === 'en' ? 'Dismiss ad' : 'Cerrar anuncio'}
+                    title={lang === 'en' ? 'Dismiss ad' : 'Cerrar anuncio'}
+                  >
+                    <Icon name="close" size="sm" />
+                  </button>
+                )
+              }
+            </div>
+
+            <h3 class="home-ad-card__title">{finalTitle}</h3>
+            <p class="home-ad-card__desc">{finalDesc}</p>
+
+            <div class="home-ad-card__footer">
+              <a class="home-ad-card__btn btn btn--sm btn--primary" href={finalHref}>
+                <span>{finalCta}</span>
+                <Icon name="arrow-right" size="sm" />
+              </a>
+              <span class="home-ad-card__disclaimer">
+                {lang === 'en' ? 'Verified Partner Offer' : 'Oferta verificada por aliados'}
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </aside>
+  )
+}
+
+{
+  variant === 'billboard' && (
+    <aside
+      class="home-ad-banner home-ad-banner--billboard-wrap"
+      data-ad-banner
+      data-ad-id={id}
+      aria-label={finalBadge}
+    >
+      <div class="container-page">
+        <div class="home-ad-billboard">
+          <img
+            src={image}
+            alt={finalAlt}
+            class="home-ad-billboard__bg"
+            loading="lazy"
+            width="1200"
+            height="400"
+          />
+          <div class="home-ad-billboard__overlay" aria-hidden="true" />
+
+          <div class="home-ad-billboard__content">
+            <div class="home-ad-billboard__tags">
+              <span class="badge badge--sun">
+                <Icon name={icon} size="sm" class="text-amber-600" />
+                <span>{finalBadge}</span>
+              </span>
+              <span class="home-ad-billboard__sponsor">{finalSponsor}</span>
+            </div>
+
+            <h3 class="home-ad-billboard__title">{finalTitle}</h3>
+            <p class="home-ad-billboard__desc">{finalDesc}</p>
+
+            <div class="home-ad-billboard__footer">
+              <a class="btn btn--sm btn--white" href={finalHref}>
+                <span>{finalCta}</span>
+                <Icon name="arrow-right" size="sm" />
+              </a>
+            </div>
+          </div>
+
+          {
+            dismissible && (
+              <button
+                type="button"
+                class="home-ad-billboard__close"
+                data-ad-close
+                aria-label={lang === 'en' ? 'Dismiss ad' : 'Cerrar anuncio'}
+                title={lang === 'en' ? 'Dismiss ad' : 'Cerrar anuncio'}
+              >
+                <Icon name="close" size="sm" />
+              </button>
+            )
+          }
+        </div>
+      </div>
+    </aside>
+  )
+}
+
+{
+  variant === 'minimal' && (
+    <aside
+      class="home-ad-banner"
+      data-ad-banner
+      data-ad-id={id}
+      aria-label={finalBadge}
+    >
+      <div class="container-page">
+        <div class="home-ad-banner__card">
+          
+          <!-- Contenido Informativo Minimalista Franja -->
+          <div class="home-ad-banner__content">
+            <div class="home-ad-banner__tags">
+              <span class="home-ad-banner__badge badge badge--sun">
+                <Icon name={icon} size="sm" class="text-amber-600" />
+                <span>{finalBadge}</span>
+              </span>
+              <span class="home-ad-banner__sponsor">{finalSponsor}</span>
+            </div>
+
+            <div class="home-ad-banner__info">
+              <strong class="home-ad-banner__title">{finalTitle}</strong>
+              <span class="home-ad-banner__divider" aria-hidden="true">•</span>
+              <p class="home-ad-banner__desc">{finalDesc}</p>
+            </div>
+          </div>
+
+          <!-- Acciones: CTA + Cierre Opcional -->
+          <div class="home-ad-banner__actions">
+            <a class="home-ad-banner__btn btn btn--sm btn--primary" href={finalHref}>
+              <span>{finalCta}</span>
+              <Icon name="arrow-right" size="sm" />
+            </a>
+
+            {
+              dismissible && (
+                <button
+                  type="button"
+                  class="home-ad-banner__close"
+                  data-ad-close
+                  aria-label={lang === 'en' ? 'Dismiss ad' : 'Cerrar anuncio'}
+                  title={lang === 'en' ? 'Dismiss ad' : 'Cerrar anuncio'}
+                >
+                  <Icon name="close" size="sm" />
+                </button>
+              )
+            }
+          </div>
+
+        </div>
+      </div>
+    </aside>
+  )
+}
+
+<script>
+  function setupAdBanners(): void {
+    const banners = document.querySelectorAll<HTMLElement>('[data-ad-banner]');
+    banners.forEach((banner) => {
+      const id = banner.dataset.adId || 'ad-banner';
+      const storageKey = `mitumbes_ad_dismissed_${id}`;
+
+      // Comprobar si ya fue cerrado en esta sesión
+      try {
+        if (sessionStorage.getItem(storageKey) === 'true') {
+          banner.style.display = 'none';
+          return;
+        }
+      } catch {}
+
+      const closeBtn = banner.querySelector<HTMLButtonElement>('[data-ad-close]');
+      closeBtn?.addEventListener('click', () => {
+        banner.style.transition = 'opacity 0.25s ease, transform 0.25s ease, max-height 0.3s ease';
+        banner.style.opacity = '0';
+        banner.style.transform = 'translateY(-6px)';
+        setTimeout(() => {
+          banner.style.display = 'none';
+        }, 260);
+
+        try {
+          sessionStorage.setItem(storageKey, 'true');
+        } catch {}
+      });
+    });
+  }
+
+  if (typeof window !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupAdBanners);
+    } else {
+      setupAdBanners();
+    }
+  }
+</script>

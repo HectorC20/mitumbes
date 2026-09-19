@@ -1,0 +1,28 @@
+---
+import Layout from '@/components/layout/Layout.astro';
+import LegalDocument from '@/components/legal/LegalDocument.astro';
+import { isLocale, type Locale } from '@/shared/constants/locales';
+import { t } from '@/shared/constants/ui';
+import { legalNoticeData } from '@/shared/content/legal-data';
+
+const lang = Astro.params.lang as Locale;
+
+if (!isLocale(lang)) {
+  return Astro.redirect('/404/', 301);
+}
+---
+
+<Layout
+  lang={lang}
+  title={t(lang, 'seo.legalTitle')}
+  description={t(lang, 'seo.legalDescription')}
+>
+  <LegalDocument
+    document={legalNoticeData}
+    lang={lang}
+    eyebrow={t(lang, 'legal.eyebrow')}
+    title={t(lang, 'legal.title')}
+    lead={t(lang, 'legal.lead')}
+    updatedText={t(lang, 'legal.updated')}
+  />
+</Layout>

@@ -1,6 +1,7 @@
 ---
 import PlaceCard from '../place/PlaceCard.astro';
-import Icon from '../Icon.astro';
+import Pagination from '../common/Pagination.astro';
+import Icon from '@/shared/components/design/Icon.astro';
 import {
   loc,
   type Categoria,
@@ -8,7 +9,7 @@ import {
   type Zona,
 } from '../../shared/content/places';
 import { isLocale, localizePath, type Locale } from '../../shared/constants/locales';
-import { interpolate, t } from '../../shared/constants/ui';
+import { t } from '../../shared/constants/ui';
 import { SECTIONS, sectionLabel } from '../../shared/constants/sections';
 
 interface Props {
@@ -37,38 +38,6 @@ const categoriasOptions = categorias.map((c) => ({
 const zonasOptions = zonas
   .map((z) => ({ id: z.id, title: loc(z.data.title, lang) ?? z.id }))
   .sort((a, b) => a.title.localeCompare(b.title));
-
-/** Enlace a una página del listado conservando los filtros activos. */
-function enlacePagina(n: number): string {
-  const qs = new URLSearchParams();
-  if (params.q) qs.set('q', params.q);
-  if (params.categoria) qs.set('categoria', params.categoria);
-  if (params.zona) qs.set('zona', params.zona);
-  if (n > 1) qs.set('page', String(n));
-  const query = qs.toString();
-  return query ? `${action}?${query}` : action;
-}
-
-/**
- * Números de página a mostrar: todos si hay pocas, o primera/última y las
- * contiguas a la actual con elipsis cuando hay muchas.
- */
-const paginasVisibles: (number | '…')[] = (() => {
-  if (totalPaginas <= 7) {
-    return Array.from({ length: totalPaginas }, (_, i) => i + 1);
-  }
-  const candidatos = [1, page - 1, page, page + 1, totalPaginas]
-    .filter((n) => n >= 1 && n <= totalPaginas)
-    .sort((a, b) => a - b);
-  const salida: (number | '…')[] = [];
-  let previo = 0;
-  for (const n of candidatos) {
-    if (previo && n - previo > 1) salida.push('…');
-    salida.push(n);
-    previo = n;
-  }
-  return salida;
-})();
 ---
 
 <div class="search-toolbar">
@@ -149,7 +118,9 @@ const paginasVisibles: (number | '…')[] = (() => {
 <p id="search-count" class="search-meta" aria-live="polite">
   {total} {total === 1 ? t(lang, 'count.place') : t(lang, 'count.places')}
 </p>
-
+{
+  totalPaginas > 1 && <Pagination page={page} totalPaginas={totalPaginas} lang={lang} />
+}
 <div id="place-grid" class="place-grid">
   {
     lugares.map((lugar) => (
@@ -171,54 +142,5 @@ const paginasVisibles: (number | '…')[] = (() => {
 </div>
 
 {
-  totalPaginas > 1 && (
-    <nav class="pagination" aria-label={t(lang, 'pagination.label')}>
-      {page > 1 ? (
-        <a class="pagination__link" href={enlacePagina(page - 1)} rel="prev">
-          <Icon name="chevron-left" size="sm" />
-          <span>{t(lang, 'pagination.previous')}</span>
-        </a>
-      ) : (
-        <span class="pagination__link pagination__link--disabled" aria-disabled="true">
-          <Icon name="chevron-left" size="sm" />
-          <span>{t(lang, 'pagination.previous')}</span>
-        </span>
-      )}
-
-      <ul class="pagination__pages">
-        {paginasVisibles.map((n) =>
-          n === '…' ? (
-            <li class="pagination__ellipsis" aria-hidden="true">
-              …
-            </li>
-          ) : (
-            <li>
-              <a
-                class="pagination__page"
-                href={enlacePagina(n)}
-                aria-current={n === page ? 'page' : undefined}
-                aria-label={interpolate(t(lang, 'pagination.goToPage'), {
-                  page: String(n),
-                })}
-              >
-                {n}
-              </a>
-            </li>
-          ),
-        )}
-      </ul>
-
-      {page < totalPaginas ? (
-        <a class="pagination__link" href={enlacePagina(page + 1)} rel="next">
-          <span>{t(lang, 'pagination.next')}</span>
-          <Icon name="chevron-right" size="sm" />
-        </a>
-      ) : (
-        <span class="pagination__link pagination__link--disabled" aria-disabled="true">
-          <span>{t(lang, 'pagination.next')}</span>
-          <Icon name="chevron-right" size="sm" />
-        </span>
-      )}
-    </nav>
-  )
+  totalPaginas > 1 && <Pagination page={page} totalPaginas={totalPaginas} lang={lang} />
 }

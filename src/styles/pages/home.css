@@ -1,116 +1,337 @@
 @reference "../global.css";
 
-/* ---------- Hero ---------- */
-.hero {
-  @apply relative overflow-hidden bg-secondary text-white;
+/* ---------- Guía de la región (contenido editorial de la portada) ---------- */
+
+.guide-section {
+  @apply py-10 sm:py-16 bg-gradient-to-b from-white via-sand/20 to-white border-b border-ink/10;
 }
 
-.hero__img {
-  @apply absolute inset-0 h-full w-full object-cover opacity-50;
+.guide-header {
+  @apply max-w-4xl mx-auto text-center mb-8 sm:mb-10;
 }
 
-.hero::after {
-  content: '';
-  @apply absolute inset-0 bg-gradient-to-r from-secondary via-secondary/80 to-secondary/30;
+.guide-header__badge {
+  @apply inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full mb-2;
 }
 
-.hero__inner {
-  @apply relative z-10 py-20 md:py-28;
+.guide-header__title {
+  @apply text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-secondary leading-tight;
 }
 
-.hero__eyebrow {
-  @apply text-xs font-semibold uppercase tracking-[0.2em] text-sun;
+.guide-header__divider {
+  @apply w-12 h-1 bg-gradient-to-r from-primary to-sun mx-auto mt-2.5 mb-5 rounded-full;
 }
 
-.hero__title {
-  @apply mt-3 max-w-3xl text-4xl leading-tight text-white sm:text-5xl lg:text-6xl;
+/* Barra de navegación rápida integrada (Compacta y sin scrollbar fea) */
+.guide-nav {
+  @apply bg-sand/50 backdrop-blur-md rounded-2xl p-1.5 sm:p-2 border border-ink/10 max-w-4xl mx-auto overflow-x-auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.hero__lead {
-  @apply mt-5 max-w-xl text-lg leading-relaxed text-white/85;
+.guide-nav::-webkit-scrollbar {
+  display: none;
 }
 
-.hero__search {
-  @apply mt-8;
+.guide-nav__list {
+  @apply flex items-center justify-start sm:justify-center gap-1 sm:gap-1.5 list-none p-0 m-0 min-w-max sm:min-w-0 sm:flex-wrap;
 }
 
-/* ---------- Tiles de categoría ---------- */
-.category-grid {
-  @apply grid gap-4 sm:grid-cols-2 lg:grid-cols-3;
+.guide-nav__item {
+  @apply shrink-0;
 }
 
-.category-tile {
-  @apply flex items-center gap-4 rounded-md border border-ink/10 bg-white p-5 transition-colors duration-200 hover:border-primary hover:bg-primary/5;
+.guide-nav__link {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-ink/75 no-underline transition-all duration-200 hover:bg-white hover:text-ink whitespace-nowrap cursor-pointer;
 }
 
-.category-tile__icon {
-  @apply flex h-12 w-12 shrink-0 items-center justify-center rounded-sm bg-primary/10 text-primary;
+.guide-nav__link--active {
+  @apply bg-primary text-white shadow-sm hover:bg-primary hover:text-white;
 }
 
-.category-tile__title {
-  @apply block font-display text-lg leading-snug text-secondary;
+/* Contenedor dinámico guide-intro */
+.guide-intro {
+  @apply bg-white p-5 sm:p-7 md:p-8 rounded-3xl shadow-sm border border-ink/10 text-left space-y-3 mt-4 transition-all duration-200;
 }
 
-.category-tile__count {
-  @apply text-sm text-muted;
+.guide-intro-panel {
+  @apply space-y-3;
 }
 
-/* ---------- Cabecera de categoría (detalle) ---------- */
-.categoria-header {
-  @apply flex items-center gap-4;
+.guide-intro-panel__badge {
+  @apply inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-1;
 }
 
-/* ---------- Guía de la región (contenido de la portada) ---------- */
-.guide__intro {
-  @apply mb-8 grid gap-4 text-base leading-relaxed text-ink/80 md:grid-cols-2;
+.guide-intro-panel__head {
+  @apply flex items-center gap-2.5 pb-2.5 border-b border-ink/10 mb-2;
 }
 
-.guide__grid {
-  @apply grid gap-8 md:grid-cols-2;
+.guide-intro-panel__title {
+  @apply text-lg sm:text-xl font-bold font-display text-secondary m-0;
 }
 
-.guide__item {
-  @apply border-t border-ink/10 pt-4;
+.guide-intro__paragraph {
+  @apply text-sm sm:text-base leading-relaxed text-ink/80 font-normal m-0;
 }
 
-.guide__item-title {
-  @apply mb-2 font-display text-lg leading-snug text-secondary;
+.guide-intro-checklist {
+  @apply space-y-2.5 list-none p-0 m-0 text-xs sm:text-sm;
 }
 
-.guide__item p {
-  @apply mb-3 text-sm leading-relaxed text-ink/80 last:mb-0;
+.guide-intro-checklist__item {
+  @apply flex items-start gap-2.5 text-ink/80;
 }
 
-/* ---------- Cards de zona ---------- */
-.zone-grid {
-  @apply grid gap-4 sm:grid-cols-2 lg:grid-cols-3;
+.guide-intro-checklist__icon {
+  @apply w-6 h-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5 text-xs;
 }
 
-.zone-card {
-  @apply relative block overflow-hidden rounded-md;
+.guide-intro-checklist__text {
+  @apply leading-relaxed;
 }
 
-.zone-card__img {
-  @apply absolute inset-0 h-full w-full object-cover transition-transform duration-300;
+/* Ruta paso a paso / Itinerario */
+.guide-steps {
+  @apply mt-12 sm:mt-16;
 }
 
-.zone-card:hover .zone-card__img {
-  @apply scale-105;
+.guide-steps__head {
+  @apply text-center max-w-2xl mx-auto mb-8;
 }
 
-.zone-card::after {
-  content: '';
-  @apply absolute inset-0 bg-gradient-to-t from-secondary/95 via-secondary/40 to-transparent;
+.guide-steps__eyebrow {
+  @apply block mb-1 text-xs font-semibold uppercase tracking-widest text-coral;
 }
 
-.zone-card__body {
-  @apply relative z-10 flex min-h-44 flex-col justify-end gap-1 p-5;
+.guide-steps__title {
+  @apply text-xl sm:text-2xl md:text-3xl font-display font-extrabold text-secondary;
 }
 
-.zone-card__title {
-  @apply text-2xl leading-tight text-white;
+.guide-steps__subtitle {
+  @apply text-xs sm:text-sm text-muted mt-1.5 leading-relaxed;
 }
 
-.zone-card__count {
-  @apply text-sm text-white/85;
+.guide-steps__grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5;
 }
+
+.guide-step-card .card__title {
+  @apply text-base font-bold;
+}
+
+.guide-step-card__desc {
+  @apply line-clamp-none text-xs text-muted leading-relaxed;
+}
+
+.guide-step-card__time {
+  @apply font-semibold text-primary inline-flex items-center gap-1 text-xs;
+}
+
+/* Callouts informativos */
+.guide-callout {
+  @apply p-3.5 rounded-2xl border text-xs sm:text-sm leading-relaxed mb-3;
+}
+
+.guide-callout--ocean {
+  @apply bg-primary/5 border-primary/20 text-ink/85;
+}
+
+.guide-callout--alert {
+  @apply bg-sun/10 border-sun/30 text-ink flex items-start gap-2.5;
+}
+
+.guide-callout--sand {
+  @apply bg-sand/80 border-ink/10 text-ink/80;
+}
+
+/* Subgrillas de temporada y playas */
+.guide-season-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs;
+}
+
+.guide-season-card {
+  @apply p-3.5 rounded-xl border border-ink/10 bg-sand/30;
+}
+
+.guide-season-card__title {
+  @apply font-bold text-secondary block text-xs sm:text-sm mb-0.5;
+}
+
+.guide-season-card__desc {
+  @apply text-muted leading-relaxed m-0 text-xs;
+}
+
+.guide-beach-grid {
+  @apply grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 text-xs;
+}
+
+.guide-beach-card {
+  @apply bg-sand/30 p-3 rounded-xl border border-ink/10;
+}
+
+.guide-beach-card__title {
+  @apply font-bold text-primary block mb-0.5 text-xs sm:text-sm;
+}
+
+.guide-beach-card__desc {
+  @apply text-muted leading-snug m-0 text-xs;
+}
+
+.guide-badges {
+  @apply flex flex-wrap gap-1.5 pt-1;
+}
+
+/* ============================================================
+   Lugares Destacados (Estándar visual de la página principal)
+   ============================================================ */
+
+.featured-places-section {
+  @apply py-12 sm:py-20 bg-gradient-to-b from-white via-sand/40 to-sand/15 border-y border-ink/10 relative overflow-hidden;
+}
+
+.featured-places__head {
+  @apply flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-8 sm:mb-10;
+}
+
+.featured-places__head-left {
+  @apply max-w-2xl;
+}
+
+.featured-places__badge {
+  @apply inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full mb-2.5 bg-primary/10 text-primary border border-primary/20;
+}
+
+.featured-places__title {
+  @apply text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-secondary leading-tight;
+}
+
+.featured-places__subtitle {
+  @apply text-sm sm:text-base text-ink/75 mt-2.5 leading-relaxed m-0 font-normal;
+}
+
+.featured-places__view-all {
+  @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-primary text-secondary hover:text-white border border-ink/15 shadow-xs font-semibold text-xs uppercase tracking-wider transition-all duration-200 no-underline shrink-0;
+}
+
+.featured-places__meta-strip {
+  @apply flex flex-wrap items-center gap-2 sm:gap-3 mb-6 sm:mb-8 text-xs font-medium text-ink/70;
+}
+
+.featured-places__meta-item {
+  @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/80 border border-ink/10 backdrop-blur-xs;
+}
+
+.featured-places__footer-banner {
+  @apply mt-10 sm:mt-12 p-6 sm:p-8 rounded-3xl bg-white border border-ink/10 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left;
+}
+
+.featured-places__footer-text {
+  @apply max-w-xl;
+}
+
+.featured-places__footer-title {
+  @apply text-base sm:text-lg font-bold text-secondary m-0;
+}
+
+.featured-places__footer-desc {
+  @apply text-xs sm:text-sm text-muted mt-1 m-0;
+}
+
+.featured-places__footer-btn {
+  @apply inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-secondary hover:bg-primary text-white font-semibold text-xs uppercase tracking-wider transition-all duration-200 no-underline shrink-0 shadow-md;
+}
+
+/* ============================================================
+   Chunking progresivo y renderizado diferido por apartados
+   (Modern Web Performance Guidance: defer-rendering-heavy-content)
+   Evita cálculos de diseño y descarga de imágenes offscreen
+   hasta que el usuario hace scroll cerca de cada apartado.
+   ============================================================ */
+
+/* Estado del chunk antes de activarse en scroll (diferido) */
+.section-chunk[data-chunk-status="pending"] {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 650px;
+  min-height: var(--chunk-min-height, 500px);
+  position: relative;
+}
+
+.dest-showcase-section.section-chunk[data-chunk-status="pending"] {
+  contain-intrinsic-size: auto none auto 680px;
+}
+
+.home-cat-section.section-chunk[data-chunk-status="pending"] {
+  contain-intrinsic-size: auto none auto 480px;
+}
+
+#destacados.section-chunk[data-chunk-status="pending"] {
+  contain-intrinsic-size: auto none auto 760px;
+}
+
+#eventos.section-chunk[data-chunk-status="pending"] {
+  contain-intrinsic-size: auto none auto 680px;
+}
+
+.guide-section.section-chunk[data-chunk-status="pending"] {
+  contain-intrinsic-size: auto none auto 880px;
+}
+
+#partners.section-chunk[data-chunk-status="pending"] {
+  contain-intrinsic-size: auto none auto 380px;
+}
+
+.section-chunk[data-chunk-status="pending"] .chunk-placeholder {
+  display: block;
+  min-height: var(--chunk-min-height, 500px);
+  width: 100%;
+}
+
+/* Una vez cargado el chunk: renderizado permanente normal.
+   Previene revalidaciones HTTP 304 continuas de imágenes al hacer scroll hacia arriba y abajo. */
+.section-chunk[data-chunk-status="loaded"] {
+  content-visibility: visible !important;
+  contain-intrinsic-size: none !important;
+  min-height: auto;
+}
+
+.section-chunk[data-chunk-status="loaded"] .chunk-placeholder {
+  display: none !important;
+}
+
+/* Shimmer animado sutil para el placeholder mientras se hace scroll hacia la sección */
+.chunk-placeholder {
+  display: none;
+  background-color: var(--color-sand, #f8f6f0);
+  opacity: 0.5;
+}
+
+.chunk-skeleton {
+  width: 100%;
+  min-height: var(--chunk-min-height, 500px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.chunk-skeleton__shimmer {
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.4) 20%,
+    rgba(255, 255, 255, 0.7) 60%,
+    rgba(255, 255, 255, 0)
+  );
+  animation: chunk-shimmer 2s infinite;
+}
+
+@keyframes chunk-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+

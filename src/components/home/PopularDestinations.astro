@@ -1,0 +1,75 @@
+---
+import ZoneCard from '@/components/zone/ZoneCard.astro';
+import ShowcaseHeader from '@/shared/components/ShowcaseHeader.astro';
+import ShowcaseTrack from '@/shared/components/ShowcaseTrack.astro';
+import { localizePath, type Locale } from '@/shared/constants/locales';
+import type { Zona } from '@/shared/content/places';
+import { ZONE_EDITORIAL_META } from '@/shared/content/zones';
+
+import SectionChunk from '@/components/common/SectionChunk.astro';
+
+interface Props {
+  zonas: Zona[];
+  conteos: Map<string, number>;
+  lang: Locale;
+}
+
+const { zonas = [], conteos, lang } = Astro.props;
+
+const defaultZoneKeys = Object.keys(ZONE_EDITORIAL_META);
+const defaultCounts: Record<string, number> = {
+  'punta-sal': 18,
+  zorritos: 22,
+  'puerto-pizarro': 15,
+  tumbes: 12,
+  cancas: 9,
+};
+
+// Combinar con zonas de la base de datos si están disponibles
+const destinationZones: Zona[] =
+  zonas.length > 0
+    ? zonas.slice(0, 5)
+    : (defaultZoneKeys.map((k) => ({ id: k } as Zona)));
+
+const zonesHref = localizePath('/zones/', lang);
+---
+
+<SectionChunk id="destinos" class="dest-showcase-section" minHeight="680px" data-carousel-scope>
+  <ShowcaseHeader
+    eyebrow={lang === 'en' ? 'POPULAR DESTINATIONS' : 'DESTINOS POPULARES'}
+    title={lang === 'en' ? 'The Jewels of Northern Coast' : 'Las Joyas del Litoral Norteño'}
+    subtitle={lang === 'en'
+      ? 'Explore the most iconic beaches, mangrove sanctuaries, and cultural centers in Tumbes.'
+      : 'Explora las playas más paradisíacas, santuarios de manglares y centros culturales de la región.'}
+    prevAriaLabel={lang === 'en' ? 'Previous destination' : 'Destino anterior'}
+    nextAriaLabel={lang === 'en' ? 'Next destination' : 'Siguiente destino'}
+  >
+    <ShowcaseTrack
+      totalItems={destinationZones.length}
+      actionHref={zonesHref}
+      actionText={lang === 'en' ? 'View all zones' : 'Ver todas las zonas'}
+      actionIcon="compass"
+      trackAriaLabel={lang === 'en' ? 'Popular destinations list' : 'Lista de destinos populares'}
+    >
+      {
+        destinationZones.map((z, index) => (
+          <ZoneCard
+            zona={z}
+            count={conteos.get(z.id) ?? defaultCounts[z.id] ?? 10}
+            lang={lang}
+            index={index}
+            isCarouselItem
+          />
+        ))
+      }
+    </ShowcaseTrack>
+  </ShowcaseHeader>
+</SectionChunk>
+
+<style>
+  @reference "@/styles/global.css";
+
+  .dest-showcase-section {
+    @apply py-14 sm:py-20 bg-gradient-to-b from-white via-sand/25 to-white border-b border-ink/10;
+  }
+</style>

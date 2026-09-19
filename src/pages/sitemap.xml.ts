@@ -1,7 +1,5 @@
 import type { APIRoute } from 'astro';
-import { lugaresService } from '../services/lugares.service';
-import { categoriasService } from '../services/categorias.service';
-import { zonasService } from '../services/zonas.service';
+import { contentService } from '../services/content.service';
 import { SITE } from '../shared/constants/site';
 import { LOCALES } from '../shared/constants/locales';
 import { rutaCategoria, rutaContenido, rutaZona } from '../shared/content/places';
@@ -16,9 +14,9 @@ interface UrlEntry {
 
 export const GET: APIRoute = async () => {
   const [contenidos, categorias, zonas] = await Promise.all([
-    lugaresService.listarTodos(),
-    categoriasService.listar(),
-    zonasService.listar(),
+    contentService.lugares.listarTodos(),
+    contentService.categorias.listar(),
+    contentService.zonas.listar(),
   ]);
 
   const urls: UrlEntry[] = [];

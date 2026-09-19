@@ -1,0 +1,111 @@
+@reference "../global.css";
+
+/* ============================================================
+   Estilos Semánticos para Documentos Legales e Institucionales
+   (Aviso Legal, Privacidad, Código de Ética)
+   ============================================================ */
+
+.legal-page-wrapper {
+  @apply w-full bg-sand/30 min-h-screen pb-16;
+}
+
+/* Encabezado del Documento */
+.legal-hero {
+  @apply w-full bg-white border-b border-ink/10 pt-12 pb-10;
+}
+
+.legal-hero__inner {
+  @apply max-w-4xl mx-auto px-4 sm:px-6;
+}
+
+.legal-hero__badge {
+  @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20 mb-4;
+}
+
+.legal-hero__title {
+  @apply text-3xl sm:text-4xl lg:text-5xl font-display font-black text-ink m-0 leading-tight;
+}
+
+.legal-hero__lead {
+  @apply text-base sm:text-lg text-ink/75 mt-4 max-w-2xl leading-relaxed;
+}
+
+.legal-hero__meta {
+  @apply flex items-center gap-2 text-xs text-ink/60 mt-6 pt-6 border-t border-ink/10 font-mono;
+}
+
+/* Contenedor Principal */
+.legal-container {
+  @apply max-w-4xl mx-auto px-4 sm:px-6 pt-10;
+}
+
+/* Tabla de Contenidos Rápida (TOC) */
+.legal-toc {
+  @apply bg-white rounded-3xl p-6 sm:p-7 border border-ink/10 shadow-2xs mb-10;
+}
+
+.legal-toc__head {
+  @apply flex items-center gap-2 mb-4 text-ink;
+}
+
+.legal-toc__title {
+  @apply text-base font-bold text-ink m-0;
+}
+
+.legal-toc__list {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-2 m-0 p-0 list-none;
+}
+
+.legal-toc__link {
+  @apply inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold text-ink/80 hover:text-primary hover:bg-sand/60 transition-all duration-200 no-underline;
+}
+
+/* Cláusulas y Secciones */
+.legal-body {
+  @apply flex flex-col gap-6;
+}
+
+.legal-card {
+  @apply bg-white rounded-3xl p-6 sm:p-8 border border-ink/10 shadow-2xs transition-all duration-200 hover:border-primary/30;
+}
+
+.legal-section__title {
+  @apply text-lg sm:text-xl font-display font-bold text-ink m-0 mb-4 flex items-center gap-2.5 pb-3 border-b border-ink/5;
+}
+
+.legal-section__content {
+  @apply text-sm sm:text-base text-ink/85 leading-relaxed space-y-4;
+}
+
+.legal-section__content p {
+  @apply m-0;
+}
+
+.legal-section__bullets {
+  @apply list-disc list-outside pl-5 space-y-2 mt-3 text-ink/80 text-sm sm:text-base;
+}
+
+.legal-section__bullets li {
+  @apply leading-relaxed;
+}
+
+/* Cuadro Destacado de Contacto / ARCO / Denuncia */
+.legal-callout {
+  @apply bg-emerald-500/5 rounded-3xl p-6 sm:p-8 border border-emerald-600/20 mt-10;
+}
+
+.legal-callout__head {
+  @apply flex items-center gap-2.5 text-emerald-800 font-bold mb-2;
+}
+
+.legal-callout__title {
+  @apply text-base sm:text-lg font-display font-bold text-emerald-950 m-0;
+}
+
+.legal-callout__text {
+  @apply text-sm sm:text-base text-emerald-900/85 leading-relaxed m-0 mb-4;
+}
+
+.legal-callout__email {
+  @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm tracking-wide transition-all duration-200 shadow-sm no-underline;
+}

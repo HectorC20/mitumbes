@@ -15,14 +15,20 @@ export interface Section {
 }
 
 export const SECTIONS: Section[] = [
-  { id: 'inicio', path: '/' },
+  // { id: 'inicio', path: '/' },
   { id: 'lugares', path: '/places/' },
   { id: 'categorias', path: '/categories/' },
   { id: 'zonas', path: '/zones/' },
 ];
 
+export const LEGAL_SECTIONS: Section[] = [
+  { id: 'legal', path: '/legal/' },
+  { id: 'privacidad', path: '/privacy/' },
+  { id: 'etica', path: '/ethics/' },
+];
+
 export function getSection(id: string): Section | undefined {
-  return SECTIONS.find((s) => s.id === id);
+  return SECTIONS.find((s) => s.id === id) ?? LEGAL_SECTIONS.find((s) => s.id === id);
 }
 
 /** Etiqueta localizada de un apartado. */
@@ -36,6 +42,12 @@ export function sectionLabel(id: string, lang: Locale): string {
       return ui[lang]['nav.categories'];
     case 'zonas':
       return ui[lang]['nav.zones'];
+    case 'legal':
+      return ui[lang]['footer.legal'];
+    case 'privacidad':
+      return ui[lang]['footer.privacy'];
+    case 'etica':
+      return ui[lang]['footer.ethics'];
     default:
       return id;
   }

@@ -1,0 +1,241 @@
+---
+import Icon from '@/shared/components/design/Icon.astro';
+import CategoryCard from '@/components/category/CategoryCard.astro';
+import SectionChunk from '@/components/common/SectionChunk.astro';
+import { localizePath, type Locale } from '@/shared/constants/locales';
+import { type Categoria } from '@/shared/content/places';
+import { t } from '@/shared/constants/ui';
+
+interface Props {
+  categorias: Categoria[];
+  conteos: Map<string, number>;
+  lang: Locale;
+}
+
+const { categorias, conteos, lang } = Astro.props;
+
+const tourismKeys = ['places', 'restaurants', 'hotels', 'activities', 'events'];
+
+const tourismCategories = categorias
+  .filter((c) => tourismKeys.includes(c.collection))
+  .sort((a, b) => {
+    const orderA = tourismKeys.indexOf(a.collection);
+    const orderB = tourismKeys.indexOf(b.collection);
+    return orderA - orderB;
+  });
+
+const primaryCategories = tourismCategories.length > 0
+  ? tourismCategories
+  : categorias.filter((c) => (conteos.get(c.collection) ?? 0) > 0).slice(0, 6);
+
+const otherCategories = categorias.filter((c) => !tourismKeys.includes(c.collection));
+const categoriesHref = localizePath('/categories/', lang);
+
+// Píldoras de filtro con enlaces reales que envían a la sección o página correspondiente
+const filterLinks = [
+  {
+    id: 'all',
+    label: lang === 'en' ? 'All Experiences' : 'Todas las Experiencias',
+    href: categoriesHref,
+    icon: 'sparkles',
+    iconColor: 'text-sun',
+  },
+  {
+    id: 'playas',
+    label: lang === 'en' ? 'Beaches & Nature' : 'Playas & Naturaleza',
+    href: localizePath('/categories/places/', lang),
+    icon: 'waves',
+    iconColor: 'text-sky-500',
+  },
+  {
+    id: 'gastronomia',
+    label: lang === 'en' ? 'Gastronomy' : 'Gastronomía',
+    href: localizePath('/categories/restaurants/', lang),
+    icon: 'utensils',
+    iconColor: 'text-amber-500',
+  },
+  {
+    id: 'hospedaje',
+    label: lang === 'en' ? 'Where to Stay' : 'Hospedajes',
+    href: localizePath('/categories/hotels/', lang),
+    icon: 'bed',
+    iconColor: 'text-emerald-500',
+  },
+  {
+    id: 'aventura',
+    label: lang === 'en' ? 'Tours & Adventures' : 'Aventuras & Tours',
+    href: localizePath('/categories/activities/', lang),
+    icon: 'boat',
+    iconColor: 'text-indigo-500',
+  },
+  {
+    id: 'eventos',
+    label: lang === 'en' ? 'Events' : 'Eventos',
+    href: localizePath('/categories/events/', lang),
+    icon: 'party',
+    iconColor: 'text-rose-500',
+  },
+];
+---
+
+<SectionChunk id="categorias" class="home-cat-section" minHeight="480px" data-home-categories>
+  <!-- Encabezado Inspiracional -->
+  <div class="container-page">
+    <div class="home-cat__head">
+      <div>
+        <p class="eyebrow">{t(lang, 'home.categoriesEyebrow')}</p>
+        <h2 class="home-cat__title">{t(lang, 'home.categoriesTitle')}</h2>
+        <p class="home-cat__subtitle">
+          {lang === 'en'
+            ? 'Discover Tumbes through warm beaches, northern culinary gems, seaside retreats, and marine expeditions.'
+            : 'Descubre Tumbes a través de sus playas cálidas, la exquisita gastronomía norteña, hospedajes costeros y expediciones marinas.'}
+        </p>
+      </div>
+
+      <a class="home-cat__view-all" href={categoriesHref}>
+        <span>{t(lang, 'home.viewAll')}</span>
+        <Icon name="arrow-right" size="sm" />
+      </a>
+    </div>
+  </div>
+
+  <!-- Barra de Filtros Sticky (class="category-filter-bar") que se posiciona debajo del navegador al hacer scroll -->
+  <nav class="category-filter-bar" data-category-filter-bar aria-label={t(lang, 'home.categoriesTitle')}>
+    <div class="container-page">
+      <div class="category-filter-bar__track">
+        {
+          filterLinks.map((item, idx) => (
+            <a
+              href={item.href}
+              class:list={[
+                'category-filter-pill',
+                { 'category-filter-pill--active': idx === 0 },
+              ]}
+              data-cat-pill={item.id}
+              title={`Explorar ${item.label}`}
+            >
+              <Icon name={item.icon} size="sm" class={item.iconColor} />
+              <span>{item.label}</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenedor de la Grilla de Tarjetas -->
+  <div class="container-page home-cat-content">
+    <div class="home-cat-grid" data-cat-grid>
+      {
+        primaryCategories.map((c) => (
+          <CategoryCard
+            categoria={c}
+            count={conteos.get(c.collection) ?? 0}
+            lang={lang}
+            dataCatCard
+          />
+        ))
+      }
+    </div>
+
+    <!-- Enlace discreto al directorio completo y servicios locales si existen -->
+    {
+      otherCategories.length > 0 && (
+        <div class="home-cat__secondary-bar">
+          <Icon name="info" size="sm" class="text-primary shrink-0" />
+          <p class="home-cat__secondary-text">
+            {lang === 'en'
+              ? 'Looking for local businesses, commerce, or professional services?'
+              : '¿Buscas comercios locales, instituciones o servicios profesionales en Tumbes?'}
+          </p>
+          <a class="home-cat__secondary-link" href={categoriesHref}>
+            <span>{lang === 'en' ? 'Explore full directory' : 'Ver directorio completo'}</span>
+            <Icon name="arrow-right" size="sm" />
+          </a>
+        </div>
+      )
+    }
+
+  </div>
+</SectionChunk>
+
+<style>
+  @reference "@/styles/global.css";
+
+  .home-cat-section {
+    @apply pt-14 sm:pt-20 pb-16 sm:pb-24 bg-gradient-to-b from-white via-sand/20 to-white border-b border-ink/10;
+  }
+
+  .home-cat__head {
+    @apply flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6 sm:mb-8;
+  }
+
+  .home-cat__title {
+    @apply text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-secondary tracking-tight mt-1.5 mb-2;
+  }
+
+  .home-cat__subtitle {
+    @apply text-sm sm:text-base text-muted max-w-2xl leading-relaxed m-0;
+  }
+
+  .home-cat__view-all {
+    @apply inline-flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wider text-primary hover:text-secondary transition-colors duration-200 shrink-0 no-underline;
+  }
+
+  /* ============================================================
+     Barra de Filtros de Categorías (category-filter-bar)
+     Sticky justo debajo de la barra de navegación (nav-shell h-14 = 3.5rem)
+     ============================================================ */
+  .category-filter-bar {
+    position: sticky;
+    top: 3.5rem; /* 56px de nav-shell */
+    z-index: 30;
+    @apply w-full bg-white/95 backdrop-blur-md border-y border-ink/10 py-2.5 sm:py-3 shadow-xs;
+  }
+
+  .category-filter-bar__track {
+    @apply flex items-center gap-2 sm:gap-2.5 overflow-x-auto py-1;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .category-filter-bar__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Píldoras con enlaces reales que envían a las páginas de categoría */
+  .category-filter-pill {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-ink/80 bg-white border border-ink/15 hover:border-primary hover:text-primary transition-all duration-200 whitespace-nowrap shadow-2xs no-underline shrink-0;
+  }
+
+  .category-filter-pill:hover {
+    @apply bg-sand/40 border-primary text-primary shadow-xs;
+  }
+
+  .category-filter-pill--active {
+    @apply bg-primary text-white border-primary shadow-xs;
+  }
+
+  .category-filter-pill--active:hover {
+    @apply bg-secondary border-secondary text-white;
+  }
+
+  /* Contenedor de contenido */
+  .home-cat-content {
+    @apply pt-8 sm:pt-10;
+  }
+
+
+  /* Barra Secundaria Discreta */
+  .home-cat__secondary-bar {
+    @apply mt-8 sm:mt-10 p-4 sm:p-5 rounded-2xl bg-sand/40 border border-ink/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs sm:text-sm;
+  }
+
+  .home-cat__secondary-text {
+    @apply text-muted m-0 flex-1 leading-relaxed;
+  }
+
+  .home-cat__secondary-link {
+    @apply inline-flex items-center gap-1 font-bold text-primary hover:text-secondary transition-colors duration-200 shrink-0 no-underline;
+  }
+</style>

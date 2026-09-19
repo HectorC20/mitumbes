@@ -1,4 +1,4 @@
-import type { EnlaceContenido } from '../../services/contrato-web';
+import type { EnlaceContenido } from '../interfaces/contenido';
 
 /**
  * Utilidades de mapa para el detalle de un lugar.

@@ -1,7 +1,8 @@
 ---
 import Layout from '@/components/layout/Layout.astro';
-import Icon from '@/components/Icon.astro';
+import Icon from '@/shared/components/design/Icon.astro';
 import PlaceCard from '@/components/place/PlaceCard.astro';
+import AdBanner from '@/shared/components/ads/AdBanner.astro';
 import noImage from '@/assets/images/no-image.svg';
 import {
   imagenSrc,
@@ -15,8 +16,7 @@ import {
   urlMapa,
   urlMapaEmbed,
 } from '@/shared/content/maps';
-import { lugaresService } from '@/services/lugares.service';
-import { categoriasService } from '@/services/categorias.service';
+import { contentService } from '@/services/content.service';
 import { lugarJsonLd, breadcrumbJsonLd } from '@/lib/seo/jsonld';
 import { LOCALE_BCP47, localizePath, isLocale, type Locale } from '@/shared/constants/locales';
 import { t, interpolate } from '@/shared/constants/ui';
@@ -31,7 +31,7 @@ if (!isLocale(lang)) {
   return Astro.redirect('/404/', 301);
 }
 
-const todos = await lugaresService.listarTodos();
+const todos = await contentService.lugares.listarTodos();
 const lugar = todos.find((item) => item.id === slug);
 
 if (!lugar) {
@@ -47,8 +47,8 @@ if (segmento !== coleccion) {
 }
 
 const [categorias, relacionados] = await Promise.all([
-  categoriasService.listar(),
-  lugaresService.listarRelacionados(lugar),
+  contentService.categorias.listar(),
+  contentService.lugares.listarRelacionados(lugar, 3),
 ]);
 
 const categoria = categorias.find((c) => c.collection === lugar.collection);
@@ -61,7 +61,7 @@ const categoriaTitle = categoria ? loc(categoria.data.title, lang) : undefined;
 const heroImg = imagenSrc(lugar.data.image) || noImage.src;
 
 const url = `${SITE.url}/${lang}/${segmento}/${lugar.id}/`;
-const bodyHtml = await lugaresService.renderBody(lugar, lang);
+const bodyHtml = await contentService.lugares.renderBody(lugar, lang);
 
 const formatFecha = (fecha: Date | undefined) =>
   fecha
@@ -395,13 +395,15 @@ const breadcrumbs = [
             </a>
             {
               lugar.data.verified && (
-                <span class="badge badge--sun badge--center">
+                <span class="badge badge--sun mx-auto">
                   <Icon name="check" size="sm" />
                   {t(lang, 'place.verified')}
                 </span>
               )
             }
           </div>
+
+          <AdBanner lang={lang} id={`place-detail-${slug}`} variant="card" />
         </aside>
       </div>
     </div>
@@ -409,17 +411,23 @@ const breadcrumbs = [
 
   {
     relacionados.length > 0 && (
-      <section class="section section--sand">
+      <section id="sigue-explorando" class="section section--sand">
         <div class="container-page">
           <div class="section-head">
             <div>
               <p class="eyebrow">{t(lang, 'place.relatedEyebrow')}</p>
               <h2 class="section-head__title">
                 {
-                  interpolate(t(lang, 'place.relatedTitle'), {
-                    zone: zonaTitle ?? '',
-                    category: categoriaTitle ? categoriaTitle.toLowerCase() : '',
-                  })
+                  zonaTitle && categoriaTitle
+                    ? interpolate(t(lang, 'place.relatedTitle'), {
+                        zone: zonaTitle,
+                        category: categoriaTitle.toLowerCase(),
+                      })
+                    : zonaTitle
+                      ? interpolate(t(lang, 'place.relatedTitleZone'), {
+                          zone: zonaTitle,
+                        })
+                      : t(lang, 'place.relatedTitleGeneral')
                 }
               </h2>
             </div>
@@ -445,6 +453,15 @@ const breadcrumbs = [
                 />
               ))
             }
+          </div>
+          <div class="section-footer">
+            <a
+              class="btn btn--outline"
+              href={localizePath(`/places/${lugar.collection ? `?categoria=${lugar.collection}` : ''}`, lang)}
+            >
+              {t(lang, 'place.viewMoreRelated')}
+              <Icon name="arrow-right" size="sm" />
+            </a>
           </div>
         </div>
       </section>

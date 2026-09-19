@@ -1,13 +1,12 @@
 ---
 import Layout from '@/components/layout/Layout.astro';
-import PlaceCard from '@/components/place/PlaceCard.astro';
-import { zonasService } from '@/services/zonas.service';
-import { categoriasService } from '@/services/categorias.service';
+import PlaceList from '@/components/place/PlaceList.astro';
+import AdBanner from '@/shared/components/ads/AdBanner.astro';
+import { contentService } from '@/services/content.service';
 import { imagenSrc, loc } from '@/shared/content/places';
 import { breadcrumbJsonLd } from '@/lib/seo/jsonld';
 import { localizePath, isLocale, type Locale } from '@/shared/constants/locales';
 import { t } from '@/shared/constants/ui';
-import '@/styles/pages/zona.css';
 
 const lang = Astro.params.lang as Locale;
 const { slug } = Astro.params;
@@ -16,20 +15,25 @@ if (!isLocale(lang)) {
   return Astro.redirect('/404/', 301);
 }
 
-const zona = await zonasService.buscarPorId(slug!);
+const zona = await contentService.zonas.buscarPorId(slug!);
 
 if (!zona) {
   return Astro.redirect(`/${lang}/404/`);
 }
 
-const [contenidos, categorias] = await Promise.all([
-  zonasService.listarLugares(slug!),
-  categoriasService.listar(),
+const search = Astro.url.searchParams;
+const pagina = Number.parseInt(search.get('page') ?? '1', 10);
+const paginaActual = Number.isNaN(pagina) || pagina < 1 ? 1 : pagina;
+
+const [listado, categorias] = await Promise.all([
+  contentService.lugares.listarPagina({ zona: slug! }, paginaActual),
+  contentService.categorias.listar(),
 ]);
 
-const categoriasPorId = new Map(categorias.map((c) => [c.collection, c]));
 const title = loc(zona.data.title, lang) ?? zona.id;
 const description = loc(zona.data.description, lang) ?? '';
+
+const countLabel = `${listado.total} ${listado.total === 1 ? t(lang, 'count.place') : t(lang, 'count.places')} ${t(lang, 'count.in')} ${title}`;
 
 const breadcrumbs = [
   { name: t(lang, 'nav.home'), url: localizePath('/', lang) },
@@ -98,33 +102,20 @@ const breadcrumbs = [
     )
   }
 
-  <section class="section zona-list">
+  <AdBanner lang={lang} id={`zone-${slug}-ad`} variant="card" />
+
+  <section class="section pt-0">
     <div class="container-page">
-      <p class="search-meta">
-        {contenidos.length} {contenidos.length === 1 ? t(lang, 'count.place') : t(lang, 'count.places')} {t(lang, 'count.in')} {title}
-      </p>
-      {
-        contenidos.length > 0 ? (
-          <div class="place-grid">
-            {
-              contenidos.map((lugar) => (
-                <PlaceCard
-                  lugar={lugar}
-                  categoria={categoriasPorId.get(lugar.collection)}
-                  lang={lang}
-                />
-              ))
-            }
-          </div>
-        ) : (
-          <div class="empty-state">
-            <p class="empty-state__title">
-              {t(lang, 'zones.emptyTitle')}
-            </p>
-            <p class="empty-state__body">{t(lang, 'zones.emptyBody')}</p>
-          </div>
-        )
-      }
+      <PlaceList
+        lugares={listado.items}
+        categorias={categorias}
+        page={listado.page}
+        totalPaginas={listado.totalPaginas}
+        lang={lang}
+        countLabel={countLabel}
+        emptyTitle={t(lang, 'zones.emptyTitle')}
+        emptyBody={t(lang, 'zones.emptyBody')}
+      />
     </div>
   </section>
 </Layout>

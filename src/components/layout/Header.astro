@@ -1,5 +1,5 @@
 ---
-import Icon from '../Icon.astro';
+import Icon from '@/shared/components/design/Icon.astro';
 import {
   LOCALES,
   LOCALE_LABELS,
@@ -11,6 +11,7 @@ import {
 } from '@/shared/constants/locales';
 import { t } from '@/shared/constants/ui';
 import { SECTIONS, sectionLabel } from '@/shared/constants/sections';
+import { navService } from '@/services/nav.service';
 
 interface Props {
   lang?: Locale;
@@ -20,11 +21,23 @@ const lang: Locale = isLocale(Astro.props.lang) ? Astro.props.lang : 'es';
 const path = Astro.url.pathname;
 const base = stripLocale(path);
 
-const links = SECTIONS.map((section) => ({
+const baseLinks = SECTIONS.map((section) => ({
   ...section,
   href: localizePath(section.path, lang),
   label: sectionLabel(section.id, lang),
 }));
+
+// Obtener hasta un máximo de 3 categorías agregadas/destacadas dinámicamente para nav-shell__nav
+const navCategories = await navService.obtenerNavCategorias(lang, 3);
+const dynamicCategoryLinks = navCategories.map((c) => ({
+  id: `cat-${c.id}`,
+  path: c.href,
+  href: c.href,
+  label: c.label,
+  isDynamicCategory: true,
+}));
+
+const links = [...baseLinks, ...dynamicCategoryLinks];
 
 const isActive = (href: string) => {
   const current = path.replace(/\/$/, '');

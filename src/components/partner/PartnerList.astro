@@ -1,21 +1,22 @@
 ---
-import Icon from '@/components/Icon.astro';
-import { PARTNERS, partnerInitials } from '@/shared/content/partners';
+import Icon from '@/shared/components/design/Icon.astro';
+import { partnerInitials } from '@/shared/content/partners';
+import { partnersService } from '@/services/partners.service';
 import { loc } from '@/shared/content/places';
 import { isLocale, type Locale } from '@/shared/constants/locales';
 import { interpolate, t } from '@/shared/constants/ui';
-import '@/styles/pages/partners.css';
 
 interface Props {
   lang?: Locale;
 }
 
 const lang: Locale = isLocale(Astro.props.lang) ? Astro.props.lang : 'es';
+const partnersList = await partnersService.obtenerPartners(lang);
 ---
 
 <div class="partner-grid">
   {
-    PARTNERS.map((partner) => (
+    partnersList.map((partner) => (
       <a
         class="partner-card"
         data-section="partners"

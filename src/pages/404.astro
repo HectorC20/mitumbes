@@ -1,13 +1,12 @@
 ---
-import Layout from '../components/layout/Layout.astro';
-import Icon from '../components/Icon.astro';
+import Layout from '@/components/layout/Layout.astro';
+import Icon from '@/shared/components/design/Icon.astro';
 import {
   getLocaleFromPath,
   localizePath,
   type Locale,
-} from '../shared/constants/locales';
-import { t } from '../shared/constants/ui';
-import '../styles/pages/notfound.css';
+} from '@/shared/constants/locales';
+import { t } from '@/shared/constants/ui';
 
 // Servida en runtime para detectar el idioma de la URL y responder 404.
 export const prerender = false;
@@ -25,7 +24,7 @@ const lang: Locale = getLocaleFromPath(Astro.url.pathname);
     <div class="notfound">
       <p class="notfound__code">404</p>
       <h1 class="page-title">{t(lang, 'notFound.title')}</h1>
-      <p class="lead lead--center">{t(lang, 'notFound.lead')}</p>
+      <p class="lead mx-auto">{t(lang, 'notFound.lead')}</p>
       <div class="notfound__actions">
         <a class="btn btn--primary" href={localizePath('/', lang)}>
           <Icon name="compass" size="sm" />

@@ -1,155 +1,248 @@
 ---
-import Icon from '../Icon.astro';
-import noImage from '@/assets/images/no-image.svg';
+import Icon from '@/shared/components/design/Icon.astro';
 import type { Props } from '@/shared/interfaces/hero.carousel';
 import { t } from '@/shared/constants/ui';
+import { getTumbesWeather } from '@/services/weather.service';
+import { heroCampaignsService } from '@/services/hero-campaigns.service';
 import '@/styles/components/hero-carousel.css';
-const { slides = [], lang } = Astro.props;
-const fallbackImage = noImage.src;
 
-// Aseguramos que cada slide tenga imagen válida o fallback
-const sanitizedSlides = slides.map((slide, index) => ({
-  ...slide,
-  number: String(index + 1).padStart(2, '0'),
-  image: slide.image && slide.image.trim() !== '' ? slide.image : fallbackImage,
-}));
+const { lang, slides: propSlides } = Astro.props;
 
-const nextSlide = sanitizedSlides[1] ?? sanitizedSlides[0];
+// Consulta en tiempo real a la API de Clima & Hora de Tumbes, Perú
+const weather = await getTumbesWeather();
+
+// Si se pasan slides por props se usan, sino se obtienen dinámicamente desde mitumbes-server (/hero)
+const mcpCampaigns = (propSlides && propSlides.length > 0)
+  ? propSlides
+  : await heroCampaignsService.obtenerHeroSlides(lang);
+
+const activeSlide = mcpCampaigns[0];
+
+const iconMap: Record<string, string> = {
+  place: 'pin',
+  item: 'pin',
+  category: 'tag',
+  zone: 'waves',
+  event: 'calendar',
+  route: 'compass',
+  custom: 'compass',
+};
 ---
 
-<section class="hero-carousel" data-hero-carousel aria-roledescription="carousel" aria-label={t(lang, 'home.heroTitle')}>
-  <!--
-    Un único H1 por página con el título descriptivo del home; los títulos de
-    las diapositivas van en <p> para no repetir encabezados (coinciden con los
-    H3 de las tarjetas de lugares destacados).
-  -->
+<section
+  class="hero-main-wrapper"
+  data-hero-container
+  aria-label={t(lang, 'home.heroTitle')}
+>
   <h1 class="sr-only">{t(lang, 'home.heroTitle')}</h1>
-  <!-- Barra lateral izquierda fija sobre el hero -->
-  <aside class="hero-sidebar" aria-label="Navegación del carrusel y redes">
-    <!-- <a href="#" class="hero-sidebar__top" aria-label="Inicio">
-      <Icon name="anchor" size="sm" />
-    </a> -->
 
-    <div class="hero-sidebar__nav">
-      <span class="hero-sidebar__counter" data-hero-counter>01</span>
-      <div class="hero-sidebar__track">
-        <div class="hero-sidebar__indicator" data-hero-progress></div>
+  <!-- ============================================================
+       1. Barra Flotante de Clima & Hora en Vivo de Tumbes (API Open-Meteo)
+       ============================================================ -->
+  <div class="hero-live-status-bar" aria-label="Clima y Hora en Vivo de Tumbes, Perú">
+    <div class="hero-live-status-inner">
+      <!-- Hora en Vivo (America/Lima) -->
+      <span class="hero-live-item" title="Hora local en Tumbes, Perú (GMT-5)">
+        <Icon name="clock" size="sm" class="text-sun" />
+        <strong data-live-clock-time>{weather.timeFormatted}</strong>
+        <span class="text-white/60 text-xs hidden sm:inline">(GMT-5)</span>
+      </span>
+
+      <span class="hero-live-divider"></span>
+
+      <!-- Clima y Temperatura en Vivo -->
+      <span class="hero-live-item" title="Temperatura actual en Tumbes">
+        <Icon name="sun" size="sm" class="text-amber-400" />
+        <strong data-live-temp>{weather.temperature} °C</strong>
+        <span class="text-white/80 hidden md:inline" data-live-condition>{weather.condition}</span>
+      </span>
+
+      <span class="hero-live-divider hidden sm:inline"></span>
+
+      <!-- Humedad -->
+      <span class="hero-live-item hidden sm:inline-flex" title="Humedad relativa en Tumbes">
+        <Icon name="waves" size="sm" class="text-sky-300" />
+        <span>Humedad: <strong data-live-humidity>{weather.humidity}%</strong></span>
+      </span>
+
+      <span class="hero-live-divider hidden lg:inline"></span>
+
+      <!-- Viento -->
+      <span class="hero-live-item hidden lg:inline-flex" title="Velocidad del viento">
+        <Icon name="compass" size="sm" class="text-emerald-300" />
+        <span>Viento: <strong data-live-wind>{weather.windSpeed} km/h</strong></span>
+      </span>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       2. Fondo Dinámico de Campaña Activa
+       ============================================================ -->
+  <div class="hero-camp-bg">
+    <img
+      id="hero-camp-bg-img"
+      src={activeSlide.image}
+      alt={activeSlide.title}
+      class="hero-camp-bg__img"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <div class="hero-camp-bg__overlay"></div>
+  </div>
+
+  <!-- ============================================================
+       3. Contenido Split-Screen (Copy Izquierdo + Panel Derecho)
+       ============================================================ -->
+  <div class="hero-camp-container">
+    <div class="hero-camp-grid">
+      
+      <!-- Columna Izquierda: Copy de Campaña -->
+      <div class="hero-camp-main">
+        <span class="hero-camp-eyebrow" id="hero-camp-eyebrow">
+          <Icon name={iconMap[activeSlide.entityType] || 'compass'} size="sm" />
+          <span>{activeSlide.eyebrow}</span>
+        </span>
+
+        <h2 class="hero-camp-title" id="hero-camp-title">
+          {activeSlide.title}
+        </h2>
+
+        <p class="hero-camp-desc" id="hero-camp-desc">
+          {activeSlide.desc}
+        </p>
+
+        <div class="hero-camp-actions">
+          <a class="btn-pill-action" id="hero-camp-cta" href={activeSlide.href}>
+            <span id="hero-camp-cta-text">{activeSlide.ctaText || t(lang, 'place.seePlace')}</span>
+            <Icon name="arrow-right" size="sm" />
+          </a>
+          <a class="btn-pill-ghost" href="#destinos">
+            <Icon name="pin" size="sm" />
+            <span>Ver Destinos Populares</span>
+          </a>
+        </div>
       </div>
-    </div>
 
-    <div class="hero-sidebar__socials">
-      <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="hero-sidebar__social-link" aria-label="Facebook">
-        <Icon name="facebook" size="sm" />
-      </a>
-      <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="hero-sidebar__social-link" aria-label="Instagram">
-        <Icon name="instagram" size="sm" />
-      </a>
-      <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="hero-sidebar__social-link" aria-label="Twitter / X">
-        <Icon name="x" size="sm" />
-      </a>
-    </div>
-  </aside>
+      <!-- Columna Derecha: Panel Interactivo de Campañas - Diseño Ticket de Viaje / Boarding Pass -->
+      <div class="hero-camp-panel">
+        <div class="hero-camp-panel__inner ticket-panel">
+          
+          <!-- Encabezado del Ticket / Boarding Pass (Limpio y tipográfico, sin íconos pesados) -->
+          <div class="ticket-header">
+            <div class="ticket-header__left">
+              <span class="ticket-header__eyebrow">PASE DE EMBARQUE</span>
+              <h3 class="hero-camp-panel__title ticket-header__title">TICKET DE VIAJE • MI TUMBES</h3>
+            </div>
+            <div class="ticket-header__right">
+              <span class="ticket-badge-class">CLASE VIP</span>
+              <span class="ticket-gate">GATE TBP</span>
+            </div>
+          </div>
 
-  <!-- Diapositivas de fondo -->
-  <div class="hero-carousel__slides">
-    {
-      sanitizedSlides.map((slide, index) => (
-        <article
-          class:list={['hero-slide', { 'hero-slide--active': index === 0 }]}
-          data-hero-slide
-          data-index={index}
-          data-title={slide.title}
-          data-img-src={slide.image}
-          aria-hidden={index !== 0}
-        >
-          <img
-            class="hero-slide__img"
-            src={slide.image}
-            alt={slide.title}
-            loading={index === 0 ? 'eager' : 'lazy'}
-            fetchpriority={index === 0 ? 'high' : 'auto'}
-            onerror={`this.onerror=null; this.src='${fallbackImage}';`}
-          />
-          <div class="hero-slide__overlay"></div>
-          <div class="hero-slide__overlay-bottom"></div>
+          <!-- Ruta Origen -> Destino del Ticket -->
+          <div class="ticket-route">
+            <div class="ticket-route__loc">
+              <span class="ticket-route__tag">ORIGEN</span>
+              <span class="ticket-route__code">TU RUTA</span>
+              <span class="ticket-route__name">Perú & Mundo</span>
+            </div>
+            <div class="ticket-route__flight" aria-hidden="true">
+              <div class="ticket-route__dotted"></div>
+              <span class="ticket-route__num">EXP-2026</span>
+            </div>
+            <div class="ticket-route__loc ticket-route__loc--dest">
+              <span class="ticket-route__tag">DESTINO</span>
+              <span class="ticket-route__code">TBP</span>
+              <span class="ticket-route__name">Tumbes Tropical</span>
+            </div>
+          </div>
 
-          <!-- Contenido central de cada diapositiva -->
-          <div class="hero-carousel__main">
-            <div class="hero-carousel__content">
-              <span class="hero-carousel__eyebrow">
-                <Icon name="waves" size="sm" />
-                {slide.eyebrow || t(lang, 'home.heroEyebrow')}
-              </span>
-              {index === 0 ? (
-                <p class="hero-carousel__title">{slide.title}</p>
-              ) : (
-                <p class="hero-carousel__title" aria-hidden="true">
-                  {slide.title}
-                </p>
-              )}
-              {slide.subtitle && (
-                <p class="hero-carousel__lead">
-                  {slide.subtitle}
-                </p>
-              )}
-              <div class="hero-carousel__action">
-                <a class="hero-btn-pill" href={slide.href}>
-                  <span>{t(lang, 'place.seePlace')}<span class="sr-only"> — {slide.title}</span></span>
-                  <Icon name="arrow-right" size="sm" />
-                </a>
+          <!-- Selector de Experiencias / Campañas -->
+          <div class="ticket-selector-wrap">
+            <div class="ticket-selector-label">
+              <span>EXPERIENCIAS SELECCIONABLES</span>
+            </div>
+            <div class="hero-camp-selector ticket-selector" role="tablist">
+              {
+                mcpCampaigns.map((c, idx) => (
+                  <button
+                    type="button"
+                    class:list={['hero-camp-pill', 'ticket-pill', { 'hero-camp-pill--active': idx === 0 }]}
+                    data-camp-btn={c.id}
+                    data-type={c.entityType}
+                    data-eyebrow={c.eyebrow}
+                    data-title={c.title}
+                    data-desc={c.desc}
+                    data-status={c.status}
+                    data-href={c.href}
+                    data-image={c.image}
+                    data-cta={c.ctaText || t(lang, 'place.seePlace')}
+                    data-temp={c.metaTemp}
+                    data-stat={c.metaStatus}
+                    data-ops={c.metaOperators}
+                    aria-label={`Ver campaña ${c.title}`}
+                  >
+                    <span class="ticket-pill__left">
+                      <span class="ticket-pill__num">0{idx + 1}</span>
+                      <span class="ticket-pill__title">{c.tag}</span>
+                    </span>
+                    <span class="ticket-pill__temp">{c.metaTemp}</span>
+                  </button>
+                ))
+              }
+            </div>
+          </div>
+
+          <!-- Línea de Desprendimiento / Perforación con Muescas Laterales (Ticket Tear Line) -->
+          <div class="ticket-tear" aria-hidden="true">
+            <div class="ticket-notch ticket-notch--left"></div>
+            <div class="ticket-tear__line"></div>
+            <div class="ticket-notch ticket-notch--right"></div>
+          </div>
+
+          <!-- Talón del Ticket / Telemetría en Vivo -->
+          <div class="ticket-stub">
+            <div class="hero-camp-telemetry ticket-telemetry" aria-label="Telemetría de la experiencia en vivo">
+              <div class="hero-camp-telemetry-item">
+                <span class="hero-camp-telemetry-label">Clima / Temp</span>
+                <span class="hero-camp-telemetry-val" id="hero-camp-telemetry-temp">{activeSlide.metaTemp}</span>
+              </div>
+              <div class="hero-camp-telemetry-item">
+                <span class="hero-camp-telemetry-label">Condición / Estado</span>
+                <span class="hero-camp-telemetry-val" id="hero-camp-telemetry-status">{activeSlide.metaStatus}</span>
+              </div>
+              <div class="hero-camp-telemetry-item">
+                <span class="hero-camp-telemetry-label">Zona / Operadores</span>
+                <span class="hero-camp-telemetry-val" id="hero-camp-telemetry-ops">{activeSlide.metaOperators}</span>
+              </div>
+            </div>
+
+            <!-- Código de Barras y Estado en Vivo -->
+            <div class="ticket-bottom">
+              <div class="ticket-barcode-block">
+                <div class="ticket-barcode" aria-hidden="true"></div>
+                <span class="ticket-serial">MTB-TBP-2026-EXP</span>
+              </div>
+              <div class="hero-camp-footer-note ticket-footer-note">
+                <span class="hero-camp-footer-live">
+                  <span class="hero-camp-pulse-dot"></span>
+                  <span id="hero-camp-status-text">{activeSlide.status}</span>
+                </span>
+                <span class="hero-camp-footer-badge" id="hero-camp-type-badge">
+                  {activeSlide.entityType.toUpperCase()}
+                </span>
               </div>
             </div>
           </div>
-        </article>
-      ))
-    }
-  </div>
 
-  <!-- Barra inferior interactiva con los 5 apartados y preview -->
-  <nav class="hero-bottom-bar" aria-label="Selección de destinos destacados">
-    <div class="hero-bottom-bar__inner">
-      <div class="hero-bottom-bar__items" role="tablist">
-        {
-          sanitizedSlides.map((slide, index) => (
-            <button
-              type="button"
-              class:list={['hero-nav-tab', { 'hero-nav__item--active': index === 0 }]}
-              data-hero-nav-item
-              data-index={index}
-              role="tab"
-              aria-selected={index === 0}
-              aria-label={`Ir al destino ${slide.title}`}
-            >
-              <span class="hero-nav-tab__num">{slide.number}</span>
-              <strong class="hero-nav-tab__title">{slide.title}</strong>
-              {slide.subtitle && <span class="hero-nav-tab__desc">{slide.subtitle}</span>}
-            </button>
-          ))
-        }
+        </div>
       </div>
 
-      <!-- Tarjeta preview miniatura a la derecha -->
-      {
-        nextSlide && (
-          <div class="hero-preview" data-hero-preview title="Siguiente destino" role="button" tabindex="0" aria-label="Ver siguiente destino">
-            <img
-              class="hero-preview__img"
-              src={nextSlide.image}
-              alt={nextSlide.title}
-              data-hero-preview-img
-              onerror={`this.onerror=null; this.src='${fallbackImage}';`}
-            />
-            <div class="hero-preview__overlay"></div>
-            <div class="hero-preview__btn" aria-hidden="true">
-              <Icon name="play" size="sm" />
-            </div>
-          </div>
-        )
-      }
     </div>
-  </nav>
+  </div>
 </section>
 
 <script>
   import '@/scripts/hero-carousel.ts';
+  import '@/scripts/weather-clock.ts';
 </script>

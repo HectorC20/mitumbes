@@ -1,0 +1,478 @@
+---
+import Icon from '@/shared/components/design/Icon.astro';
+import SectionChunk from '@/components/common/SectionChunk.astro';
+import { HOME_GUIDE } from '@/shared/content/home-guide';
+import { localizePath, type Locale } from '@/shared/constants/locales';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const guia = HOME_GUIDE[lang];
+const placesHref = localizePath('/places/', lang);
+const beachesHref = localizePath('/categories/places/', lang);
+const foodHref = localizePath('/categories/restaurants/', lang);
+const activitiesHref = localizePath('/categories/activities/', lang);
+const zorritosHref = localizePath('/zones/zorritos/', lang);
+const puntaSalHref = localizePath('/zones/punta-sal/', lang);
+const puertoPizarroHref = localizePath('/zones/puerto-pizarro/', lang);
+---
+
+<SectionChunk id="guia" class="guide-section" minHeight="880px" data-section="guia">
+  <div class="container-page">
+    
+    <!-- Cabecera compacta con navegación dinámica -->
+    <header class="guide-header">
+      <span class="guide-header__badge badge badge--primary">
+        <Icon name="compass" size="sm" />
+        {guia.eyebrow}
+      </span>
+      <h2 class="guide-header__title">{guia.title}</h2>
+      <div class="guide-header__divider" aria-hidden="true"></div>
+
+      <!-- Barra de navegación por pestañas (Compacta, interactiva, sin scrollbar tosca) -->
+      <nav class="guide-nav" aria-label={guia.title}>
+        <ul class="guide-nav__list" role="tablist">
+          <li class="guide-nav__item">
+            <a
+              class="guide-nav__link guide-nav__link--active"
+              href="#resumen"
+              data-guide-tab="resumen"
+              role="tab"
+              aria-selected="true"
+              aria-label="Ver Resumen General de la Guía"
+            >
+              <Icon name="compass" size="sm" />
+              <span>{lang === 'en' ? 'Overview' : 'Resumen'}</span>
+            </a>
+          </li>
+          {
+            guia.navItems.map((item) => (
+              <li class="guide-nav__item">
+                <a
+                  class="guide-nav__link"
+                  href={`#${item.id}`}
+                  data-guide-tab={item.id}
+                  role="tab"
+                  aria-selected="false"
+                  aria-label={`Ver sección ${item.label}`}
+                >
+                  <Icon name={item.icon} size="sm" />
+                  <span>{item.label}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      
+      <!-- Contenedor dinámico guide-intro (Tarjeta interactiva con información completa) -->
+      <div class="guide-intro" data-guide-intro-container>
+        
+        <!-- 0. Resumen General Oficial -->
+        <div class="guide-intro-panel guide-intro-panel--active" data-guide-intro-panel="resumen">
+          <div class="guide-intro-panel__badge">
+            <Icon name="compass" size="sm" class="text-primary" />
+            <span>{lang === 'en' ? 'Official Regional Overview' : 'Resumen Logístico Oficial de Tumbes'}</span>
+          </div>
+          
+          {guia.intro.map((parrafo) => (
+            <p class="guide-intro__paragraph">{parrafo}</p>
+          ))}
+
+          <!-- Datos clave resumidos -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-ink/10">
+            <div class="p-2.5 rounded-xl bg-sand/30 border border-ink/10 text-left">
+              <span class="text-[11px] uppercase font-bold text-muted block">Temperatura</span>
+              <strong class="text-xs sm:text-sm text-secondary">24 °C - 32 °C</strong>
+            </div>
+            <div class="p-2.5 rounded-xl bg-sand/30 border border-ink/10 text-left">
+              <span class="text-[11px] uppercase font-bold text-muted block">Aeropuerto</span>
+              <strong class="text-xs sm:text-sm text-secondary">Tumbes (TBP)</strong>
+            </div>
+            <div class="p-2.5 rounded-xl bg-sand/30 border border-ink/10 text-left">
+              <span class="text-[11px] uppercase font-bold text-muted block">Playas Top</span>
+              <strong class="text-xs sm:text-sm text-secondary">Punta Sal & Zorritos</strong>
+            </div>
+            <div class="p-2.5 rounded-xl bg-sand/30 border border-ink/10 text-left">
+              <span class="text-[11px] uppercase font-bold text-muted block">Plato Bandera</span>
+              <strong class="text-xs sm:text-sm text-secondary">Ceviche Conchas Negras</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1. Cuándo viajar (Clima & Temporadas) -->
+        <div class="guide-intro-panel" data-guide-intro-panel="tumbes-clima" hidden>
+          <div class="guide-intro-panel__head">
+            <span class="guide-card__icon guide-card__icon--sun">
+              <Icon name="sun" size="md" />
+            </span>
+            <div>
+              <h3 class="guide-intro-panel__title">{guia.clima.title}</h3>
+              <span class="text-xs text-muted">Condiciones meteorológicas, temperaturas del mar y mejores meses</span>
+            </div>
+          </div>
+          
+          <p class="guide-intro__paragraph">{guia.clima.intro}</p>
+          
+          <div class="guide-callout guide-callout--ocean">
+            <p class="m-0">{guia.clima.highlight}</p>
+          </div>
+
+          <!-- Cuadrícula detallada de temporadas -->
+          <div class="guide-season-grid">
+            {
+              guia.clima.seasons.map((season) => (
+                <div class="guide-season-card">
+                  <span class="guide-season-card__title flex items-center gap-1.5 mb-1">
+                    <Icon name={season.icon} size="sm" class="text-primary" />
+                    <span>{season.title}</span>
+                  </span>
+                  <p class="guide-season-card__desc">{season.desc}</p>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- 2. Cómo llegar y cómo moverte -->
+        <div class="guide-intro-panel" data-guide-intro-panel="tumbes-transporte" hidden>
+          <div class="guide-intro-panel__head">
+            <span class="guide-card__icon guide-card__icon--ocean">
+              <Icon name="airplane" size="md" />
+            </span>
+            <div>
+              <h3 class="guide-intro-panel__title">{guia.transporte.title}</h3>
+              <span class="text-xs text-muted">Vuelos, Panamericana Norte, terminales terrestres y traslados</span>
+            </div>
+          </div>
+
+          <p class="guide-intro__paragraph">{guia.transporte.intro}</p>
+
+          <div class="guide-callout guide-callout--alert">
+            <Icon name="alert" size="md" class="text-sun shrink-0" />
+            <p class="m-0">{guia.transporte.alert}</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
+            <div class="p-3 rounded-xl border border-ink/10 bg-sand/30">
+              <strong class="text-primary flex items-center gap-1.5 mb-1">
+                <Icon name="airplane" size="sm" />
+                <span>Aeropuerto Tumbes (TBP)</span>
+              </strong>
+              <span class="text-muted leading-relaxed">A 15 min del centro y 30 min de Zorritos. Vuelos directos diarios desde Lima (LATAM / SKY).</span>
+            </div>
+            <div class="p-3 rounded-xl border border-ink/10 bg-sand/30">
+              <strong class="text-primary flex items-center gap-1.5 mb-1">
+                <Icon name="car" size="sm" />
+                <span>Panamericana Norte</span>
+              </strong>
+              <span class="text-muted leading-relaxed">Conecta Tumbes con Piura (3.5 hrs), Máncora (1.5 hrs), Zorritos y Punta Sal con transporte frecuente.</span>
+            </div>
+            <div class="p-3 rounded-xl border border-ink/10 bg-sand/30">
+              <strong class="text-primary flex items-center gap-1.5 mb-1">
+                <Icon name="shield-check" size="sm" />
+                <span>Frontera Aguas Verdes</span>
+              </strong>
+              <span class="text-muted leading-relaxed">Paso internacional con Huaquillas (Ecuador) a 25 min de Tumbes. Revisa DNI/Pasaporte y horarios de aduanas.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Playas -->
+        <div class="guide-intro-panel" data-guide-intro-panel="tumbes-playas" hidden>
+          <div class="guide-intro-panel__head">
+            <span class="guide-card__icon guide-card__icon--ocean">
+              <Icon name="waves" size="md" />
+            </span>
+            <div>
+              <h3 class="guide-intro-panel__title">{guia.playas.title}</h3>
+              <span class="text-xs text-muted">Evaluación de balnearios, tipo de oleaje, servicios y mejores zonas</span>
+            </div>
+          </div>
+
+          {guia.playas.paragraphs.map((p) => (
+            <p class="guide-intro__paragraph">{p}</p>
+          ))}
+
+          <div class="guide-beach-grid">
+            {
+              guia.playas.cards.map((beach) => (
+                <div class="guide-beach-card">
+                  <span class="guide-beach-card__title">{beach.name}</span>
+                  <p class="guide-beach-card__desc">{beach.desc}</p>
+                </div>
+              ))
+            }
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-ink/10 flex flex-wrap gap-2 justify-end">
+            <a href={puntaSalHref} class="btn btn--outline text-xs py-1.5 px-3">
+              <span>Punta Sal</span>
+            </a>
+            <a href={zorritosHref} class="btn btn--outline text-xs py-1.5 px-3">
+              <span>Zorritos</span>
+            </a>
+            <a href={beachesHref} class="btn btn--primary text-xs py-1.5 px-3.5">
+              <span>Ver todas las playas</span>
+              <Icon name="arrow-right" size="sm" />
+            </a>
+          </div>
+        </div>
+
+        <!-- 4. Manglares, reservas y fauna -->
+        <div class="guide-intro-panel" data-guide-intro-panel="tumbes-manglares" hidden>
+          <div class="guide-intro-panel__head">
+            <span class="guide-card__icon guide-card__icon--nature">
+              <Icon name="tree" size="md" />
+            </span>
+            <div>
+              <h3 class="guide-intro-panel__title">{guia.manglares.title}</h3>
+              <span class="text-xs text-muted">Santuario Nacional, Parque Cerros de Amotape, avistamiento de ballenas</span>
+            </div>
+          </div>
+
+          {guia.manglares.paragraphs.map((p) => (
+            <p class="guide-intro__paragraph">{p}</p>
+          ))}
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
+            <div class="p-3 rounded-xl border border-ink/10 bg-sand/30">
+              <strong class="text-primary flex items-center gap-1.5 mb-1">
+                <Icon name="tree" size="sm" />
+                <span>Santuario Nacional de Manglares</span>
+              </strong>
+              <span class="text-muted leading-relaxed">2,972 ha de bosque de manglar. Circuitos en lancha: Isla de los Pájaros, Isla del Amor y Zoocriadero de Cocodrilos.</span>
+            </div>
+            <div class="p-3 rounded-xl border border-ink/10 bg-sand/30">
+              <strong class="text-primary flex items-center gap-1.5 mb-1">
+                <Icon name="waves" size="sm" />
+                <span>Ballenas Jorobadas (Jul - Oct)</span>
+              </strong>
+              <span class="text-muted leading-relaxed">Migración marina con 98% de probabilidad de avistamiento frente a las costas de Zorritos, Cancas y Punta Sal.</span>
+            </div>
+          </div>
+
+          <div class="guide-badges mt-3">
+            {
+              guia.manglares.badges.map((b) => (
+                <span class="badge badge--primary">{b}</span>
+              ))
+            }
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-ink/10 flex justify-end gap-2">
+            <a href={puertoPizarroHref} class="btn btn--outline text-xs py-1.5 px-3">
+              <span>Puerto Pizarro</span>
+            </a>
+            <a href={activitiesHref} class="btn btn--primary text-xs py-1.5 px-3.5">
+              <span>Ver tours y actividades</span>
+              <Icon name="arrow-right" size="sm" />
+            </a>
+          </div>
+        </div>
+
+        <!-- 5. Qué comer -->
+        <div class="guide-intro-panel" data-guide-intro-panel="tumbes-gastronomia" hidden>
+          <div class="guide-intro-panel__head">
+            <span class="guide-card__icon guide-card__icon--coral">
+              <Icon name="utensils" size="md" />
+            </span>
+            <div>
+              <h3 class="guide-intro-panel__title">{guia.gastronomia.title}</h3>
+              <span class="text-xs text-muted">Patrimonio culinario del norte, conchas negras, majarisco y cevicherías</span>
+            </div>
+          </div>
+
+          <p class="guide-intro__paragraph">{guia.gastronomia.paragraph}</p>
+
+          <div class="guide-callout guide-callout--sand">
+            <p class="m-0">{guia.gastronomia.recommendation}</p>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 text-xs">
+            <div class="p-2.5 rounded-xl border border-ink/10 bg-sand/30">
+              <strong class="text-secondary flex items-center gap-1.5 mb-1">
+                <Icon name="utensils" size="sm" class="text-primary" />
+                <span>Conchas Negras</span>
+              </strong>
+              <span class="text-muted">Ceviche fresco con limón norteño y ají limo.</span>
+            </div>
+            <div class="p-2.5 rounded-xl border border-ink/10 bg-sand/30">
+              <strong class="text-secondary flex items-center gap-1.5 mb-1">
+                <Icon name="utensils" size="sm" class="text-primary" />
+                <span>Majarisco</span>
+              </strong>
+              <span class="text-muted">Plátano verde frito bañado en salsa de mariscos.</span>
+            </div>
+            <div class="p-2.5 rounded-xl border border-ink/10 bg-sand/30">
+              <strong class="text-secondary flex items-center gap-1.5 mb-1">
+                <Icon name="utensils" size="sm" class="text-primary" />
+                <span>Langostinos</span>
+              </strong>
+              <span class="text-muted">Al ajillo, empanizados o al vapor en Puerto Pizarro.</span>
+            </div>
+            <div class="p-2.5 rounded-xl border border-ink/10 bg-sand/30">
+              <strong class="text-secondary flex items-center gap-1.5 mb-1">
+                <Icon name="fish" size="sm" class="text-primary" />
+                <span>Sudado & Frito</span>
+              </strong>
+              <span class="text-muted">Mero, corvina, cabrilla y robalo fresco del día.</span>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-ink/10 flex justify-end">
+            <a href={foodHref} class="btn btn--primary text-xs py-1.5 px-3.5">
+              <span>Explorar restaurantes recomendados</span>
+              <Icon name="arrow-right" size="sm" />
+            </a>
+          </div>
+        </div>
+
+        <!-- 6. Fiestas y eventos -->
+        <div class="guide-intro-panel" data-guide-intro-panel="tumbes-fiestas" hidden>
+          <div class="guide-intro-panel__head">
+            <span class="guide-card__icon guide-card__icon--sun">
+              <Icon name="party" size="md" />
+            </span>
+            <div>
+              <h3 class="guide-intro-panel__title">{guia.fiestas.title}</h3>
+              <span class="text-xs text-muted">Calendario cívico, celebraciones religiosas y festivales gastronómicos</span>
+            </div>
+          </div>
+
+          {guia.fiestas.paragraphs.map((p) => (
+            <p class="guide-intro__paragraph">{p}</p>
+          ))}
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 text-xs">
+            <div class="p-3 rounded-xl border border-ink/10 bg-sand/30">
+              <strong class="text-primary flex items-center gap-1.5 mb-1">
+                <Icon name="party" size="sm" />
+                <span>Enero - Aniversario de Tumbes</span>
+              </strong>
+              <span class="text-muted">Semana de actividades cívicas, corsos, ferias y música en la Plaza Mayor.</span>
+            </div>
+            <div class="p-3 rounded-xl border border-ink/10 bg-sand/30">
+              <strong class="text-primary flex items-center gap-1.5 mb-1">
+                <Icon name="calendar" size="sm" />
+                <span>Marzo/Abril - Semana Santa</span>
+              </strong>
+              <span class="text-muted">Procesiones tradicionales, alta ocupación hotelera en playas y ferias de mariscos.</span>
+            </div>
+            <div class="p-3 rounded-xl border border-ink/10 bg-sand/30">
+              <strong class="text-primary flex items-center gap-1.5 mb-1">
+                <Icon name="party" size="sm" />
+                <span>Julio/Octubre - Fiestas & Ceviche</span>
+              </strong>
+              <span class="text-muted">Batalla de Zarumilla, temporada de ballenas y Festival Regional del Cebiche.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. Consejos prácticos -->
+        <div class="guide-intro-panel" data-guide-intro-panel="tumbes-consejos" hidden>
+          <div class="guide-intro-panel__head">
+            <span class="guide-card__icon guide-card__icon--ocean">
+              <Icon name="shield-check" size="md" />
+            </span>
+            <div>
+              <h3 class="guide-intro-panel__title">{guia.consejos.title}</h3>
+              <span class="text-xs text-muted">Recomendaciones locales, equipaje, seguridad y fichas verificadas</span>
+            </div>
+          </div>
+
+          <p class="guide-intro__paragraph">{guia.consejos.intro}</p>
+
+          <ul class="guide-intro-checklist mt-3">
+            {
+              guia.consejos.items.map((item) => (
+                <li class="guide-intro-checklist__item">
+                  <span class="guide-intro-checklist__icon">
+                    <Icon name={item.icon} size="sm" />
+                  </span>
+                  <span class="guide-intro-checklist__text">{item.text}</span>
+                </li>
+              ))
+            }
+          </ul>
+
+          <!-- Fichas Verificadas -->
+          <div class="mt-4 p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs">
+            <strong class="text-emerald-800 font-bold flex items-center gap-1.5 mb-1">
+              <Icon name="shield-check" size="sm" class="text-emerald-600" />
+              <span>Garantía de Fichas Verificadas por MiTumbes:</span>
+            </strong>
+            <p class="text-emerald-900/80 m-0 leading-relaxed">
+              Todos los operadores turísticos de manglares cuentan con autorización oficial de SERNANP y los alojamientos de Zorritos y Punta Sal son evaluados periódicamente.
+            </p>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-ink/10 flex justify-end">
+            <a href={placesHref} class="btn btn--primary inline-flex items-center gap-2 text-xs py-2 px-4">
+              <span>{guia.consejos.ctaText}</span>
+              <Icon name="arrow-right" size="sm" />
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Itinerario recomendado: Ruta Paso a Paso -->
+    <section class="guide-steps" id="tumbes-paso-a-paso" aria-labelledby="guide-steps-title">
+      <header class="guide-steps__head">
+        <p class="guide-steps__eyebrow eyebrow">{guia.itinerary.eyebrow}</p>
+        <h3 class="guide-steps__title" id="guide-steps-title">{guia.itinerary.title}</h3>
+        <p class="guide-steps__subtitle">{guia.itinerary.description}</p>
+      </header>
+
+      <div class="guide-steps__grid">
+        {
+          guia.itinerary.steps.map((paso) => (
+            <article class="card guide-step-card">
+              <div class="card__media">
+                <img
+                  src={paso.image}
+                  alt={paso.title}
+                  loading="lazy"
+                  width="640"
+                  height="480"
+                />
+                <span class="card__badge badge badge--primary">
+                  <Icon name="footprints" size="sm" />
+                  {paso.badge}
+                </span>
+              </div>
+              <div class="card__body">
+                <h4 class="card__title">{paso.title}</h4>
+                <p class="card__meta">
+                  <span class="card__meta-item">
+                    <Icon name="calendar" size="sm" />
+                    {paso.dayLabel}
+                  </span>
+                </p>
+                <p class="card__text guide-step-card__desc">{paso.description}</p>
+              </div>
+              <div class="card__footer">
+                <span class="guide-step-card__time">
+                  <Icon name="clock" size="sm" />
+                  {paso.duration}
+                </span>
+                <span class="badge badge--sun">
+                  {paso.tag}
+                </span>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+  </div>
+</SectionChunk>
+
+<script>
+  import '@/scripts/home-guide.ts';
+</script>

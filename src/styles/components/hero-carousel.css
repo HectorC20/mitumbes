@@ -1,180 +1,315 @@
 @reference "../global.css";
 
 /* ============================================================
-   Hero Carousel — Inspirado en diseño de viaje escénico
+   Hero Principal MiTumbes — Campañas Dinámicas y Telemetría en Vivo
    ============================================================ */
 
-.hero-carousel {
-  @apply relative w-full overflow-hidden mt-0.5 bg-secondary text-white;
-  height: clamp(620px, 92vh, 980px);
+.hero-main-wrapper {
+  @apply relative w-full overflow-hidden bg-secondary text-white flex flex-col justify-center;
+  min-height: calc(100vh - 3.5rem);
+  min-height: calc(100dvh - 3.5rem);
 }
 
-/* Diapositivas de fondo */
-.hero-carousel__slides {
-  @apply absolute inset-0 h-full w-full;
+/* 1. Barra Flotante de Clima & Hora en Vivo de Tumbes (Open-Meteo API) */
+.hero-live-status-bar {
+  @apply absolute top-4  z-30 sm:top-6 left-1/2 -translate-x-1/2 max-w-[95vw] pointer-events-auto;
 }
 
-.hero-slide {
-  @apply absolute inset-0 h-full w-full opacity-0 pointer-events-none transition-opacity duration-1000 ease-in-out;
+.hero-live-status-inner {
+  @apply inline-flex items-center gap-2 sm:gap-3.5 bg-black/70 backdrop-blur-md px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full border border-white/25 shadow-2xl text-xs sm:text-sm text-white/90;
 }
 
-.hero-slide--active {
-  @apply opacity-100 pointer-events-auto z-10;
+.hero-live-badge {
+  @apply inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/25 border border-emerald-400/50 text-[10px] sm:text-xs font-bold text-emerald-300 uppercase tracking-wider;
 }
 
-.hero-slide__img {
-  @apply h-full w-full object-cover transform scale-105 transition-transform duration-[6000ms] ease-out;
+.hero-live-item {
+  @apply inline-flex items-center gap-1.5 whitespace-nowrap;
 }
 
-.hero-slide--active .hero-slide__img {
-  @apply scale-100;
+.hero-live-divider {
+  @apply h-3.5 w-px bg-white/25;
 }
 
-.hero-slide__overlay {
-  content: '';
-  @apply absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/30;
+/* 2. Fondo de Imagen de la Campaña Activa */
+.hero-camp-bg {
+  @apply absolute inset-0 w-full h-full;
 }
 
-.hero-slide__overlay-bottom {
-  content: '';
-  @apply absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/80 to-transparent;
+.hero-camp-bg__img {
+  @apply w-full h-full object-cover transition-all duration-700;
 }
 
-/* Barra lateral izquierda */
-.hero-sidebar {
-  @apply absolute left-0 top-0 bottom-0 z-30 hidden md:flex flex-col items-center justify-between py-8 px-4 border-r border-white/10 bg-black/15 backdrop-blur-xs w-16 lg:w-20;
+.hero-camp-bg__overlay {
+  @apply absolute inset-0 bg-gradient-to-r from-black/92 via-black/75 to-black/45;
 }
 
-.hero-sidebar__top {
-  @apply flex items-center justify-center text-white/80 hover:text-white transition-colors;
+/* 3. Contenedor Grid Split-Screen */
+.hero-camp-container {
+  @apply relative z-20 w-full flex-1 flex items-center px-6 sm:px-12 md:px-16 pt-24 pb-16 max-w-7xl mx-auto;
 }
 
-.hero-sidebar__nav {
-  @apply flex flex-col items-center gap-3 my-auto;
+.hero-camp-grid {
+  @apply grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full;
 }
 
-.hero-sidebar__counter {
-  @apply text-xs font-mono font-semibold tracking-wider text-white/90;
+/* Columna Izquierda */
+.hero-camp-main {
+  @apply lg:col-span-7;
 }
 
-.hero-sidebar__track {
-  @apply relative w-[2px] h-36 bg-white/20 rounded-full overflow-hidden;
+.hero-camp-status-badge {
+  @apply inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 mb-3;
 }
 
-.hero-sidebar__indicator {
-  --progress-pos: 0%;
-  @apply absolute left-0 w-full bg-sun rounded-full transition-all duration-700 ease-out;
-  height: 28%;
-  top: var(--progress-pos);
+.hero-camp-pulse-dot {
+  @apply w-2 h-2 rounded-full bg-emerald-400 animate-pulse;
 }
 
-.hero-sidebar__socials {
-  @apply flex flex-col items-center gap-4 text-white/70;
+.hero-camp-eyebrow {
+  @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-sun mb-2 block;
 }
 
-.hero-sidebar__social-link {
-  @apply text-white/70 hover:text-white transition-colors hover:scale-110 duration-200;
+.hero-camp-title {
+  @apply text-3xl sm:text-4xl lg:text-5xl font-display font-black leading-tight text-white m-0 drop-shadow;
 }
 
-/* Contenido central del Hero */
-.hero-carousel__main {
-  @apply relative z-20 h-full flex flex-col justify-between pt-16 pb-28 md:pl-24 lg:pl-28;
+.hero-camp-desc {
+  @apply text-base sm:text-lg text-white/90 mt-4 leading-relaxed max-w-xl;
 }
 
-.hero-carousel__content {
-  @apply max-w-3xl my-auto px-4 sm:px-6 lg:px-8;
+.hero-camp-actions {
+  @apply mt-8 flex flex-wrap items-center gap-4;
 }
 
-.hero-carousel__eyebrow {
-  @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-sun drop-shadow-sm;
+.btn-pill-action {
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 bg-sun text-secondary hover:bg-white font-bold text-sm tracking-wide shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 no-underline;
 }
 
-.hero-carousel__title {
-  @apply mt-2 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-sans font-extrabold tracking-tight uppercase leading-[1.05] text-white drop-shadow-md;
+.btn-pill-ghost {
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 bg-white/15 hover:bg-white/30 text-white backdrop-blur-md border border-white/25 font-semibold text-sm transition-all duration-200 no-underline;
 }
 
-.hero-carousel__lead {
-  @apply mt-4 max-w-xl text-base sm:text-lg text-white/90 line-clamp-2 drop-shadow;
+/* Columna Derecha: Panel Interactivo de Campañas - Diseño Ticket de Viaje / Boarding Pass */
+.hero-camp-panel {
+  @apply lg:col-span-5;
 }
 
-.hero-carousel__action {
-  @apply mt-8 flex items-center gap-4;
+.hero-camp-panel__inner.ticket-panel {
+  @apply relative bg-slate-950/85 backdrop-blur-2xl border border-white/20 rounded-3xl p-5 sm:p-6 shadow-2xl overflow-hidden;
 }
 
-.hero-btn-pill {
-  @apply inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 bg-emerald-100 text-secondary font-semibold text-sm tracking-wide shadow-lg shadow-black/20 hover:bg-white hover:scale-105 active:scale-95 transition-all duration-200 no-underline;
+/* Encabezado del Ticket */
+.ticket-header {
+  @apply flex items-start justify-between gap-3 pb-3 border-b border-white/15;
 }
 
-/* Barra inferior del carrusel */
-.hero-bottom-bar {
-  @apply absolute bottom-0 pb-2 inset-x-0 z-30 mb-0 bg-black/60 backdrop-blur-md border-t border-white/10 md:pl-20 lg:pl-24;
+.ticket-header__left {
+  @apply flex flex-col;
 }
 
-.hero-bottom-bar__inner {
-  @apply items-stretch justify-between gap-4 max-w-7xl mx-auto px-4 sm:px-6 py-3 md:py-4;
+.ticket-header__eyebrow {
+  @apply block text-[10px] font-mono tracking-widest text-sun font-bold uppercase leading-tight;
 }
 
-.hero-bottom-bar__items {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  @apply  items-center gap-4 sm:gap-8 overflow-x-auto flex-1;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.ticket-header__title {
+  @apply text-sm sm:text-base font-bold text-white tracking-wide m-0 leading-tight mt-0.5;
 }
 
-.hero-bottom-bar__items::-webkit-scrollbar {
-  display: none;
+.ticket-header__right {
+  @apply flex flex-col items-end gap-1 shrink-0;
 }
 
-.hero-nav-tab {
-  @apply flex flex-col text-left py-1 px-2 border-b-2 border-transparent transition-all duration-300 cursor-pointer min-w-[140px] sm:min-w-[180px] text-white/60 hover:text-white;
+.ticket-badge-class {
+  @apply text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-sun text-secondary shadow-sm;
 }
 
-.hero-nav__item--active {
-  @apply text-white border-sun;
+.ticket-gate {
+  @apply text-[10px] font-mono text-white/60 tracking-wider;
 }
 
-.hero-nav-tab__num {
-  @apply text-xs font-mono font-semibold tracking-wider text-white/50 mb-1;
+/* Sección de Ruta (Origen -> Destino) */
+.ticket-route {
+  @apply my-3 py-2.5 px-3.5 bg-white/5 rounded-2xl border border-white/10 flex items-center justify-between;
 }
 
-.hero-nav__item--active .hero-nav-tab__num {
-  @apply text-sun;
+.ticket-route__loc {
+  @apply flex flex-col;
 }
 
-.hero-nav-tab__title {
-  @apply text-sm sm:text-base font-semibold leading-tight line-clamp-1;
+.ticket-route__loc--dest {
+  @apply items-end text-right;
 }
 
-.hero-nav-tab__desc {
-  @apply text-xs text-white/60 line-clamp-1 mt-0.5 hidden sm:block;
+.ticket-route__tag {
+  @apply text-[9px] font-mono tracking-widest text-white/50 uppercase font-semibold;
 }
 
-/* Tarjeta preview a la derecha */
-.hero-preview {
-  @apply hidden lg:flex absolute justify-center right-14  bottom-0  items-center w-58 h-44 rounded-t-lg overflow-hidden border border-white/20 shadow-xl cursor-pointer;
+.ticket-route__code {
+  @apply text-lg sm:text-xl font-black text-white tracking-wider leading-none my-0.5;
 }
 
-.hero-preview__img {
-  @apply absolute inset-0 w-full h-full object-cover transition-transform duration-500;
+.ticket-route__name {
+  @apply text-[11px] text-sun font-medium;
 }
 
-.hero-preview:hover .hero-preview__img {
-  @apply scale-110;
+.ticket-route__flight {
+  @apply flex-1 flex flex-col items-center px-4 relative;
 }
 
-.hero-preview__overlay {
-  @apply absolute inset-0 bg-black/40 transition-colors;
+.ticket-route__dotted {
+  @apply w-full border-t-2 border-dashed border-white/25 my-1;
 }
 
-.hero-preview:hover .hero-preview__overlay {
-  @apply bg-black/20;
+.ticket-route__num {
+  @apply text-[9px] font-mono tracking-widest text-white/40;
 }
 
-.hero-preview__btn {
-  @apply relative z-10 w-10 h-10 rounded-full bg-white text-secondary flex items-center justify-center shadow-lg transition-transform duration-300;
+/* Selector de Experiencias / Tramos */
+.ticket-selector-wrap {
+  @apply my-2.5;
 }
 
-.hero-preview:hover .hero-preview__btn {
-  @apply scale-110;
+.ticket-selector-label {
+  @apply text-[10px] font-mono font-bold tracking-widest text-white/70 uppercase mb-2;
 }
+
+.ticket-selector {
+  @apply flex flex-col gap-2;
+}
+
+.ticket-pill {
+  @apply px-3.5 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/15 text-white border border-white/10 transition-all duration-200 text-left cursor-pointer flex items-center justify-between;
+}
+
+.ticket-pill__left {
+  @apply flex items-center gap-2.5 min-w-0;
+}
+
+.ticket-pill__num {
+  @apply font-mono text-[11px] text-sun/80 bg-black/40 px-1.5 py-0.5 rounded border border-white/10 shrink-0;
+}
+
+.ticket-pill__title {
+  @apply truncate;
+}
+
+.ticket-pill__temp {
+  @apply text-xs font-mono text-white/40 ml-2 shrink-0;
+}
+
+.hero-camp-pill--active.ticket-pill {
+  @apply bg-sun text-secondary border-sun shadow-lg;
+}
+
+.hero-camp-pill--active .ticket-pill__num {
+  @apply text-secondary bg-white/40 border-secondary/20;
+}
+
+.hero-camp-pill--active .ticket-pill__temp {
+  @apply text-secondary font-extrabold;
+}
+
+/* Línea de Perforación / Desprendimiento con Muescas (Ticket Perforation Tear Line) */
+.ticket-tear {
+  @apply relative flex items-center my-3.5 -mx-5 sm:-mx-6;
+}
+
+.ticket-notch {
+  @apply w-4 h-4 rounded-full bg-[#0a121d] border border-white/20 shrink-0;
+}
+
+.ticket-notch--left {
+  margin-left: -8px;
+  box-shadow: inset -2px 0 4px rgba(0, 0, 0, 0.6);
+}
+
+.ticket-notch--right {
+  margin-right: -8px;
+  box-shadow: inset 2px 0 4px rgba(0, 0, 0, 0.6);
+}
+
+.ticket-tear__line {
+  @apply flex-1 border-t-2 border-dashed border-white/25 mx-2;
+}
+
+/* Talón de Telemetría (Ticket Stub) */
+.ticket-stub {
+  @apply flex flex-col gap-3;
+}
+
+.ticket-telemetry {
+  @apply grid grid-cols-3 gap-2 bg-white/5 rounded-2xl p-2.5 border border-white/10 text-center m-0;
+}
+
+.hero-camp-telemetry-item {
+  @apply flex flex-col items-center justify-center;
+}
+
+.hero-camp-telemetry-label {
+  @apply text-[9px] uppercase font-semibold text-white/50 tracking-wider;
+}
+
+.hero-camp-telemetry-val {
+  @apply text-xs sm:text-sm font-bold text-sun mt-0.5 truncate max-w-full;
+}
+
+/* Fila Inferior con Código de Barras y Estado en Vivo */
+.ticket-bottom {
+  @apply flex items-center justify-between gap-3 pt-1;
+}
+
+.ticket-barcode-block {
+  @apply flex flex-col gap-1;
+}
+
+.ticket-barcode {
+  height: 22px;
+  width: 110px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.75),
+    rgba(255, 255, 255, 0.75) 1.5px,
+    transparent 1.5px,
+    transparent 3px,
+    rgba(255, 255, 255, 0.75) 3px,
+    rgba(255, 255, 255, 0.75) 5px,
+    transparent 5px,
+    transparent 6.5px,
+    rgba(255, 255, 255, 0.75) 6.5px,
+    rgba(255, 255, 255, 0.75) 7.5px,
+    transparent 7.5px,
+    transparent 9.5px,
+    rgba(255, 255, 255, 0.75) 9.5px,
+    rgba(255, 255, 255, 0.75) 12px,
+    transparent 12px,
+    transparent 13px,
+    rgba(255, 255, 255, 0.75) 13px,
+    rgba(255, 255, 255, 0.75) 15.5px,
+    transparent 15.5px,
+    transparent 17px
+  );
+  border-radius: 2px;
+}
+
+.ticket-serial {
+  @apply text-[9px] font-mono tracking-widest text-white/40 uppercase;
+}
+
+.ticket-footer-note {
+  @apply text-[11px] text-emerald-300 font-mono flex items-center gap-2;
+}
+
+.hero-camp-footer-live {
+  @apply inline-flex items-center gap-1.5;
+}
+
+.hero-camp-footer-badge {
+  @apply text-white/70 text-[9px] font-sans font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/10 border border-white/15;
+}
+
+.hero-camp-pulse-dot {
+  @apply w-2 h-2 rounded-full bg-emerald-400 animate-pulse;
+}
+
+

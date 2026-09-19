@@ -1,0 +1,64 @@
+---
+import PlaceCard from './PlaceCard.astro';
+import Pagination from '../common/Pagination.astro';
+import type { Categoria, ContenidoConRelaciones } from '../../shared/content/places';
+import type { Locale } from '../../shared/constants/locales';
+
+interface Props {
+  /** Solo los ítems de la página actual (la paginación la resuelve el servicio). */
+  lugares: ContenidoConRelaciones[];
+  /** Todas las categorías, para resolver el badge de cada tarjeta. */
+  categorias: Categoria[];
+  page: number;
+  totalPaginas: number;
+  lang: Locale;
+  /** Contador ya traducido, ej. "34 lugares" o "5 lugares en Zorritos". */
+  countLabel: string;
+  emptyTitle: string;
+  emptyBody: string;
+  /** Fecha visible por lugar (ya formateada), p. ej. para eventos. */
+  fechas?: Record<string, string>;
+}
+
+const {
+  lugares,
+  categorias,
+  page,
+  totalPaginas,
+  lang,
+  countLabel,
+  emptyTitle,
+  emptyBody,
+  fechas,
+} = Astro.props;
+
+const categoriasPorId = new Map(categorias.map((c) => [c.collection, c]));
+---
+
+<p class="search-meta">
+  {countLabel}
+</p>
+
+{
+  lugares.length > 0 ? (
+    <div class="place-grid">
+      {
+        lugares.map((lugar) => (
+          <PlaceCard
+            lugar={lugar}
+            categoria={categoriasPorId.get(lugar.collection)}
+            lang={lang}
+            fecha={fechas?.[lugar.id]}
+          />
+        ))
+      }
+    </div>
+  ) : (
+    <div class="empty-state">
+      <p class="empty-state__title">{emptyTitle}</p>
+      <p class="empty-state__body">{emptyBody}</p>
+    </div>
+  )
+}
+
+<Pagination page={page} totalPaginas={totalPaginas} lang={lang} />

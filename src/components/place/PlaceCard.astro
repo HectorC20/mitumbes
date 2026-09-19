@@ -10,16 +10,18 @@ import {
 import { COLLECTION_ICONS } from '../../shared/constants/collections';
 import { isLocale, localizePath, type Locale } from '../../shared/constants/locales';
 import { t } from '../../shared/constants/ui';
-import Icon from '../Icon.astro';
+import Icon from '@/shared/components/design/Icon.astro';
 import noImage from '@/assets/images/no-image.svg';
 
 interface Props {
   lugar: ContenidoConRelaciones;
   categoria?: Categoria;
   lang?: Locale;
+  /** Rango de fechas visible (p. ej. eventos): "1 - 15 Septiembre". */
+  fecha?: string;
 }
 
-const { lugar, categoria } = Astro.props;
+const { lugar, categoria, fecha } = Astro.props;
 const lang: Locale = isLocale(Astro.props.lang) ? Astro.props.lang : 'es';
 const href = localizePath(rutaContenido(lugar), lang);
 const title = loc(lugar.data.title, lang) ?? lugar.id;
@@ -51,7 +53,18 @@ const imagen = imagenSrc(lugar.data.image) || noImage.src;
       categoriaTitle && (
         <span class="card__badge badge badge--primary">
           <Icon name={COLLECTION_ICONS[lugar.collection] ?? 'pin'} size="sm" />
-          {categoriaTitle}
+          <span class="card__badge-text">{categoriaTitle}</span>
+        </span>
+      )
+    }
+    {
+      lugar.data.rating && (
+        <span
+          class="card__rating"
+          aria-label={`Calificación: ${lugar.data.rating.toFixed(1)} de 5 estrellas`}
+        >
+          <Icon name="star" size="sm" />
+          <span>{lugar.data.rating.toFixed(1)}</span>
         </span>
       )
     }
@@ -63,18 +76,18 @@ const imagen = imagenSrc(lugar.data.image) || noImage.src;
     </h3>
     <p class="card__meta">
       {
-        zoneTitle && (
+        fecha && (
           <span class="card__meta-item">
-            <Icon name="pin" size="sm" />
-            {zoneTitle}
+            <Icon name="calendar" size="sm" />
+            {fecha}
           </span>
         )
       }
       {
-        lugar.data.rating && (
+        zoneTitle && (
           <span class="card__meta-item">
-            <Icon name="star" size="sm" />
-            {lugar.data.rating.toFixed(1)}
+            <Icon name="pin" size="sm" />
+            {zoneTitle}
           </span>
         )
       }

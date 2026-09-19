@@ -81,6 +81,18 @@ export const ui = {
     'pagination.next': 'Siguiente',
     'pagination.goToPage': 'Ir a la página {page}',
 
+    // Calendario de eventos
+    'calendar.title': 'Filtrar por calendario',
+    'calendar.month': 'Mes',
+    'calendar.year': 'Año',
+    'calendar.allMonths': 'Todos los meses',
+    'calendar.apply': 'Filtrar',
+    'calendar.clear': 'Quitar filtro',
+    'events.emptyMonthTitle': 'No hay eventos en este mes',
+    'events.emptyMonthBody': 'Prueba con otro mes del calendario o quita el filtro para ver todos los eventos.',
+    'count.events': 'eventos',
+    'count.event': 'evento',
+
     // Detalle de contenido
     'place.about': 'Sobre este lugar',
     'place.howToGet': 'Cómo llegar',
@@ -101,7 +113,19 @@ export const ui = {
     'place.seePlace': 'Ver lugar',
     'place.relatedEyebrow': 'Sigue explorando',
     'place.relatedTitle': 'Otros lugares en {zone} y {category}',
+    'place.relatedTitleZone': 'Recomendados en {zone} y alrededores',
+    'place.relatedTitleGeneral': 'Más lugares y experiencias en Tumbes',
     'place.viewZone': 'Ver zona',
+    'place.viewMoreRelated': 'Ver más lugares',
+
+    // Tarjetas de contenido
+    'card.verifiedPlace': 'lugar verificado',
+    'card.verifiedPlaces': 'lugares verificados',
+    'card.explore': 'Explorar',
+    'card.place': 'lugar',
+    'card.places': 'lugares',
+    'card.exploreDestination': 'Explorar destino',
+    'card.exploreEvent': 'Explorar evento',
 
     // Compartir
     'share.label': 'Compartir',
@@ -157,6 +181,39 @@ export const ui = {
       'Información turística de la región Tumbes.',
     'footer.verification': '',
     'footer.report': 'reportar datos',
+    'footer.legal': 'Aviso Legal',
+    'footer.privacy': 'Política de Privacidad',
+    'footer.ethics': 'Código de Ética',
+    'footer.legalHeading': 'Información legal y ética',
+
+    // Apartados Legales e Institucionales
+    'legal.eyebrow': 'Marco Institucional',
+    'legal.title': 'Aviso Legal',
+    'legal.lead':
+      'Términos y condiciones generales de uso, titularidad de la plataforma y régimen de responsabilidad de MiTumbes.',
+    'legal.updated': 'Última actualización: Septiembre 2026',
+
+    'privacy.eyebrow': 'Protección de Datos',
+    'privacy.title': 'Política de Privacidad',
+    'privacy.lead':
+      'Tratamiento y resguardo de datos personales de acuerdo con la Ley N° 29733 de la República del Perú.',
+    'privacy.updated': 'Última actualización: Septiembre 2026',
+
+    'ethics.eyebrow': 'Sostenibilidad y Transparencia',
+    'ethics.title': 'Código de Ética',
+    'ethics.lead':
+      'Nuestros principios de conservación ambiental, turismo responsable, comercio justo y cero tolerancia a la explotación.',
+    'ethics.updated': 'Última actualización: Septiembre 2026',
+
+    'seo.legalTitle': 'Aviso Legal — MiTumbes',
+    'seo.legalDescription':
+      'Condiciones de uso, titularidad del sitio y marco legal de la plataforma turística MiTumbes.',
+    'seo.privacyTitle': 'Política de Privacidad — MiTumbes',
+    'seo.privacyDescription':
+      'Política de protección de datos personales y privacidad de MiTumbes conforme a la Ley N° 29733.',
+    'seo.ethicsTitle': 'Código de Ética y Sostenibilidad — MiTumbes',
+    'seo.ethicsDescription':
+      'Código de ética, compromiso de conservación y turismo sostenible en la región Tumbes.',
 
     // Geolocalización del visitante
     'geo.location': 'Visitando desde',
@@ -230,6 +287,18 @@ export const ui = {
     'pagination.next': 'Next',
     'pagination.goToPage': 'Go to page {page}',
 
+    // Events calendar
+    'calendar.title': 'Filter by calendar',
+    'calendar.month': 'Month',
+    'calendar.year': 'Year',
+    'calendar.allMonths': 'All months',
+    'calendar.apply': 'Filter',
+    'calendar.clear': 'Clear filter',
+    'events.emptyMonthTitle': 'No events this month',
+    'events.emptyMonthBody': 'Try another month or clear the filter to see all events.',
+    'count.events': 'events',
+    'count.event': 'event',
+
     'place.about': 'About this place',
     'place.howToGet': 'How to get there',
     'place.activities': 'Activities',
@@ -249,7 +318,19 @@ export const ui = {
     'place.seePlace': 'View place',
     'place.relatedEyebrow': 'Keep exploring',
     'place.relatedTitle': 'Other places in {zone} and {category}',
+    'place.relatedTitleZone': 'Recommended in {zone} and nearby',
+    'place.relatedTitleGeneral': 'More places and experiences in Tumbes',
     'place.viewZone': 'View zone',
+    'place.viewMoreRelated': 'View more places',
+
+    // Content cards
+    'card.verifiedPlace': 'verified place',
+    'card.verifiedPlaces': 'verified places',
+    'card.explore': 'Explore',
+    'card.place': 'place',
+    'card.places': 'places',
+    'card.exploreDestination': 'Explore destination',
+    'card.exploreEvent': 'Explore event',
 
     // Share
     'share.label': 'Share',
@@ -302,6 +383,39 @@ export const ui = {
     'footer.note': 'Tourist information for the Tumbes region.',
     'footer.verification': 'Content under verification — report data.',
     'footer.report': 'report data',
+    'footer.legal': 'Legal Notice',
+    'footer.privacy': 'Privacy',
+    'footer.ethics': 'Code of Ethics',
+    'footer.legalHeading': 'Legal & Ethics Information',
+
+    // Legal & Institutional
+    'legal.eyebrow': 'Institutional Framework',
+    'legal.title': 'Legal Notice',
+    'legal.lead':
+      'General terms and conditions of use, platform ownership, and disclaimer of liability for MiTumbes.',
+    'legal.updated': 'Last updated: September 2026',
+
+    'privacy.eyebrow': 'Data Protection',
+    'privacy.title': 'Privacy Policy',
+    'privacy.lead':
+      'Processing and safeguarding of personal data in compliance with Law No. 29733 of Peru.',
+    'privacy.updated': 'Last updated: September 2026',
+
+    'ethics.eyebrow': 'Sustainability & Transparency',
+    'ethics.title': 'Code of Ethics',
+    'ethics.lead':
+      'Our principles of environmental conservation, responsible tourism, fair trade, and zero tolerance for exploitation.',
+    'ethics.updated': 'Last updated: September 2026',
+
+    'seo.legalTitle': 'Legal Notice — MiTumbes',
+    'seo.legalDescription':
+      'Terms of use, platform ownership, and legal framework of MiTumbes travel guide.',
+    'seo.privacyTitle': 'Privacy Policy — MiTumbes',
+    'seo.privacyDescription':
+      'Personal data protection policy of MiTumbes in compliance with Law No. 29733.',
+    'seo.ethicsTitle': 'Code of Ethics & Sustainability — MiTumbes',
+    'seo.ethicsDescription':
+      'Code of ethics, conservation commitments, and sustainable tourism in Tumbes region.',
 
     // Visitor geolocation
     'geo.location': 'Visiting from',
@@ -375,6 +489,18 @@ export const ui = {
     'pagination.next': 'Próxima',
     'pagination.goToPage': 'Ir para a página {page}',
 
+    // Calendário de eventos
+    'calendar.title': 'Filtrar por calendário',
+    'calendar.month': 'Mês',
+    'calendar.year': 'Ano',
+    'calendar.allMonths': 'Todos os meses',
+    'calendar.apply': 'Filtrar',
+    'calendar.clear': 'Limpar filtro',
+    'events.emptyMonthTitle': 'Não há eventos neste mês',
+    'events.emptyMonthBody': 'Tente outro mês ou limpe o filtro para ver todos os eventos.',
+    'count.events': 'eventos',
+    'count.event': 'evento',
+
     'place.about': 'Sobre este lugar',
     'place.howToGet': 'Como chegar',
     'place.activities': 'Atividades',
@@ -394,7 +520,19 @@ export const ui = {
     'place.seePlace': 'Ver lugar',
     'place.relatedEyebrow': 'Continue explorando',
     'place.relatedTitle': 'Outros lugares em {zone} e {category}',
+    'place.relatedTitleZone': 'Recomendados em {zone} e arredores',
+    'place.relatedTitleGeneral': 'Mais lugares e experiências em Tumbes',
     'place.viewZone': 'Ver zona',
+    'place.viewMoreRelated': 'Ver mais lugares',
+
+    // Cartões de conteúdo
+    'card.verifiedPlace': 'lugar verificado',
+    'card.verifiedPlaces': 'lugares verificados',
+    'card.explore': 'Explorar',
+    'card.place': 'lugar',
+    'card.places': 'lugares',
+    'card.exploreDestination': 'Explorar destino',
+    'card.exploreEvent': 'Explorar evento',
 
     // Compartilhar
     'share.label': 'Compartilhar',
@@ -447,6 +585,39 @@ export const ui = {
     'footer.note': 'Informações turísticas da região de Tumbes.',
     'footer.verification': 'Conteúdo em verificação — reportar dados.',
     'footer.report': 'reportar dados',
+    'footer.legal': 'Aviso Legal',
+    'footer.privacy': 'Privacidade',
+    'footer.ethics': 'Código de Ética',
+    'footer.legalHeading': 'Informações legais e éticas',
+
+    // Apartados Legais e Institucionais
+    'legal.eyebrow': 'Estrutura Institucional',
+    'legal.title': 'Aviso Legal',
+    'legal.lead':
+      'Termos e condições gerais de uso, titularidade da plataforma e regime de responsabilidade do MiTumbes.',
+    'legal.updated': 'Última atualização: Setembro de 2026',
+
+    'privacy.eyebrow': 'Proteção de Dados',
+    'privacy.title': 'Política de Privacidade',
+    'privacy.lead':
+      'Tratamento e proteção de dados pessoais em conformidade com a Lei nº 29733 da República do Peru.',
+    'privacy.updated': 'Última atualização: Setembro de 2026',
+
+    'ethics.eyebrow': 'Sustentabilidade e Transparência',
+    'ethics.title': 'Código de Ética',
+    'ethics.lead':
+      'Nossos princípios de conservação ambiental, turismo responsável, comércio justo e tolerância zero à exploração.',
+    'ethics.updated': 'Última atualização: Setembro de 2026',
+
+    'seo.legalTitle': 'Aviso Legal — MiTumbes',
+    'seo.legalDescription':
+      'Termos de uso, titularidade e marco legal do guia turístico MiTumbes.',
+    'seo.privacyTitle': 'Política de Privacidade — MiTumbes',
+    'seo.privacyDescription':
+      'Política de proteção de dados pessoais do MiTumbes em conformidade com a Lei nº 29733.',
+    'seo.ethicsTitle': 'Código de Ética e Sustentabilidade — MiTumbes',
+    'seo.ethicsDescription':
+      'Código de ética, compromisso de conservação e turismo sustentável na região de Tumbes.',
 
     // Geolocalização do visitante
     'geo.location': 'Visitando de',

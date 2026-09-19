@@ -1,0 +1,88 @@
+---
+import Icon from '@/shared/components/design/Icon.astro';
+import { t } from '@/shared/constants/ui';
+import type { Locale } from '@/shared/constants/locales';
+
+interface Props {
+  /** Mes activo en formato YYYY-MM (undefined = sin filtro). */
+  mes?: string;
+  lang: Locale;
+}
+
+const { mes, lang } = Astro.props;
+
+const [anioActivo, mesActivo] = (mes?.split('-') ?? []).map(Number);
+const hoy = new Date();
+const anioBase = Number.isInteger(anioActivo) ? anioActivo : hoy.getFullYear();
+const anios = [...new Set([anioBase - 1, anioBase, anioBase + 1])];
+
+const NOMBRES_MES = {
+  es: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+  en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+  pt: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+} as const;
+const nombresMes = NOMBRES_MES[lang] ?? NOMBRES_MES.es;
+
+const sinFiltro = Astro.url.pathname;
+const filtroActivo = Number.isInteger(mesActivo) || Number.isInteger(anioActivo);
+---
+
+<form class="calendar-filter" method="get" action={sinFiltro}>
+  <span class="calendar-filter__label">
+    <Icon name="calendar" size="sm" />
+    {t(lang, 'calendar.title')}
+  </span>
+
+  <select class="filter-field" name="mes" aria-label={t(lang, 'calendar.month')}>
+    <option value="">{t(lang, 'calendar.allMonths')}</option>
+    {
+      nombresMes.map((nombre, i) => (
+        <option value={i + 1} selected={mesActivo === i + 1}>
+          {nombre}
+        </option>
+      ))
+    }
+  </select>
+
+  <select class="filter-field" name="anio" aria-label={t(lang, 'calendar.year')}>
+    {
+      anios.map((anio) => (
+        <option value={anio} selected={anio === (Number.isInteger(anioActivo) ? anioActivo : hoy.getFullYear())}>
+          {anio}
+        </option>
+      ))
+    }
+  </select>
+
+  <button class="btn btn--primary calendar-filter__submit" type="submit">
+    {t(lang, 'calendar.apply')}
+  </button>
+
+  {
+    filtroActivo && (
+      <a class="calendar-filter__clear" href={sinFiltro}>
+        {t(lang, 'calendar.clear')}
+      </a>
+    )
+  }
+</form>
+
+<style>
+  @reference "@/styles/global.css";
+
+  .calendar-filter {
+    @apply flex flex-wrap items-center gap-2 mb-4 p-3 rounded-lg bg-white border border-ink/10;
+  }
+
+  .calendar-filter__label {
+    @apply flex items-center gap-1.5 font-semibold text-sm text-ink;
+  }
+
+  .calendar-filter__submit {
+    @apply py-2 px-4 text-sm;
+  }
+
+  .calendar-filter__clear {
+    @apply text-sm text-primary underline underline-offset-2;
+  }
+</style>

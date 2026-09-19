@@ -1,19 +1,21 @@
 ---
 import Layout from '@/components/layout/Layout.astro';
-import Icon from '@/components/Icon.astro';
-import PlaceCard from '@/components/place/PlaceCard.astro';
-import { loc, imagenSrc } from '@/shared/content/places';
-import { categoriasService } from '@/services/categorias.service';
-import { lugaresService } from '@/services/lugares.service';
-import { zonasService } from '@/services/zonas.service';
-import { conteosService } from '@/services/conteos.service';
+import Icon from '@/shared/components/design/Icon.astro';
+import PlaceList from '@/components/place/PlaceList.astro';
+import AdBanner from '@/shared/components/ads/AdBanner.astro';
+import EventCalendarFilter from '@/components/events/EventCalendarFilter.astro';
+import CategoryCard from '@/components/category/CategoryCard.astro';
+import ZoneCard from '@/components/zone/ZoneCard.astro';
+import { loc } from '@/shared/content/places';
+import type { PaginaListado } from '@/shared/content/places';
+import { fechaEvento } from '@/shared/content/eventos';
+import { contentService } from '@/services/content.service';
+import { eventosService } from '@/services/eventos.service';
 import { breadcrumbJsonLd } from '@/lib/seo/jsonld';
 import { localizePath, isLocale, type Locale } from '@/shared/constants/locales';
 import { t } from '@/shared/constants/ui';
 import { COLLECTION_ICONS } from '@/shared/constants/collections';
 import { clicksService } from '@/services/clicks.service';
-import type { ContenidoConRelaciones } from '@/shared/content/places';
-import '@/styles/pages/home.css';
 
 const lang = Astro.params.lang as Locale;
 const { slug } = Astro.params;
@@ -22,12 +24,11 @@ if (!isLocale(lang)) {
   return Astro.redirect('/404/', 301);
 }
 
-const [categoria, subcategorias, zonas, conteos, categoriasTodas] = await Promise.all([
-  categoriasService.buscarPorId(slug!),
-  categoriasService.listarSubcategorias(slug!),
-  zonasService.listar(),
-  conteosService.obtener(),
-  categoriasService.listar(),
+const [categoria, subcategorias, zonas, categoriasTodas] = await Promise.all([
+  contentService.categorias.buscarPorId(slug!),
+  contentService.categorias.listarSubcategorias(slug!),
+  contentService.zonas.listar(),
+  contentService.categorias.listar(),
 ]);
 
 if (!categoria) {
@@ -42,18 +43,57 @@ const esRaiz = !categoria.data.parent;
 // "zones" es una categoría raíz del backend; sus zonas geográficas se
 // muestran como agrupación (atributo de los lugares), no como contenidos.
 const esSeccionZonas = slug === 'zones';
+const esEventos = slug === 'events';
 const icono =
   categoria.data.icon ??
   COLLECTION_ICONS[slug as keyof typeof COLLECTION_ICONS] ??
   'pin';
 
-// Contenidos: raíz → por categoría; subcategoría → por subcategoría hoja.
-let contenidos: ContenidoConRelaciones[] = [];
+// Conteos solo si hay tarjetas de subcategoría o de zona que mostrar (evita
+// pedir el catálogo completo en páginas que no los usan).
+const conteos =
+  subcategorias.length > 0 || esSeccionZonas
+    ? await contentService.conteos.obtener()
+    : { porCategoria: new Map(), porSubcategoria: new Map(), porZona: new Map() };
+
+const search = Astro.url.searchParams;
+const pagina = Number.parseInt(search.get('page') ?? '1', 10);
+const paginaActual = Number.isNaN(pagina) || pagina < 1 ? 1 : pagina;
+
+// Calendario de eventos: mes y año viajan como query (mes=9&anio=2026).
+const mesNum = Number.parseInt(search.get('mes') ?? '', 10);
+const anioNum = Number.parseInt(search.get('anio') ?? '', 10);
+const mesCalendario =
+  esEventos && !Number.isNaN(mesNum) && !Number.isNaN(anioNum)
+    ? `${anioNum}-${String(mesNum).padStart(2, '0')}`
+    : undefined;
+
+// Listado paginado según el tipo de página: eventos (con calendario),
+// categoría raíz o subcategoría hoja (backend pagination).
+let listado: PaginaListado = {
+  items: [],
+  total: 0,
+  page: paginaActual,
+  totalPaginas: 1,
+};
 if (!esSeccionZonas) {
-  contenidos = esRaiz
-    ? await lugaresService.listarPorCategoria(slug as never)
-    : await lugaresService.listarPorSubcategoria(slug!);
+  if (esEventos) {
+    listado = await eventosService.listarPagina({ mes: mesCalendario }, paginaActual);
+  } else if (esRaiz) {
+    listado = await contentService.lugares.listarPagina({ categoria: slug! }, paginaActual);
+  } else {
+    listado = await contentService.lugares.listarPagina({ subcategoria: slug! }, paginaActual);
+  }
 }
+
+// Fecha visible de cada evento en las tarjetas del listado.
+const fechasEventos = esEventos
+  ? listado.items.reduce<Record<string, string>>((acc, lugar) => {
+      const fecha = fechaEvento(lugar, lang);
+      if (fecha) acc[lugar.id] = fecha;
+      return acc;
+    }, {})
+  : undefined;
 
 const title = loc(categoria.data.title, lang) ?? slug!;
 const description = loc(categoria.data.description, lang) ?? '';
@@ -75,6 +115,19 @@ const breadcrumbs = [
     : []),
   { name: title },
 ];
+
+const countLabel = esEventos
+  ? `${listado.total} ${listado.total === 1 ? t(lang, 'count.event') : t(lang, 'count.events')}`
+  : `${listado.total} ${listado.total === 1 ? t(lang, 'count.place') : t(lang, 'count.places')}`;
+
+const emptyTitle =
+  esEventos && mesCalendario
+    ? t(lang, 'events.emptyMonthTitle')
+    : t(lang, 'categories.emptyTitle');
+const emptyBody =
+  esEventos && mesCalendario
+    ? t(lang, 'events.emptyMonthBody')
+    : t(lang, 'categories.emptyBody');
 ---
 
 <Layout
@@ -108,7 +161,7 @@ const breadcrumbs = [
 
   <section class="section section--sand">
     <div class="container-page">
-      <div class="categoria-header">
+      <div class="flex items-center gap-4">
         <span class="category-tile__icon">
           <Icon name={icono} size="lg" />
         </span>
@@ -120,6 +173,8 @@ const breadcrumbs = [
     </div>
   </section>
 
+  <AdBanner lang={lang} id={`category-${slug}-ad`} variant="minimal" />
+
   <!-- Subcategorías (nivel 2 del backend) de una categoría raíz. -->
   {
     subcategorias.length > 0 && (
@@ -128,22 +183,12 @@ const breadcrumbs = [
           <div class="category-grid">
             {
               subcategorias.map((sub) => (
-                <a
-                  class="category-tile"
-                  data-section="subcategorias"
-                  data-id={sub.collection}
-                  href={localizePath(`/categories/${sub.collection}/`, lang)}
-                >
-                  <span class="category-tile__icon">
-                    <Icon name={COLLECTION_ICONS[sub.collection] ?? 'pin'} />
-                  </span>
-                  <span>
-                    <span class="category-tile__title">{loc(sub.data.title, lang)}</span>
-                    <span class="category-tile__count">
-                      {conteos.porSubcategoria.get(sub.collection) ?? 0} {t(lang, 'count.places')}
-                    </span>
-                  </span>
-                </a>
+                <CategoryCard
+                  categoria={sub}
+                  count={conteos.porSubcategoria.get(sub.collection) ?? 0}
+                  lang={lang}
+                  section="subcategorias"
+                />
               ))
             }
           </div>
@@ -158,61 +203,40 @@ const breadcrumbs = [
     esSeccionZonas ? (
       <section class="section">
         <div class="container-page">
-          <div class="zone-grid">
-            {
-              zonas.map((z) => (
-                <a
-                  class="zone-card"
-                  data-section="zonas"
-                  data-id={z.id}
-                  href={localizePath(`/zones/${z.id}/`, lang)}
-                >
-                  {
-                    z.data.image && (
-                      <img
-                        class="zone-card__img"
-                        src={imagenSrc(z.data.image)}
-                        alt={t(lang, 'zones.imageAlt').replace('{zone}', loc(z.data.title, lang) ?? z.id)}
-                        loading="lazy"
-                      />
-                    )
-                  }
-                  <div class="zone-card__body">
-                    <p class="zone-card__title">{loc(z.data.title, lang)}</p>
-                    <p class="zone-card__count">
-                      {conteos.porZona.get(z.id) ?? 0} {t(lang, 'count.places')}
-                    </p>
-                  </div>
-                </a>
-              ))
-            }
+          <div class="dest-track-container">
+            <div class="zone-grid">
+              {
+                zonas.map((z) => (
+                  <ZoneCard
+                    zona={z}
+                    count={conteos.porZona.get(z.id) ?? 0}
+                    lang={lang}
+                  />
+                ))
+              }
+            </div>
           </div>
         </div>
       </section>
     ) : (
       <section class="section">
         <div class="container-page">
-          <p class="search-meta">
-            {contenidos.length} {contenidos.length === 1 ? t(lang, 'count.place') : t(lang, 'count.places')}
-          </p>
           {
-            contenidos.length > 0 ? (
-              <div class="place-grid">
-                {
-                  contenidos.map((lugar) => (
-                    <PlaceCard lugar={lugar} categoria={categoria} lang={lang} />
-                  ))
-                }
-              </div>
-            ) : (
-              <div class="empty-state">
-                <p class="empty-state__title">
-                  {t(lang, 'categories.emptyTitle')}
-                </p>
-                <p class="empty-state__body">{t(lang, 'categories.emptyBody')}</p>
-              </div>
+            esEventos && (
+              <EventCalendarFilter mes={mesCalendario} lang={lang} />
             )
           }
+          <PlaceList
+            lugares={listado.items}
+            categorias={categoriasTodas}
+            page={listado.page}
+            totalPaginas={listado.totalPaginas}
+            lang={lang}
+            countLabel={countLabel}
+            emptyTitle={emptyTitle}
+            emptyBody={emptyBody}
+            fechas={fechasEventos}
+          />
         </div>
       </section>
     )

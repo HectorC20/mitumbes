@@ -44,6 +44,20 @@ export default defineConfig({
           'car',
           'check',
           'content-copy',
+          'weather-sunny',
+          'airplane-takeoff',
+          'shoe-print',
+          'umbrella-beach',
+          'tree',
+          'party-popper',
+          'alert-circle-outline',
+          'eye-outline',
+          'wallet',
+          'shield-check',
+          'check-decagram',
+          'sparkles',
+          'sail-boat',
+          'fish',
         ],
         // Redes sociales para la columna global de compartir.
         'simple-icons': ['whatsapp', 'facebook', 'x', 'linkedin'],
@@ -52,5 +66,13 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      watch: {
+        // Ignora artefactos que no forman parte del código fuente. Escribirlos
+        // dentro del proyecto hacía que el watcher de Vite los tratara como
+        // cambios y provocara recargas HMR en bucle (requests 304 constantes).
+        ignored: ['**/.astro/**', '**/.system_generated/**', '**/*.log', '**/.tmp/**', '**/temp-*'],
+      },
+    },
   },
 });

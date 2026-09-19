@@ -8,19 +8,13 @@ import {
   getPaginaContenidosApi,
   getZonasApi,
 } from '../../services/contenido-api';
-import type { EntradaContenido, ZonaLigera } from '../../services/contrato-web';
+import type { EntradaContenido, ZonaLigera } from '../interfaces/contenido';
+import type { FiltroContenidos, PaginaListado } from '../interfaces/api';
 
-/**
- * Helpers de contenido. La web ya no tiene contenido local: todas las
- * operaciones consultan mitumbes-server (items, categories, zones).
- * Si la API no está configurada o falla, devuelven listas vacías.
- */
-
+export type { EntradaContenido, ZonaLigera, FiltroContenidos, PaginaListado };
 export type Contenido = EntradaContenido;
 export type Categoria = EntradaContenido;
 export type Zona = ZonaLigera;
-
-/** Contenido con su zona resuelta (ya incluida en EntradaContenido). */
 export type ContenidoConRelaciones = Contenido;
 
 /** Acceso seguro a un campo localizado con respaldo en español. */
@@ -28,6 +22,8 @@ export function loc<T>(campo: Record<Locale, T> | undefined, lang: Locale): T | 
   return campo?.[lang] ?? campo?.es;
 }
 
+const urlCategories = '/categories/';
+const urlZones = '/zones/';
 /**
  * URL renderizable de una imagen de contenido.
  * Acepta tanto una imagen local procesada por astro:assets (ImageMetadata,
@@ -54,17 +50,18 @@ export function imagenSrc(imagen: ImageMetadata | string | undefined): string | 
  */
 export function rutaContenido(c: { collection: string; id: string; data?: { subcategory?: string } }): string {
   const segmento = c.data?.subcategory ?? c.collection;
-  return `/${segmento}/${c.id}/`;
+  const urlSegmento= `/${segmento}/`
+  return `${urlSegmento}${c.id}/`;
 }
 
 /** Ruta interna (sin idioma) de una categoría (colección). */
 export function rutaCategoria(collection: string): string {
-  return `/categories/${collection}/`;
+  return `${urlCategories}${collection}/`;
 }
 
 /** Ruta interna (sin idioma) de una zona. */
 export function rutaZona(id: string): string {
-  return `/zones/${id}/`;
+  return `${urlZones}${id}/`;
 }
 
 /** Recupera todos los contenidos del catálogo unificado, desde la API. */
@@ -73,16 +70,7 @@ export async function getAllContenidos(): Promise<ContenidoConRelaciones[]> {
 }
 
 /** Tamaño de página del listado público de lugares. */
-export const LUGARES_POR_PAGINA = 20;
-
-/** Una página del listado público, ya filtrada, ordenada y contada por el backend. */
-export interface PaginaListado {
-  items: ContenidoConRelaciones[];
-  /** Total de coincidencias en el servidor (no solo las de esta página). */
-  total: number;
-  page: number;
-  totalPaginas: number;
-}
+export const LUGARES_POR_PAGINA = 6;
 
 /**
  * Página del listado de lugares. El filtro (texto, categoría, zona), el orden y
@@ -97,6 +85,7 @@ export async function getPaginaContenidos(
   const pagina = await getPaginaContenidosApi({
     q: filtro.q,
     categoria: filtro.categoria,
+    subcategoria: filtro.subcategoria,
     zona: filtro.zona,
     page: paginaActual,
     limit: LUGARES_POR_PAGINA,
@@ -181,26 +170,104 @@ export async function getDestacados(
   return todos.filter((c) => c.data.featured).slice(0, limit);
 }
 
+/**
+ * Lugares relacionados con algoritmo inteligente, diverso y rotativo.
+ *
+ * En lugar de filtrar rígidamente por la misma colección y un orden estático
+ * de actualización (lo que repetía siempre los mismos 1-3 lugares en todas las páginas
+ * o devolvía solo 1 si la categoría tenía pocos ítems), este algoritmo:
+ * 1. Prioriza afinidad geográfica (misma zona) y temática (misma subcategoría/colección).
+ * 2. Incorpora opciones de colecciones complementarias (ej. restaurantes y actividades si es un hotel).
+ * 3. Añade rotación y variedad para entregar recomendaciones frescas y no repetitivas.
+ * 4. Rellena dinámicamente hasta alcanzar el límite deseado (por defecto 6), garantizando
+ *    que nunca quede un solo ítem aislado cuando existen más opciones en la región.
+ */
 export async function getRelacionados(
   item: ContenidoConRelaciones,
-  limit = 3,
+  limit = 6,
 ): Promise<ContenidoConRelaciones[]> {
   const todos = await getAllContenidos();
-  return todos
-    .filter(
-      (c) =>
-        c.id !== item.id &&
-        (c.collection === item.collection ||
-          (item.zone ? c.zone?.id === item.zone.id : false)),
-    )
-    .sort(
-      (a, b) =>
-        Number(b.collection === item.collection) -
-          Number(a.collection === item.collection) ||
-        (b.data.updatedAt?.getTime() ?? 0) -
-          (a.data.updatedAt?.getTime() ?? 0),
-    )
-    .slice(0, limit);
+  const otros = todos.filter((c) => c.id !== item.id);
+  if (otros.length === 0) return [];
+
+  // Mapeo de categorías complementarias para enriquecer la experiencia turística
+  const complementarias: Record<string, string[]> = {
+    places: ['restaurants', 'activities', 'hotels'],
+    restaurants: ['places', 'activities', 'hotels'],
+    hotels: ['restaurants', 'places', 'activities'],
+    activities: ['places', 'restaurants', 'hotels'],
+    services: ['places', 'restaurants', 'hotels'],
+    events: ['places', 'restaurants', 'activities'],
+  };
+  const listaComp = complementarias[item.collection] ?? ['places', 'restaurants'];
+
+  // Puntuación multidimensional
+  const puntuados = otros.map((c) => {
+    let score = 0;
+
+    const mismaZona = Boolean(item.zone && c.zone && c.zone.id === item.zone.id);
+    const mismaSubcategoria = Boolean(
+      item.data.subcategory && c.data.subcategory === item.data.subcategory,
+    );
+    const mismaColeccion = c.collection === item.collection;
+    const esComplementaria = listaComp.includes(c.collection);
+
+    if (mismaZona && mismaSubcategoria) {
+      score += 70;
+    } else if (mismaZona && mismaColeccion) {
+      score += 55;
+    } else if (mismaZona) {
+      score += 42;
+    } else if (mismaSubcategoria) {
+      score += 35;
+    } else if (mismaColeccion) {
+      score += 25;
+    } else if (esComplementaria) {
+      score += 15;
+    } else {
+      score += 5;
+    }
+
+    if (c.data.featured) score += 12;
+    if (c.data.verified) score += 8;
+    if (c.data.rating) score += Math.min(10, Math.round(c.data.rating * 2));
+
+    // Variación dinámica para evitar listas estáticas repetitivas
+    const variacion = Math.random() * 20;
+
+    return {
+      item: c,
+      score: score + variacion,
+    };
+  });
+
+  // Orden descendente por puntaje total
+  puntuados.sort((a, b) => b.score - a.score);
+
+  // Selección diversa sin duplicados
+  const seleccionados: ContenidoConRelaciones[] = [];
+  const idsSeleccionados = new Set<string>();
+
+  for (const p of puntuados) {
+    if (seleccionados.length >= limit) break;
+    if (!idsSeleccionados.has(p.item.id)) {
+      seleccionados.push(p.item);
+      idsSeleccionados.add(p.item.id);
+    }
+  }
+
+  // Garantía de relleno flexible: nunca entregar menos si hay otros disponibles
+  if (seleccionados.length < limit) {
+    for (const c of otros) {
+      if (seleccionados.length >= limit) break;
+      if (!idsSeleccionados.has(c.id)) {
+        seleccionados.push(c);
+        idsSeleccionados.add(c.id);
+      }
+    }
+  }
+
+  return seleccionados;
 }
 
 /** Zonas desde la API (/zones), ordenadas por título en español. */
@@ -256,13 +323,6 @@ export function normalizarTexto(texto: string): string {
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
-}
-
-/** Filtros del listado público (viajan como query string al backend). */
-export interface FiltroContenidos {
-  q?: string;
-  categoria?: string;
-  zona?: string;
 }
 
 /**

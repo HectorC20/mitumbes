@@ -1,0 +1,109 @@
+---
+import Icon from '@/shared/components/design/Icon.astro';
+import type { Locale } from '@/shared/constants/locales';
+import { t } from '@/shared/constants/ui';
+import type { EventItem } from '@/shared/interfaces/event';
+
+export type { EventItem };
+
+interface Props {
+  event: EventItem;
+  lang: Locale;
+  index?: number;
+  class?: string;
+  isCarouselItem?: boolean;
+}
+
+const {
+  event,
+  lang,
+  index,
+  class: extraClass = '',
+  isCarouselItem = true,
+} = Astro.props;
+
+const exploreLabel = t(lang, 'card.exploreEvent');
+---
+
+<article
+  class:list={[
+    'dest-card',
+    'event-card',
+    { 'dest-card--carousel': isCarouselItem, 'dest-card--grid': !isCarouselItem },
+    extraClass,
+  ]}
+  data-dest-card
+  data-event-card
+  data-section="eventos"
+  data-id={event.id}
+  data-index={index}
+>
+  <a
+    href={event.href}
+    class="dest-card__link event-card__link"
+    aria-label={`${exploreLabel} ${event.title}`}
+  >
+    <div class="dest-card__media event-card__media">
+      <img
+        src={event.image}
+        alt={event.title}
+        class="dest-card__img event-card__img"
+        loading="lazy"
+        width="600"
+        height="800"
+      />
+      <div class="dest-card__gradient event-card__gradient"></div>
+    </div>
+
+    <!-- Badge superior: Categoría a la izquierda, Fecha/Temporada a la derecha -->
+    <div class="dest-card__top event-card__top">
+      <span class="dest-card__badge event-card__badge">
+        {event.badge ?? event.category}
+      </span>
+      <span class="dest-card__count event-card__date">
+        <Icon name="calendar" size="sm" />
+        <span>{event.date}</span>
+      </span>
+    </div>
+
+    <!-- Info inferior: Ubicación, Título, Descripción y Botón Explorar -->
+    <div class="dest-card__bottom event-card__bottom">
+      <div class="event-card__location">
+        <Icon name="pin" size="sm" class="text-sun" />
+        <span>{event.location}</span>
+      </div>
+
+      <h3 class="dest-card__title event-card__title">{event.title}</h3>
+      <p class="dest-card__desc event-card__desc">{event.description}</p>
+
+      <div class="dest-card__action event-card__action">
+        <span class="dest-card__action-text zone-card__action-text">
+          {exploreLabel}
+        </span>
+        <span class="dest-card__action-icon zone-card__action-icon">
+          <Icon name="arrow-right" size="sm" />
+        </span>
+      </div>
+    </div>
+  </a>
+</article>
+
+<style>
+  @reference "@/styles/global.css";
+
+  .event-card__title {
+    color: #ffffff !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
+  }
+
+  .event-card__desc {
+    color: rgba(255, 255, 255, 0.92) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+  }
+
+  .event-card__location {
+    @apply inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider mb-1;
+    color: #f0a202 !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  }
+</style>

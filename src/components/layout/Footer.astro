@@ -2,7 +2,6 @@
 import { SITE } from '../../shared/constants/site';
 import { isLocale, localizePath, type Locale } from '../../shared/constants/locales';
 import { t } from '../../shared/constants/ui';
-import Icon from '../Icon.astro';
 
 interface Props {
   lang?: Locale;
@@ -67,12 +66,19 @@ const link = (path: string) => localizePath(path, lang);
         </a>
       </nav>
     </div>
+    <div class="site-footer__legal-bar">
+      <nav class="site-footer__legal-links" aria-label={t(lang, 'footer.legalHeading')}>
+        <a class="site-footer__legal-link" href={link('/legal/')}>{t(lang, 'footer.legal')}</a>
+        <span class="site-footer__legal-sep" aria-hidden="true">•</span>
+        <a class="site-footer__legal-link" href={link('/privacy/')}>{t(lang, 'footer.privacy')}</a>
+        <span class="site-footer__legal-sep" aria-hidden="true">•</span>
+        <a class="site-footer__legal-link" href={link('/ethics/')}>{t(lang, 'footer.ethics')}</a>
+      </nav>
+      {t(lang, 'footer.verification') && <span>{t(lang, 'footer.verification')}</span>}
+    </div>
     <div class="site-footer__note">
       <div class="site-footer__note-inner">
         <span>© {year} {SITE.name}. {t(lang, 'footer.note')}</span>
-        <span>
-          {t(lang, 'footer.verification')}
-        </span>
       </div>
     </div>
   </div>

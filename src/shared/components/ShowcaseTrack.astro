@@ -1,0 +1,186 @@
+---
+import Icon from '@/shared/components/design/Icon.astro';
+
+interface Props {
+  totalItems: number;
+  actionHref?: string;
+  actionText?: string;
+  actionIcon?: string;
+  trackAriaLabel?: string;
+  class?: string;
+}
+
+const {
+  totalItems,
+  actionHref,
+  actionText,
+  actionIcon = 'arrow-right',
+  trackAriaLabel = 'Carrusel de elementos',
+  class: extraClass = '',
+} = Astro.props;
+---
+
+<!-- Riel horizontal reutilizable con scroll-snap nativo -->
+<div class:list={['dest-track-container showcase-track-container', extraClass]}>
+  <div
+    class="dest-track showcase-track"
+    data-carousel-track
+    tabindex="0"
+    role="region"
+    aria-label={trackAriaLabel}
+  >
+    <slot />
+  </div>
+</div>
+
+<!-- Paginación inferior interactiva y botón de acción opcional -->
+<div class="dest-bottom-bar showcase-bottom-bar">
+  <div class="dest-dots showcase-dots" role="tablist" aria-label="Navegar carrusel">
+    {
+      Array.from({ length: totalItems }).map((_, index) => (
+        <button
+          type="button"
+          class:list={['dest-dot showcase-dot', { 'dest-dot--active showcase-dot--active': index === 0 }]}
+          data-carousel-dot={index}
+          aria-label={`Ir al elemento ${index + 1}`}
+        />
+      ))
+    }
+  </div>
+
+  {
+    actionHref && actionText && (
+      <a class="btn btn--outline" href={actionHref}>
+        {actionIcon && <Icon name={actionIcon} size="sm" />}
+        <span>{actionText}</span>
+      </a>
+    )
+  }
+</div>
+
+<style>
+  @reference "@/styles/global.css";
+
+  .dest-track-container,
+  .showcase-track-container {
+    @apply relative -mx-4 sm:mx-0 px-4 sm:px-0;
+  }
+
+  .dest-track,
+  .showcase-track {
+    @apply flex gap-5 overflow-x-auto snap-x snap-mandatory py-3 outline-none;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+  }
+
+  .dest-track::-webkit-scrollbar,
+  .showcase-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dest-bottom-bar,
+  .showcase-bottom-bar {
+    @apply mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-ink/10;
+  }
+
+  .dest-dots,
+  .showcase-dots {
+    @apply flex items-center my-2 gap-1.5 max-w-[220px] sm:max-w-none overflow-x-auto justify-center flex-nowrap py-1 shrink;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .dest-dots::-webkit-scrollbar,
+  .showcase-dots::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dest-dot,
+  .showcase-dot {
+    @apply w-2.5 h-2.5 shrink-0 rounded-full bg-ink/20 hover:bg-primary transition-all duration-200 cursor-pointer border-none p-0;
+  }
+
+  .dest-dot--active,
+  .showcase-dot--active {
+    @apply w-6 bg-primary;
+  }
+</style>
+
+<script>
+  function initShowcaseCarousels() {
+    const tracks = document.querySelectorAll<HTMLElement>('[data-carousel-track]');
+
+    tracks.forEach((track) => {
+      // Evita inicialización duplicada
+      if (track.dataset.carouselInitialized === 'true') return;
+      track.dataset.carouselInitialized = 'true';
+
+      const scope =
+        track.closest<HTMLElement>(
+          '[data-carousel-scope], [data-dest-showcase], [data-events-section], section'
+        ) ?? track.parentElement;
+
+      if (!scope) return;
+
+      const prevBtn = scope.querySelector<HTMLButtonElement>(
+        '[data-carousel-prev], [data-dest-prev], [data-events-prev]'
+      );
+      const nextBtn = scope.querySelector<HTMLButtonElement>(
+        '[data-carousel-next], [data-dest-next], [data-events-next]'
+      );
+      const dots = Array.from(
+        scope.querySelectorAll<HTMLButtonElement>(
+          '[data-carousel-dot], [data-dest-dot], [data-events-dot]'
+        )
+      );
+
+      const getCardWidth = () => {
+        const firstCard = track.firstElementChild as HTMLElement | null;
+        if (!firstCard) return 320;
+        const gap = 20; // 5 en Tailwind (gap-5 = 20px)
+        return firstCard.offsetWidth + gap;
+      };
+
+      const updateActiveDot = () => {
+        const scrollLeft = track.scrollLeft;
+        const cardWidth = getCardWidth();
+        const activeIndex = Math.min(
+          dots.length - 1,
+          Math.max(0, Math.round(scrollLeft / cardWidth))
+        );
+
+        dots.forEach((dot, idx) => {
+          const isActive = idx === activeIndex;
+          dot.classList.toggle('dest-dot--active', isActive);
+          dot.classList.toggle('showcase-dot--active', isActive);
+        });
+      };
+
+      prevBtn?.addEventListener('click', () => {
+        track.scrollBy({ left: -getCardWidth(), behavior: 'smooth' });
+      });
+
+      nextBtn?.addEventListener('click', () => {
+        track.scrollBy({ left: getCardWidth(), behavior: 'smooth' });
+      });
+
+      dots.forEach((dot, idx) => {
+        dot.addEventListener('click', () => {
+          track.scrollTo({ left: idx * getCardWidth(), behavior: 'smooth' });
+        });
+      });
+
+      track.addEventListener('scroll', updateActiveDot, { passive: true });
+    });
+  }
+
+  if (typeof window !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initShowcaseCarousels);
+    } else {
+      initShowcaseCarousels();
+    }
+    document.addEventListener('chunk:ready', initShowcaseCarousels);
+  }
+</script>

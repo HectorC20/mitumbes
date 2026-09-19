@@ -1,0 +1,129 @@
+---
+import Icon from '@/shared/components/design/Icon.astro';
+import ContainerPage from '@/shared/components/ContainerPage.astro';
+
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  badge?: string;
+  badgeIcon?: string;
+  badgeColor?: string;
+  hasControls?: boolean;
+  prevAriaLabel?: string;
+  nextAriaLabel?: string;
+  prevDataAttr?: string;
+  nextDataAttr?: string;
+  viewAllHref?: string;
+  viewAllText?: string;
+  class?: string;
+}
+
+const {
+  id,
+  eyebrow,
+  title,
+  subtitle,
+  badge,
+  badgeIcon = 'sparkles',
+  badgeColor = 'badge--primary',
+  hasControls = true,
+  prevAriaLabel = 'Anterior',
+  nextAriaLabel = 'Siguiente',
+  prevDataAttr = 'data-carousel-prev',
+  nextDataAttr = 'data-carousel-next',
+  viewAllHref,
+  viewAllText,
+  class: extraClass = '',
+} = Astro.props;
+
+const prevAttrs = prevDataAttr ? { [prevDataAttr]: '' } : {};
+const nextAttrs = nextDataAttr ? { [nextDataAttr]: '' } : {};
+---
+
+<ContainerPage class={extraClass}>
+  <div id={id} class="dest-showcase__head">
+    <div class="dest-showcase__head-left">
+      {badge ? (
+        <span class:list={['badge mb-2 inline-flex items-center gap-1.5', badgeColor]}>
+          {badgeIcon && <Icon name={badgeIcon} size="sm" />}
+          <span>{badge}</span>
+        </span>
+      ) : eyebrow ? (
+        <p class="eyebrow">{eyebrow}</p>
+      ) : null}
+
+      <h2 class="dest-showcase__title">{title}</h2>
+      
+      {subtitle && <p class="dest-showcase__subtitle">{subtitle}</p>}
+      
+      <slot name="subtitle-after" />
+    </div>
+
+    <!-- Controles de navegación o enlace de acción -->
+    <div class="dest-showcase__controls">
+      <slot name="controls">
+        {hasControls && (
+          <button
+            type="button"
+            class="dest-nav-btn"
+            {...prevAttrs}
+            aria-label={prevAriaLabel}
+          >
+            <Icon name="chevron-left" size="sm" />
+          </button>
+          <button
+            type="button"
+            class="dest-nav-btn"
+            {...nextAttrs}
+            aria-label={nextAriaLabel}
+          >
+            <Icon name="chevron-right" size="sm" />
+          </button>
+        )}
+        {viewAllHref && (
+          <a class="dest-nav-link" href={viewAllHref}>
+            <span>{viewAllText || 'Ver todos'}</span>
+            <Icon name="arrow-right" size="sm" />
+          </a>
+        )}
+      </slot>
+    </div>
+  </div>
+
+  <!-- Contenido (carrusel de destinos, eventos, tarjetas, etc.) -->
+  <slot />
+</ContainerPage>
+
+<style>
+  @reference "@/styles/global.css";
+
+  .dest-showcase__head {
+    @apply flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 sm:mb-10;
+  }
+
+  .dest-showcase__head-left {
+    @apply max-w-2xl;
+  }
+
+  .dest-showcase__title {
+    @apply text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-secondary tracking-tight mt-1 mb-2;
+  }
+
+  .dest-showcase__subtitle {
+    @apply text-sm sm:text-base text-muted leading-relaxed m-0;
+  }
+
+  .dest-showcase__controls {
+    @apply hidden sm:flex items-center gap-2.5 shrink-0;
+  }
+
+  .dest-nav-btn {
+    @apply w-10 h-10 rounded-full border border-ink/15 bg-white text-ink/80 hover:bg-primary hover:text-white hover:border-primary flex items-center justify-center shadow-xs transition-all duration-200 cursor-pointer;
+  }
+
+  .dest-nav-link {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-primary text-secondary hover:text-white border border-ink/15 shadow-xs font-semibold text-xs uppercase tracking-wider transition-all duration-200 no-underline shrink-0;
+  }
+</style>

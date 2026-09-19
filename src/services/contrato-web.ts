@@ -1,94 +1,7 @@
-import type { Locale } from '@/shared/constants/locales';
 import type { ContentCollectionName } from '@/shared/constants/collections';
+import type { Localizado, EnlaceContenido, EntradaContenido, ZonaLigera, ContratoEntry } from '@/shared/interfaces/contenido';
 
-/**
- * Mapeo puro del contrato web (backend → shape CollectionEntry).
- *
- * El backend normaliza cada campo localizado como `{ es, en, pt }` y los
- * monolingües como valor simple (ver server/src/common/serializers/web-contract.ts).
- * Este módulo convierte esa respuesta al shape que la web ya consume
- * (equivalente al CollectionEntry de Astro) sin depender de `astro:content`,
- * por lo que es 100 % testeable en vitest.
- */
-
-export type Localizado<T = string> = Record<Locale, T>;
-
-/** Enlace externo del backend (sitio, redes, teléfono, mapa, …). */
-export interface EnlaceContenido {
-  type: string;
-  url: string;
-  label?: string;
-}
-
-/** Entrada normalizada (compatible estructuralmente con CollectionEntry). */
-export interface EntradaContenido {
-  id: string;
-  collection: ContentCollectionName;
-  /** Zona resuelta (misma referencia que data.zone) para acceso tipo
-   *  `item.zone.data.title`, igual que el CollectionEntry con relaciones. */
-  zone?: ZonaLigera;
-  data: {
-    title: Localizado<string>;
-    description: Localizado<string>;
-    excerpt?: Localizado<string>;
-    zone?: ZonaLigera;
-    image?: string;
-    gallery?: string[];
-    coordinates?: { lat: number; lng: number };
-    address?: Localizado<string>;
-    hours?: Localizado<string>;
-    price?: Localizado<string>;
-    phone?: string;
-    email?: string;
-    website?: string;
-    social?: { instagram?: string; facebook?: string };
-    /** Enlaces externos del backend (incluye el de Google Maps). */
-    links?: EnlaceContenido[];
-    services?: Localizado<string[]>;
-    howToGet?: Localizado<string>;
-    activities?: Localizado<string[]>;
-    nearby?: string[];
-    source?: Localizado<string>;
-    verified: boolean;
-    featured: boolean;
-    rating?: number;
-    createdAt?: Date;
-    updatedAt?: Date;
-    body?: Localizado<string>;
-    /** Subcategoría hoja del lugar (slug; backend places). */
-    subcategory?: string;
-    /** Solo categorías: slug de la categoría padre (ausente = raíz). */
-    parent?: string;
-    /** Solo categorías: UUID del padre (referencia cruda del backend). */
-    parentId?: string | null;
-    /** Solo categorías: ruta materializada del árbol (ej. /places/playas). */
-    path?: string;
-    /** Solo categorías: profundidad (0 = raíz, 1+ = subcategoría). */
-    depth?: number;
-    /** Solo categorías (index.md del markdown). */
-    icon?: string;
-  };
-}
-
-/** Zona ligera (shape de GET /zones del backend; id = slug). */
-export interface ZonaLigera {
-  id: string;
-  collection: 'zones';
-  data: {
-    title: Localizado<string>;
-    type?: string;
-    description?: Localizado<string>;
-    image?: string;
-    body?: Localizado<string>;
-  };
-}
-
-/** Respuesta cruda del backend (WebContractEntry). */
-export interface ContratoEntry {
-  id: string;
-  collection: string;
-  data: Record<string, unknown>;
-}
+export type { Localizado, EnlaceContenido, EntradaContenido, ZonaLigera, ContratoEntry };
 
 /** Zona de respaldo si el string `zone` no coincide con una zona local. */
 function zonaRespaldo(id: string): ZonaLigera {
@@ -183,6 +96,8 @@ export function normalizarEntrada(
       path: simple<string>('path'),
       depth: simple<number>('depth'),
       icon: simple<string>('icon'),
+      startDate: simple<string>('startDate'),
+      endDate: simple<string>('endDate'),
     },
   };
 }

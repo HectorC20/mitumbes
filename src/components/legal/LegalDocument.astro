@@ -1,0 +1,105 @@
+---
+import Icon from '@/shared/components/design/Icon.astro';
+import type { Locale } from '@/shared/constants/locales';
+import type { LegalDocumentContent } from '@/shared/content/legal-data';
+import '@/styles/pages/legal.css';
+
+interface Props {
+  document: LegalDocumentContent;
+  lang: Locale;
+  eyebrow: string;
+  title: string;
+  lead: string;
+  updatedText: string;
+}
+
+const { document: doc, lang, eyebrow, title, lead, updatedText } = Astro.props;
+---
+
+<article class="legal-page-wrapper">
+  <!-- Encabezado del Documento -->
+  <header class="legal-hero">
+    <div class="legal-hero__inner">
+      <span class="legal-hero__badge">
+        <Icon name="scale" size="sm" />
+        <span>{eyebrow}</span>
+      </span>
+      <h1 class="legal-hero__title">{title}</h1>
+      <p class="legal-hero__lead">{lead}</p>
+      <div class="legal-hero__meta">
+        <Icon name="clock" size="sm" />
+        <span>{updatedText}</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="legal-container">
+    <!-- Tabla de Contenidos Rápida -->
+    <nav class="legal-toc" aria-label="Tabla de contenidos del documento">
+      <div class="legal-toc__head">
+        <Icon name="menu" size="sm" class="text-primary" />
+        <h2 class="legal-toc__title">Contenido del documento</h2>
+      </div>
+      <ul class="legal-toc__list">
+        {
+          doc.sections.map((section) => (
+            <li>
+              <a class="legal-toc__link" href={`#${section.id}`}>
+                <Icon name="chevron-right" size="sm" class="opacity-60" />
+                <span>{section.title[lang]}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <!-- Cláusulas y Secciones -->
+    <div class="legal-body">
+      {
+        doc.sections.map((section) => (
+          <section class="legal-card" id={section.id}>
+            <h2 class="legal-section__title">
+              <Icon name="check" size="sm" class="text-primary" />
+              <span>{section.title[lang]}</span>
+            </h2>
+            <div class="legal-section__content">
+              {section.paragraphs[lang].map((p) => (
+                <p>{p}</p>
+              ))}
+              {section.bullets && section.bullets[lang] && (
+                <ul class="legal-section__bullets">
+                  {section.bullets[lang].map((bullet) => (
+                    <li>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </section>
+        ))
+      }
+    </div>
+
+    <!-- Cuadro de Contacto y Acción -->
+    {
+      doc.callout && (
+        <aside class="legal-callout">
+          <div class="legal-callout__head">
+            <Icon name="info" size="sm" />
+            <h3 class="legal-callout__title">{doc.callout.title[lang]}</h3>
+          </div>
+          <p class="legal-callout__text">{doc.callout.text[lang]}</p>
+          {doc.callout.contactEmail && (
+            <a
+              class="legal-callout__email"
+              href={`mailto:${doc.callout.contactEmail}`}
+            >
+              <Icon name="phone" size="sm" />
+              <span>Escribir a {doc.callout.contactEmail}</span>
+            </a>
+          )}
+        </aside>
+      )
+    }
+  </div>
+</article>

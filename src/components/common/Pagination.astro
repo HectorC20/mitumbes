@@ -1,0 +1,102 @@
+---
+import Icon from '@/shared/components/design/Icon.astro';
+import { isLocale, type Locale } from '@/shared/constants/locales';
+import { interpolate, t } from '@/shared/constants/ui';
+
+interface Props {
+  page: number;
+  totalPaginas: number;
+  lang?: Locale;
+}
+
+const { page, totalPaginas } = Astro.props;
+const lang: Locale = isLocale(Astro.props.lang) ? Astro.props.lang : 'es';
+
+/** Query actual conservada en cada enlace (sin `page`, que la pone cada enlace). */
+const queryBase = new URLSearchParams(Astro.url.searchParams);
+queryBase.delete('page');
+const base = Astro.url.pathname;
+
+function enlacePagina(n: number): string {
+  const query = new URLSearchParams(queryBase);
+  if (n > 1) query.set('page', String(n));
+  const qs = query.toString();
+  return qs ? `${base}?${qs}` : base;
+}
+
+/**
+ * Números de página a mostrar: todos si hay pocos, o primera/última y las
+ * contiguas a la actual con elipsis cuando hay muchas.
+ */
+const paginasVisibles: (number | '…')[] = (() => {
+  if (totalPaginas <= 7) {
+    return Array.from({ length: totalPaginas }, (_, i) => i + 1);
+  }
+  const candidatos = [...new Set(
+    [1, page - 1, page, page + 1, totalPaginas].filter(
+      (n) => n >= 1 && n <= totalPaginas,
+    ),
+  )].sort((a, b) => a - b);
+  const salida: (number | '…')[] = [];
+  let previo = 0;
+  for (const n of candidatos) {
+    if (previo && n - previo > 1) salida.push('…');
+    salida.push(n);
+    previo = n;
+  }
+  return salida;
+})();
+---
+
+{
+  totalPaginas > 1 && (
+    <nav class="pagination" aria-label={t(lang, 'pagination.label')}>
+      {page > 1 ? (
+        <a class="pagination__link" href={enlacePagina(page - 1)} rel="prev">
+          <Icon name="chevron-left" size="sm" />
+          <span>{t(lang, 'pagination.previous')}</span>
+        </a>
+      ) : (
+        <span class="pagination__link pagination__link--disabled" aria-disabled="true">
+          <Icon name="chevron-left" size="sm" />
+          <span>{t(lang, 'pagination.previous')}</span>
+        </span>
+      )}
+
+      <ul class="pagination__pages">
+        {paginasVisibles.map((n) =>
+          n === '…' ? (
+            <li class="pagination__ellipsis" aria-hidden="true">
+              …
+            </li>
+          ) : (
+            <li>
+              <a
+                class="pagination__page"
+                href={enlacePagina(n)}
+                aria-current={n === page ? 'page' : undefined}
+                aria-label={interpolate(t(lang, 'pagination.goToPage'), {
+                  page: String(n),
+                })}
+              >
+                {n}
+              </a>
+            </li>
+          ),
+        )}
+      </ul>
+
+      {page < totalPaginas ? (
+        <a class="pagination__link" href={enlacePagina(page + 1)} rel="next">
+          <span>{t(lang, 'pagination.next')}</span>
+          <Icon name="chevron-right" size="sm" />
+        </a>
+      ) : (
+        <span class="pagination__link pagination__link--disabled" aria-disabled="true">
+          <span>{t(lang, 'pagination.next')}</span>
+          <Icon name="chevron-right" size="sm" />
+        </span>
+      )}
+    </nav>
+  )
+}

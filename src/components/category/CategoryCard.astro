@@ -1,0 +1,87 @@
+---
+import Icon from '@/shared/components/design/Icon.astro';
+import type { Locale } from '@/shared/constants/locales';
+import { loc, type Categoria } from '@/shared/content/places';
+import { getCategoryMeta } from '@/shared/content/categories';
+import { t } from '@/shared/constants/ui';
+
+interface Props {
+  categoria: Categoria;
+  count: number;
+  lang: Locale;
+  section?: string;
+  dataCatCard?: boolean;
+  dataVibe?: string;
+  class?: string;
+}
+
+const {
+  categoria,
+  count,
+  lang,
+  section,
+  dataCatCard,
+  dataVibe,
+  class: extraClass = '',
+} = Astro.props;
+
+const meta = getCategoryMeta(categoria, lang);
+const title = loc(categoria.data?.title, lang) ?? categoria.id;
+const desc = loc(categoria.data?.description, lang) || meta.tagline;
+const href = meta.href;
+const vibe = dataVibe ?? meta.vibe;
+const badge = meta.badge;
+const icon = categoria.data?.icon ?? meta.icon;
+
+const countLabel = t(lang, count === 1 ? 'card.verifiedPlace' : 'card.verifiedPlaces');
+const exploreLabel = t(lang, 'card.explore');
+---
+
+<a
+  href={href}
+  class:list={[
+    'category-card',
+    'home-cat-card',
+    meta.accentBorder,
+    meta.accentGlow,
+    extraClass,
+  ]}
+  data-section={section}
+  data-id={categoria.collection}
+  data-cat-card={dataCatCard ? '' : undefined}
+  data-vibe={vibe}
+>
+  <!-- Cabecera de la tarjeta con icono estilizado y badge de ambiente -->
+  <div class="category-card__top home-cat-card__top">
+    <span class:list={['category-card__icon', 'home-cat-card__icon', meta.accentBg, meta.accentText]}>
+      <Icon name={icon} size="md" />
+    </span>
+
+    <span class="category-card__badge home-cat-card__badge">
+      {badge}
+    </span>
+  </div>
+
+  <!-- Cuerpo de la tarjeta -->
+  <div class="category-card__body home-cat-card__body">
+    <h3 class="category-card__title home-cat-card__title">
+      {title}
+    </h3>
+    <p class="category-card__desc home-cat-card__desc">
+      {desc}
+    </p>
+  </div>
+
+  <!-- Pie de la tarjeta: Conteo verificado + flecha de acción dinámica -->
+  <div class="category-card__footer home-cat-card__footer">
+    <span class="category-card__count home-cat-card__count">
+      <span class="category-card__pulse-dot home-cat-card__pulse-dot"></span>
+      <span>{count} {countLabel}</span>
+    </span>
+
+    <span class="category-card__action home-cat-card__action">
+      <span>{exploreLabel}</span>
+      <Icon name="arrow-right" size="sm" class="category-card__arrow home-cat-card__arrow" />
+    </span>
+  </div>
+</a>

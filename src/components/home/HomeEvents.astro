@@ -1,0 +1,291 @@
+---
+import ShowcaseHeader from '@/shared/components/ShowcaseHeader.astro';
+import ShowcaseTrack from '@/shared/components/ShowcaseTrack.astro';
+import EventCard, { type EventItem } from '@/components/events/EventCard.astro';
+import SectionChunk from '@/components/common/SectionChunk.astro';
+import { localizePath, type Locale } from '@/shared/constants/locales';
+import { contentService } from '@/services/content.service';
+import { imagenSrc, loc, rutaContenido } from '@/shared/content/places';
+
+interface Props {
+  lang: Locale;
+  badge?: string;
+  title?: string;
+  subtitle?: string;
+  limit?: number;
+  id?: string;
+}
+
+const {
+  lang,
+  badge: propBadge,
+  title: propTitle,
+  subtitle: propSubtitle,
+  limit,
+  id = 'agenda-head',
+} = Astro.props;
+
+const eventStockImages = [
+  'https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=800&q=80', // cebiche / gastronomía
+  'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80', // fiesta / noche
+  'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=800&q=80', // tradición marina
+  'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80', // ballenas / costa
+];
+
+/**
+ * Extrae la fecha real del evento del contrato del backend.
+ * En mitumbes-server, las fechas festivas y temporadas se registran en `hours`
+ * (campo localizado: { es, en, pt }).
+ */
+function extraerFechaEvento(item: (typeof items)[0], lang: Locale): string {
+  // 1. Horario / fechas del evento en el contrato del backend (`item.data.hours`)
+  const hoursVal = loc(item.data.hours, lang);
+  if (hoursVal && hoursVal.trim()) {
+    // Si contiene notas largas entre paréntesis (ej: "22 y 23 de julio (en el marco de...)"),
+    // limpiar el texto entre paréntesis para que el badge de la tarjeta sea conciso y legible.
+    const fechaLimpia = hoursVal.replace(/\s*\([^)]*\)/g, '').trim();
+    return fechaLimpia || hoursVal.trim();
+  }
+
+  // 2. Propiedades alternativas de fecha en data
+  const d = item.data as Record<string, unknown>;
+  const dateField = d.date ?? d.dates ?? d.eventDate ?? d.startDate ?? d.fechas;
+  if (typeof dateField === 'string' && dateField.trim()) {
+    return dateField.trim();
+  }
+  if (dateField && typeof dateField === 'object' && !Array.isArray(dateField)) {
+    const locDate = loc(dateField as Record<Locale, string>, lang);
+    if (locDate && locDate.trim()) return locDate.trim();
+  }
+
+  // 3. Fechas ISO o marcas de tiempo
+  const rawDate = d.publishedAt ?? d.event_date ?? d.start_date;
+  if (rawDate && (typeof rawDate === 'string' || rawDate instanceof Date)) {
+    const dt = new Date(rawDate as string | Date);
+    if (!isNaN(dt.getTime())) {
+      return dt.toLocaleDateString(lang === 'en' ? 'en-US' : lang === 'pt' ? 'pt-BR' : 'es-PE', {
+        month: 'short',
+        day: 'numeric',
+      });
+    }
+  }
+
+  // 4. Fallback internacionalizado
+  return lang === 'en' ? 'Upcoming' : lang === 'pt' ? 'Em breve' : 'Próximamente';
+}
+
+function extraerUbicacionEvento(item: (typeof items)[0], lang: Locale): string {
+  if (item.zone) {
+    const zTitle = loc(item.zone.data.title, lang);
+    if (zTitle && zTitle.trim()) return zTitle;
+  }
+  const addr = loc(item.data.address, lang);
+  if (addr && addr.trim()) return addr;
+
+  const slug = item.id.toLowerCase();
+  if (slug.includes('zarumilla')) return 'Zarumilla';
+  if (slug.includes('puerto-pizarro') || slug.includes('pizarro')) return 'Puerto Pizarro';
+  if (slug.includes('zorritos')) return 'Zorritos';
+  if (slug.includes('punta-sal')) return 'Punta Sal';
+  if (slug.includes('matapalo')) return 'Matapalo';
+  if (slug.includes('san-jacinto')) return 'San Jacinto';
+  if (slug.includes('la-cruz')) return 'La Cruz';
+  if (slug.includes('corrales')) return 'Corrales';
+  if (slug.includes('aguas-verdes')) return 'Aguas Verdes';
+  if (slug.includes('papayal')) return 'Papayal';
+  if (slug.includes('cancas')) return 'Cancas';
+
+  return 'Tumbes';
+}
+
+function extraerBadgeEvento(item: (typeof items)[0], lang: Locale): string {
+  const title = (loc(item.data.title, lang) ?? item.id).toLowerCase();
+  if (
+    title.includes('fiesta') ||
+    title.includes('patronal') ||
+    title.includes('virgen') ||
+    title.includes('santo') ||
+    title.includes('señor') ||
+    title.includes('san ')
+  ) {
+    return lang === 'en' ? 'Patron Feast' : lang === 'pt' ? 'Festa Tradicional' : 'Fiesta Patronal';
+  }
+  if (title.includes('festival') || title.includes('cebiche') || title.includes('gastron')) {
+    return lang === 'en' ? 'Culinary Fair' : lang === 'pt' ? 'Feira Culinária' : 'Festival Gastronómico';
+  }
+  if (title.includes('ballena')) {
+    return lang === 'en' ? 'Marine Season' : lang === 'pt' ? 'Temporada Marinha' : 'Temporada Marina';
+  }
+  if (
+    title.includes('aniversario') ||
+    title.includes('semana turística') ||
+    title.includes('independencia') ||
+    title.includes('cívic')
+  ) {
+    return lang === 'en' ? 'Civic Week' : lang === 'pt' ? 'Semana Cívica' : 'Semana Cívica';
+  }
+  if (title.includes('carnaval')) {
+    return lang === 'en' ? 'Carnival' : lang === 'pt' ? 'Carnaval' : 'Carnavales';
+  }
+  return item.data.subcategory ?? (lang === 'en' ? 'Featured Event' : 'Evento Destacado');
+}
+
+function extraerImagenEvento(item: (typeof items)[0], idx: number): string {
+  const img = imagenSrc(item.data.image);
+  if (img && !img.includes('no-image')) return img;
+
+  const title = (item.data.title?.es ?? item.id).toLowerCase();
+  if (title.includes('cebiche') || title.includes('gastron') || title.includes('mangle') || title.includes('conchas')) {
+    return 'https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=800&q=80';
+  }
+  if (title.includes('ballena') || title.includes('mar') || title.includes('playa') || title.includes('san pedro')) {
+    return 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80';
+  }
+  if (title.includes('fiesta') || title.includes('virgen') || title.includes('patronal') || title.includes('feria')) {
+    return 'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=800&q=80';
+  }
+  if (title.includes('aniversario') || title.includes('semana') || title.includes('carnaval')) {
+    return 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80';
+  }
+
+  return eventStockImages[idx % eventStockImages.length];
+}
+
+// Intentar obtener eventos desde el catálogo unificado (colección events)
+let eventosCatalogo: EventItem[] = [];
+let items: Awaited<ReturnType<typeof contentService.lugares.listarPorCategoria>> = [];
+try {
+  items = await contentService.lugares.listarPorCategoria('events');
+  if (items && items.length > 0) {
+    eventosCatalogo = items.map((item, idx) => ({
+      id: item.id,
+      title: loc(item.data.title, lang) ?? item.id,
+      date: extraerFechaEvento(item, lang),
+      category: item.data.subcategory ?? (lang === 'en' ? 'Event' : 'Evento'),
+      badge: extraerBadgeEvento(item, lang),
+      location: extraerUbicacionEvento(item, lang),
+      description: loc(item.data.excerpt, lang) ?? loc(item.data.description, lang) ?? '',
+      image: extraerImagenEvento(item, idx),
+      href: localizePath(rutaContenido(item), lang),
+      verified: Boolean(item.data.verified),
+    }));
+  }
+} catch {
+  // Si la API no responde, se usan los eventos curados de la región
+}
+
+// Eventos curados de respaldo con las fechas y festividades icónicas de Tumbes
+const fallbackEvents: EventItem[] = [
+  {
+    id: 'ballenas-2026',
+    title: lang === 'en' ? 'Humpback Whale Watching Season' : 'Temporada de Ballenas Jorobadas 2026',
+    date: lang === 'en' ? 'Jul 15 - Oct 31' : '15 Jul - 31 Oct',
+    category: 'Ecoturismo',
+    badge: lang === 'en' ? 'Marine Season' : 'Temporada Oficial',
+    location: 'Zorritos & Punta Sal',
+    description:
+      lang === 'en'
+        ? 'Guided boat tours with marine biologists to observe humpback whales migrating through warm coastal waters.'
+        : 'Navegaciones guiadas con biólogos marinos para el avistamiento de ballenas jorobadas en las cálidas aguas norteñas.',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80',
+    href: localizePath('/places/?q=ballenas', lang),
+    verified: true,
+  },
+  {
+    id: 'feria-conchas-negras',
+    title: lang === 'en' ? 'Mangrove Black Shells & Ceviche Fair' : 'Festival del Manglar y Conchas Negras',
+    date: lang === 'en' ? 'Oct 18 - 20' : '18 - 20 Octubre',
+    category: 'Gastronomía',
+    badge: lang === 'en' ? 'Culinary Fair' : 'Feria Culinaria',
+    location: 'Puerto Pizarro, Tumbes',
+    description:
+      lang === 'en'
+        ? 'Gastronomic fair celebrating the emblematic black shell ceviche, mangrove boat races, and live coastal music.'
+        : 'Feria gastronómica y concurso del ceviche de conchas negras, paseos en canoa por los manglares y música en vivo.',
+    image: 'https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=800&q=80',
+    href: localizePath('/categories/restaurants/', lang),
+    verified: true,
+  },
+  {
+    id: 'virgen-del-perpetuo-socorro',
+    title: lang === 'en' ? 'Patron Saint Feast of Zorritos' : 'Fiesta de la Virgen del Perpetuo Socorro',
+    date: lang === 'en' ? 'Sep 24 - 28' : '24 - 28 Septiembre',
+    category: 'Tradición',
+    badge: lang === 'en' ? 'Patron Feast' : 'Fiesta Patronal',
+    location: 'Zorritos, C. Villar',
+    description:
+      lang === 'en'
+        ? 'Traditional maritime procession of decorated fishing boats along Zorritos bay, night verbenas, and folk dances.'
+        : 'Emblemática procesión náutica de embarcaciones en la bahía de Zorritos, castillos pirotécnicos, verbenas y danzas.',
+    image: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=800&q=80',
+    href: localizePath('/zones/zorritos/', lang),
+    verified: true,
+  },
+  {
+    id: 'aniversario-tumbes',
+    title: lang === 'en' ? 'Tumbes Regional Tourist Week' : 'Semana Turística y Aniversario de Tumbes',
+    date: lang === 'en' ? 'Jan 05 - 12' : '05 - 12 Enero',
+    category: 'Festividad',
+    badge: lang === 'en' ? 'Civic Week' : 'Semana Turística',
+    location: 'Plaza Mayor de Tumbes',
+    description:
+      lang === 'en'
+        ? 'Civic parades, open-air criollo serenades, artisanal markets, and coastal exhibitions across Tumbes city center.'
+        : 'Desfiles de comparsas, serenatas criollas al aire libre, feria de artesanos y gastronomía en el centro histórico.',
+    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80',
+    href: localizePath('/zones/tumbes/', lang),
+    verified: true,
+  },
+];
+
+const rawEventosFinales = eventosCatalogo.length > 0 ? eventosCatalogo : fallbackEvents;
+const eventosFinales = limit && limit > 0 ? rawEventosFinales.slice(0, limit) : rawEventosFinales;
+const allEventsHref = localizePath('/categories/events/', lang);
+---
+
+<SectionChunk id="eventos" class="section home-events-section" minHeight="680px" data-carousel-scope>
+  <ShowcaseHeader
+    id={id}
+    badge={propBadge || 'Agenda'}
+    badgeIcon="calendar"
+    badgeColor="badge--primary"
+    title={propTitle || (lang === 'en' ? 'Events, Festivals & Traditions' : lang === 'pt' ? 'Eventos, Festas e Tradições' : 'Eventos, Fiestas y Tradiciones')}
+    subtitle={propSubtitle || (lang === 'en'
+      ? 'Discover upcoming seasonal festivals, patron saint celebrations, culinary fairs, and marine life activities in Tumbes.'
+      : lang === 'pt'
+      ? 'Descubra festivais de temporada, celebrações tradicionais, feiras gastronômicas e atividades no litoral de Tumbes.'
+      : 'Descubre las fechas cívicas, festivales gastronómicos, celebraciones patronales y temporadas eco-turísticas más importantes de Tumbes.')}
+    prevAriaLabel={lang === 'en' ? 'Previous event' : 'Evento anterior'}
+    nextAriaLabel={lang === 'en' ? 'Next event' : 'Siguiente evento'}
+    viewAllHref={allEventsHref}
+    viewAllText={lang === 'en' ? 'All events' : lang === 'pt' ? 'Todos os eventos' : 'Todos los eventos'}
+  >
+    <!-- Riel reutilizable de 3 en 3 con puntos y botón -->
+    <ShowcaseTrack
+      totalItems={eventosFinales.length}
+      actionHref={allEventsHref}
+      actionText={lang === 'en' ? 'Explore Full Calendar' : lang === 'pt' ? 'Explorar Calendário' : 'Explorar Calendario de Fiestas'}
+      actionIcon="calendar"
+      trackAriaLabel={lang === 'en' ? 'Events and festivities list' : 'Lista de eventos y festividades'}
+    >
+      {
+        eventosFinales.map((evento, index) => (
+          <EventCard
+            event={evento}
+            lang={lang}
+            index={index}
+            isCarouselItem
+          />
+        ))
+      }
+    </ShowcaseTrack>
+  </ShowcaseHeader>
+</SectionChunk>
+
+<style>
+  @reference "@/styles/global.css";
+
+  .home-events-section {
+    @apply py-14 sm:py-20 bg-gradient-to-b from-sand/15 via-white to-sand/10 border-b border-ink/10;
+  }
+</style>

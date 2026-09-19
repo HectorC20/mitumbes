@@ -1,6 +1,8 @@
 ---
 import Layout from '@/components/layout/Layout.astro';
+import PageHeader from '@/components/layout/PageHeader.astro';
 import PartnerList from '@/components/partner/PartnerList.astro';
+import AdBanner from '@/shared/components/ads/AdBanner.astro';
 import { isLocale, type Locale } from '@/shared/constants/locales';
 import { t } from '@/shared/constants/ui';
 
@@ -16,17 +18,17 @@ if (!isLocale(lang)) {
   title={t(lang, 'seo.partnersTitle')}
   description={t(lang, 'seo.partnersDescription')}
 >
-  <section class="section section--sand">
-    <div class="container-page">
-      <p class="eyebrow">{t(lang, 'partners.eyebrow')}</p>
-      <h1 class="page-title">{t(lang, 'seo.partnersTitle')}</h1>
-      <p class="lead">{t(lang, 'partners.lead')}</p>
-    </div>
-  </section>
+  <PageHeader
+    eyebrow={t(lang, 'partners.eyebrow')}
+    title={t(lang, 'seo.partnersTitle')}
+    lead={t(lang, 'partners.lead')}
+  />
 
   <section class="section">
     <div class="container-page">
       <PartnerList lang={lang} />
     </div>
   </section>
+
+  <AdBanner lang={lang} id="partners-page-ad" variant="billboard" />
 </Layout>

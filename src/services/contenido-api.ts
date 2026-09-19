@@ -2,10 +2,11 @@ import { api } from './api';
 import {
   normalizarEntrada,
   porActualizacionDesc,
-  type ContratoEntry,
-  type EntradaContenido,
-  type ZonaLigera,
 } from './contrato-web';
+import type { ContratoEntry, EntradaContenido, ZonaLigera } from './contrato-web';
+import type { ConsultaContenidos, PaginaContenidos } from '@/shared/interfaces/api';
+
+export type { ConsultaContenidos, PaginaContenidos };
 
 /**
  * Adaptador de contenido: consume el contrato del backend cuando
@@ -53,29 +54,6 @@ export function apiHabilitada(): boolean {
  */
 const LIMITE_CATALOGO = 500;
 
-/** Página del catálogo pedida al backend (filtrado, orden y paginado en el servidor). */
-export interface ConsultaContenidos {
-  /** Texto libre (`search` en la API: nombre o descripción). */
-  q?: string;
-  /** Slug de categoría (`categorySlug`). */
-  categoria?: string;
-  /** Slug de zona (`zoneSlug`). */
-  zona?: string;
-  /** Página pedida, base 1. */
-  page?: number;
-  /** Tamaño de página. */
-  limit?: number;
-}
-
-/** Resultado paginado del backend. */
-export interface PaginaContenidos {
-  items: EntradaContenido[];
-  /** Total de coincidencias en el servidor (no solo las de esta página). */
-  total: number;
-  limit: number;
-  offset: number;
-}
-
 /** Respuesta cruda de GET /items. */
 interface RespuestaItems {
   items?: ContratoEntry[];
@@ -93,6 +71,7 @@ function queryItems(consulta: ConsultaContenidos): URLSearchParams {
   params.set('offset', String((page - 1) * limit));
   if (consulta.q) params.set('search', consulta.q);
   if (consulta.categoria) params.set('categorySlug', consulta.categoria);
+  if (consulta.subcategoria) params.set('subcategorySlug', consulta.subcategoria);
   if (consulta.zona) params.set('zoneSlug', consulta.zona);
   return params;
 }

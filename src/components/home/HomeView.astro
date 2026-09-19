@@ -1,27 +1,25 @@
 ---
 import Layout from '@/components/layout/Layout.astro';
-import Icon from '@/components/Icon.astro';
+import Icon from '@/shared/components/design/Icon.astro';
 import PlaceCard from '@/components/place/PlaceCard.astro';
 import HeroCarousel from '@/components/home/HeroCarousel.astro';
+import PopularDestinations from '@/components/home/PopularDestinations.astro';
+import HomeCategories from '@/components/home/HomeCategories.astro';
+import AdBanner from '@/shared/components/ads/AdBanner.astro';
 import PartnerList from '@/components/partner/PartnerList.astro';
 import noImage from '@/assets/images/no-image.svg';
-import { lugaresService } from '@/services/lugares.service';
-import { categoriasService } from '@/services/categorias.service';
-import { conteosService } from '@/services/conteos.service';
-import { clicksService } from '@/services/clicks.service';
+import { contentService } from '@/services/content.service';
 import {
   imagenSrc,
-  loc,
-  rutaCategoria,
-  rutaContenido,
 } from '@/shared/content/places';
 import {
   localizePath,
   type Locale,
 } from '@/shared/constants/locales';
 import { t } from '@/shared/constants/ui';
-import { COLLECTION_ICONS } from '@/shared/constants/collections';
-import { HOME_GUIDE } from '@/shared/content/home-guide';
+import HomeGuide from '@/components/home/HomeGuide.astro';
+import HomeEvents from '@/components/home/HomeEvents.astro';
+import SectionChunk from '@/components/common/SectionChunk.astro';
 import '@/styles/pages/home.css';
 
 interface Props {
@@ -30,93 +28,79 @@ interface Props {
 
 const { lang } = Astro.props;
 
-// El home solo muestra categorías raíz (nivel 1 del backend). Las
-// subcategorías se exploran dentro de cada página de categoría.
-const [destacados, categorias, conteos] = await Promise.all([
-  lugaresService.listarDestacados(6),
-  categoriasService.listarRaices(),
-  conteosService.obtener(),
+// El home muestra categorías raíz, zonas geográficas y lugares destacados.
+const [destacados, categorias, zonas, conteos] = await Promise.all([
+  contentService.lugares.listarDestacados(6),
+  contentService.categorias.listarRaices(),
+  contentService.zonas.listar(),
+  contentService.conteos.obtener(),
 ]);
 
 const categoriasPorId = new Map(categorias.map((c) => [c.collection, c]));
-
-// Categorías del home: 4 con más clics + 2 al azar de las restantes (si la API
-// responde con el ranking; si no, se mantiene el orden original).
-const clicks = await clicksService.obtenerClicks();
-const categoriasHome = clicksService.reordenarPorClics(categorias, clicks);
 
 const carouselPlaces = destacados.slice(0, 5);
 const fallbackHeroImg = noImage.src;
 const heroImg =
   imagenSrc(carouselPlaces[0]?.data?.image) || fallbackHeroImg;
 
-const heroSlides = carouselPlaces.map((item) => ({
-  id: item.id,
-  title: loc(item.data.title, lang) ?? '',
-  subtitle: loc(item.data.excerpt, lang) ?? loc(item.data.description, lang) ?? '',
-  eyebrow: item.zone ? loc(item.zone.data.title, lang) : undefined,
-  image: imagenSrc(item.data.image) || fallbackHeroImg,
-  href: localizePath(rutaContenido(item), lang),
-}));
-
 const lugaresHref = localizePath('/places/', lang);
-const categoriasHref = localizePath('/categories/', lang);
 const partnersHref = localizePath('/partners/', lang);
-
-// Guía de la región: texto estable (no depende del backend) que da contexto
-// real a la portada antes de cerrar con los partners.
-const guia = HOME_GUIDE[lang];
 ---
 
 <Layout lang={lang} title={t(lang, 'seo.homeTitle')} description={t(lang, 'seo.homeDescription')} image={heroImg}>
-  <HeroCarousel slides={heroSlides} lang={lang} />
+  <!-- 1. Hero principal dinámico conectado con mitumbes-server/MCP -->
+  <HeroCarousel lang={lang} />
 
-  <section class="section" id="categorias" data-section="categorias">
+  <!-- 1.1 Banner publicitario minimalista en el apartado inicial -->
+  <AdBanner lang={lang} />
+
+  <!-- 2. Apartado de Destinos Populares (3D Coverflow inspirado en diseño top travel) -->
+  <PopularDestinations zonas={zonas} conteos={conteos.porZona} lang={lang} />
+
+  <!-- 3. Categorías principales dinámicas e inspiracionales -->
+  <HomeCategories categorias={categorias} conteos={conteos.porCategoria} lang={lang} />
+
+  <!-- 4. Lugares Destacados (Diseño moderno alineado con el estándar de la home) -->
+  <SectionChunk id="destacados" class="section section--sand featured-places-section" minHeight="760px">
     <div class="container-page">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">{t(lang, 'home.categoriesEyebrow')}</p>
-          <h2 class="section-head__title">{t(lang, 'home.categoriesTitle')}</h2>
+      
+      <!-- Encabezado moderno unificado con el estándar de la home -->
+      <div class="featured-places__head">
+        <div class="featured-places__head-left">
+          <span class="featured-places__badge">
+            <Icon name="star" size="sm" class="text-amber-500" />
+            <span>{t(lang, 'home.featuredEyebrow')}</span>
+          </span>
+          <h2 class="featured-places__title">{t(lang, 'home.featuredTitle')}</h2>
+          <p class="featured-places__subtitle">
+            {lang === 'en'
+              ? 'Handpicked travel experiences with verified access, beach conditions, ecological reserves, and local cuisine.'
+              : 'Selección de experiencias imprescindibles con rutas de acceso verificadas, playas tranquilas, reservas ecológicas y auténtica gastronomía norteña.'}
+          </p>
         </div>
-        <a class="section-head__link" href={categoriasHref}>
-          {t(lang, 'home.viewAll')}
+        <a class="featured-places__view-all" href={lugaresHref}>
+          <span>{t(lang, 'search.viewAllPlaces')}</span>
           <Icon name="arrow-right" size="sm" />
         </a>
       </div>
-      <div class="category-grid">
-        {
-          categoriasHome.map((c) => (
-            <a class="category-tile" href={localizePath(rutaCategoria(c.collection), lang)}>
-              <span class="category-tile__icon">
-                <Icon name={COLLECTION_ICONS[c.collection] ?? 'pin'} />
-              </span>
-              <span>
-                <span class="category-tile__title">
-                  {loc(c.data.title, lang)}
-                </span>
-                <span class="category-tile__count">
-                  {conteos.porCategoria.get(c.collection) ?? 0} {t(lang, 'count.places')}
-                </span>
-              </span>
-            </a>
-          ))
-        }
-      </div>
-    </div>
-  </section>
 
-  <section class="section section--sand" id="destacados">
-    <div class="container-page">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">{t(lang, 'home.featuredEyebrow')}</p>
-          <h2 class="section-head__title">{t(lang, 'home.featuredTitle')}</h2>
-        </div>
-        <a class="section-head__link" href={lugaresHref}>
-          {t(lang, 'search.viewAllPlaces')}
-          <Icon name="arrow-right" size="sm" />
-        </a>
+      <!-- Barra de atributos rápidos -->
+      <div class="featured-places__meta-strip" aria-label="Características destacadas">
+        <span class="featured-places__meta-item">
+          <Icon name="badge-check" size="sm" class="text-primary" />
+          <span>Fichas 100% Verificadas</span>
+        </span>
+        <span class="featured-places__meta-item">
+          <Icon name="sun" size="sm" class="text-amber-500" />
+          <span>Litoral Cálido Todo el Año</span>
+        </span>
+        <span class="featured-places__meta-item">
+          <Icon name="pin" size="sm" class="text-rose-500" />
+          <span>Rutas desde Aeropuerto y Terminales</span>
+        </span>
       </div>
+
+      <!-- Parrilla de Tarjetas -->
       <div class="place-grid">
         {
           destacados.map((lugar) => (
@@ -128,38 +112,36 @@ const guia = HOME_GUIDE[lang];
           ))
         }
       </div>
-    </div>
-  </section>
 
-  <section class="section" id="guia" data-section="guia">
-    <div class="container-page">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">{guia.eyebrow}</p>
-          <h2 class="section-head__title">{guia.title}</h2>
+      <!-- Banner de Exploración y Búsqueda -->
+      <div class="featured-places__footer-banner">
+        <div class="featured-places__footer-text">
+          <h3 class="featured-places__footer-title">
+            {lang === 'en' ? 'Looking for a specific attraction or beach?' : '¿Buscas una playa, restaurante o actividad en específico?'}
+          </h3>
+          <p class="featured-places__footer-desc">
+            {lang === 'en'
+              ? 'Filter our full directory by zones, categories, or search by keywords with instant results.'
+              : 'Explora nuestro directorio completo con buscador en tiempo real, filtros por zona y categorías gastronómicas.'}
+          </p>
         </div>
+        <a class="featured-places__footer-btn" href={lugaresHref}>
+          <Icon name="search" size="sm" />
+          <span>{lang === 'en' ? 'Explore Full Catalog' : 'Explorar Todo el Catálogo'}</span>
+        </a>
       </div>
-      <div class="guide">
-        <div class="guide__intro">
-          {guia.intro.map((parrafo) => <p>{parrafo}</p>)}
-        </div>
-        <div class="guide__grid">
-          {
-            guia.sections.map((apartado) => (
-              <article class="guide__item">
-                <h3 class="guide__item-title">{apartado.title}</h3>
-                {apartado.paragraphs.map((parrafo) => (
-                  <p>{parrafo}</p>
-                ))}
-              </article>
-            ))
-          }
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <section class="section" id="partners" data-section="partners">
+    </div>
+  </SectionChunk>
+
+  <!-- 5. Apartado de Eventos y Agenda Cultural -->
+  <HomeEvents lang={lang} />
+
+  <!-- 6. Guía editorial de la región -->
+  <HomeGuide lang={lang} />
+
+  <!-- 6. Directorio de Partners / Aliados -->
+  <SectionChunk id="partners" class="section" minHeight="380px" data-section="partners">
     <div class="container-page">
       <div class="section-head">
         <div>
@@ -173,5 +155,9 @@ const guia = HOME_GUIDE[lang];
       </div>
       <PartnerList lang={lang} />
     </div>
-  </section>
+  </SectionChunk>
 </Layout>
+
+<script>
+  import '@/scripts/chunk-loader';
+</script>

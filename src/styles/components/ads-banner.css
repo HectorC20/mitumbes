@@ -1,0 +1,204 @@
+
+@reference "../global.css";
+
+/* ============================================================
+   Banner Publicitario Minimalista del Apartado Inicial
+   ============================================================ */
+
+.home-ad-banner {
+  @apply py-3 sm:py-3.5 bg-gradient-to-b from-sand/25 via-white to-white border-b border-ink/5;
+}
+
+.home-ad-banner__card {
+  @apply bg-sand/35 hover:bg-sand/50 border border-ink/10 rounded-2xl p-3 sm:px-4 sm:py-2.5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 sm:gap-4 backdrop-blur-xs shadow-2xs transition-all duration-200;
+}
+
+.home-ad-banner__content {
+  @apply flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3.5 flex-1 min-w-0;
+}
+
+.home-ad-banner__tags {
+  @apply flex items-center gap-2 shrink-0;
+}
+
+.home-ad-banner__badge {
+  @apply text-[10px] sm:text-xs py-0.5 px-2.5;
+}
+
+.home-ad-banner__sponsor {
+  @apply text-[11px] font-bold uppercase tracking-wider text-muted;
+}
+
+.home-ad-banner__info {
+  @apply flex flex-wrap items-center gap-1.5 text-xs sm:text-sm min-w-0;
+}
+
+.home-ad-banner__title {
+  @apply font-bold text-secondary text-xs sm:text-sm;
+}
+
+.home-ad-banner__divider {
+  @apply text-ink/30 select-none hidden sm:inline text-xs;
+}
+
+.home-ad-banner__desc {
+  @apply text-muted text-xs sm:text-sm m-0 line-clamp-1 font-normal;
+}
+
+.home-ad-banner__actions {
+  @apply flex items-center gap-2 shrink-0 self-end md:self-auto;
+}
+
+.home-ad-banner__btn {
+  @apply text-xs py-1.5 px-3.5 rounded-full shadow-2xs font-semibold;
+}
+
+.home-ad-banner__close {
+  @apply inline-flex items-center justify-center w-7 h-7 rounded-full text-muted hover:text-secondary hover:bg-ink/5 transition-colors duration-150 border-0 bg-transparent cursor-pointer p-0;
+}
+
+/* Variante 2: Tarjeta Horizontal con Imagen Rectangular (16:9) */
+.home-ad-banner--card-wrap {
+  @apply py-3 sm:py-4;
+  container-type: inline-size;
+  container-name: adcard;
+}
+
+/* Si la tarjeta está dentro de una barra lateral u otro contenedor anidado,
+   evitamos doble padding del .container-page */
+.place-aside .home-ad-banner--card-wrap,
+aside .home-ad-banner--card-wrap {
+  @apply py-0;
+}
+
+.place-aside .home-ad-banner--card-wrap .container-page,
+aside .home-ad-banner--card-wrap .container-page {
+  @apply px-0 max-w-full;
+}
+
+.home-ad-card {
+  @apply bg-gradient-to-br from-white via-white to-amber-50/20 border border-ink/10 hover:border-amber-500/30 rounded-2xl p-4 sm:p-5 flex flex-col items-stretch gap-4 sm:gap-5 shadow-2xs hover:shadow-sm transition-all duration-300 relative overflow-hidden;
+}
+
+.home-ad-card__media {
+  @apply w-full shrink-0 aspect-[16/9] rounded-xl overflow-hidden relative bg-sand/30 border border-ink/5 shadow-2xs;
+}
+
+.home-ad-card__img {
+  @apply w-full h-full object-cover transition-transform duration-500 hover:scale-105;
+}
+
+.home-ad-card__badge {
+  @apply absolute top-2.5 left-2.5 text-[10px] sm:text-xs py-0.5 px-2.5 shadow-2xs bg-white/90 backdrop-blur-md rounded-full font-semibold text-amber-800 border border-amber-500/20 flex items-center gap-1;
+}
+
+.home-ad-card__body {
+  @apply flex-1 flex flex-col justify-between w-full min-w-0 gap-2;
+}
+
+.home-ad-card__header {
+  @apply flex items-center justify-between gap-2;
+}
+
+.home-ad-card__sponsor {
+  @apply text-[11px] font-bold uppercase tracking-wider text-amber-700/90 flex items-center gap-1;
+}
+
+.home-ad-card__close {
+  @apply inline-flex items-center justify-center w-7 h-7 rounded-full text-muted hover:text-secondary hover:bg-amber-100/60 transition-colors duration-150 border-0 bg-transparent cursor-pointer p-0 shrink-0;
+}
+
+.home-ad-card__title {
+  @apply text-base sm:text-lg font-display font-extrabold text-secondary m-0 leading-snug hover:text-primary transition-colors;
+}
+
+.home-ad-card__desc {
+  @apply text-xs sm:text-sm text-muted m-0 leading-relaxed line-clamp-2 font-normal;
+}
+
+.home-ad-card__footer {
+  @apply flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-ink/10 mt-1;
+}
+
+.home-ad-card__btn {
+  @apply text-xs py-2 px-4 rounded-full shadow-2xs font-semibold shrink-0;
+}
+
+.home-ad-card__disclaimer {
+  @apply text-[11px] text-muted/75 italic;
+}
+
+/* Container Query: Cuando el espacio disponible es amplio (>= 540px),
+   la tarjeta cambia de layout vertical a horizontal elegante */
+@container adcard (min-width: 540px) {
+  .home-ad-card {
+    flex-direction: row;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .home-ad-card__media {
+    width: 16rem;
+    height: 100%;
+    align-self: stretch;
+  }
+
+  .home-ad-card__title {
+    font-size: 1.25rem;
+  }
+
+  .home-ad-card__desc {
+    -webkit-line-clamp: 3;
+  }
+}
+
+@container adcard (min-width: 768px) {
+  .home-ad-card__media {
+    width: 18rem;
+  }
+}
+
+/* Variante 3: Billboard Panorámico con Imagen Rectangular */
+.home-ad-banner--billboard-wrap {
+  @apply py-4 sm:py-5;
+}
+
+.home-ad-billboard {
+  @apply relative rounded-2xl sm:rounded-3xl overflow-hidden border border-ink/10 shadow-sm min-h-[170px] sm:min-h-[200px] flex items-center p-5 sm:p-8;
+}
+
+.home-ad-billboard__bg {
+  @apply absolute inset-0 w-full h-full object-cover;
+}
+
+.home-ad-billboard__overlay {
+  @apply absolute inset-0 bg-gradient-to-r from-secondary/95 via-secondary/80 to-secondary/30 sm:to-transparent;
+}
+
+.home-ad-billboard__content {
+  @apply relative z-10 flex flex-col justify-between gap-2 text-white max-w-2xl;
+}
+
+.home-ad-billboard__tags {
+  @apply flex items-center gap-2;
+}
+
+.home-ad-billboard__sponsor {
+  @apply text-xs font-semibold uppercase tracking-wider text-white/80;
+}
+
+.home-ad-billboard__title {
+  @apply text-lg sm:text-2xl font-display font-extrabold text-white m-0 leading-snug;
+}
+
+.home-ad-billboard__desc {
+  @apply text-xs sm:text-sm text-white/85 m-0 line-clamp-2 leading-relaxed;
+}
+
+.home-ad-billboard__footer {
+  @apply pt-2;
+}
+
+.home-ad-billboard__close {
+  @apply absolute top-3.5 right-3.5 z-20 inline-flex items-center justify-center w-7 h-7 rounded-full text-white/80 hover:text-white bg-black/20 hover:bg-black/40 backdrop-blur-xs transition-colors duration-150 border-0 cursor-pointer p-0;
+}

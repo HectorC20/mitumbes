@@ -1,0 +1,81 @@
+---
+import Icon from '@/shared/components/design/Icon.astro';
+import type { Locale } from '@/shared/constants/locales';
+import { t } from '@/shared/constants/ui';
+import type { Zona } from '@/shared/content/places';
+import { getZoneMeta } from '@/shared/content/zones';
+
+interface Props {
+  zona: Zona;
+  count: number;
+  lang: Locale;
+  index?: number;
+  class?: string;
+  isCarouselItem?: boolean;
+}
+
+const {
+  zona,
+  count,
+  lang,
+  index,
+  class: extraClass = '',
+  isCarouselItem = false,
+} = Astro.props;
+
+const meta = getZoneMeta(zona, lang);
+
+const countLabel = t(lang, count === 1 ? 'card.place' : 'card.places');
+const exploreLabel = t(lang, 'card.exploreDestination');
+---
+
+<article
+  class:list={[
+    'dest-card',
+    'zone-card',
+    { 'dest-card--carousel': isCarouselItem, 'dest-card--grid': !isCarouselItem },
+    extraClass,
+  ]}
+  data-dest-card
+  data-section="zonas"
+  data-id={zona.id}
+  data-index={index}
+>
+  <a href={meta.href} class="dest-card__link zone-card__link" aria-label={`${exploreLabel} ${meta.title}`}>
+    <div class="dest-card__media zone-card__media">
+      <img
+        src={meta.image}
+        alt={meta.title}
+        class="dest-card__img zone-card__img"
+        loading="lazy"
+        width="600"
+        height="800"
+      />
+      <div class="dest-card__gradient zone-card__gradient"></div>
+    </div>
+
+    <!-- Badge superior -->
+    <div class="dest-card__top zone-card__top">
+      <span class="dest-card__badge zone-card__badge">{meta.badge}</span>
+      <span class="dest-card__count zone-card__count">
+        <Icon name="pin" size="sm" />
+        <span>{count} {countLabel}</span>
+      </span>
+    </div>
+
+    <!-- Info inferior -->
+    <div class="dest-card__bottom zone-card__bottom">
+      <h3 class="dest-card__title zone-card__title">{meta.title}</h3>
+      <p class="dest-card__desc zone-card__desc">{meta.tagline}</p>
+
+      <div class="dest-card__action zone-card__action">
+        <span class="dest-card__action-text zone-card__action-text">
+          {exploreLabel}
+        </span>
+        <span class="dest-card__action-icon zone-card__action-icon">
+          <Icon name="arrow-right" size="sm" />
+        </span>
+      </div>
+    </div>
+  </a>
+</article>

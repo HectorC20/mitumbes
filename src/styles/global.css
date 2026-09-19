@@ -64,7 +64,7 @@
   }
 
   .section--sand {
-    @apply bg-sand;
+    @apply bg-gradient-to-b from-sand/60 via-sand/35 to-sand/15;
   }
 
   .section--deep {
@@ -85,6 +85,10 @@
 
   .section-head__link:hover {
     @apply text-secondary;
+  }
+
+  .section-footer {
+    @apply mt-10 flex justify-center;
   }
 
   /* ---------- Tipografía ---------- */
@@ -134,15 +138,15 @@
   }
 
   .badge--primary {
-    @apply bg-primary/30 text-secondary;
+    @apply bg-sky-100 text-sky-900 border border-sky-200/80 font-semibold;
   }
 
   .badge--coral {
-    @apply bg-coral/10 text-coral;
+    @apply bg-rose-50 text-rose-700 border border-rose-200/60 font-semibold;
   }
 
   .badge--sun {
-    @apply bg-sun/15 text-ink;
+    @apply bg-amber-50 text-amber-800 border border-amber-200/60 font-semibold;
   }
 
   .badge--light {
@@ -249,33 +253,406 @@
     @apply border-t border-white/10 py-6 text-xs text-white/50;
   }
 
+  .site-footer__legal-bar {
+    @apply border-t border-white/10 pt-6 pb-2 text-xs text-white/60 flex flex-col sm:flex-row items-center justify-between gap-4;
+  }
+
+  .site-footer__legal-links {
+    @apply inline-flex flex-wrap items-center gap-2 sm:gap-3 text-xs;
+  }
+
+  .site-footer__legal-link {
+    @apply text-white/70 hover:text-sun transition-colors duration-200 no-underline font-medium;
+  }
+
+  .site-footer__legal-sep {
+    @apply text-white/30 select-none;
+  }
+
   .site-footer .nav-shell__wordmark {
     @apply text-white;
   }
 
-  /* ---------- Cards de lugar ---------- */
+  /* ---------- Grillas Reutilizables ---------- */
+  .grid-cards,
+  .partner-grid {
+    @apply grid gap-4 sm:grid-cols-2 lg:grid-cols-3;
+  }
+
+  .zone-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6;
+  }
+
+  .category-grid,
+  .home-cat-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6;
+  }
+
+  .grid-cards--loose,
   .place-grid {
     @apply grid gap-6 sm:grid-cols-2 lg:grid-cols-3;
   }
 
-  .card {
-    @apply flex flex-col overflow-hidden rounded-md border border-ink/40 bg-white shadow-sm transition-shadow duration-200 hover:shadow-lg;
+  /* ---------- Tarjetas de Categorías Modernas (home-cat-card / category-card) ---------- */
+  .category-card,
+  .home-cat-card {
+    @apply relative flex flex-col rounded-2xl sm:rounded-3xl bg-white p-6 sm:p-7 border border-ink/10 shadow-2xs transition-all duration-300 no-underline overflow-hidden;
   }
 
-  .card__media {
-    @apply relative aspect-[4/3] overflow-hidden;
+  .category-card:hover,
+  .home-cat-card:hover {
+    @apply shadow-xl -translate-y-1.5;
   }
 
-  .card__media img {
+  .category-card__top,
+  .home-cat-card__top {
+    @apply flex items-center justify-between gap-3 mb-5;
+  }
+
+  .category-card__icon,
+  .home-cat-card__icon {
+    @apply w-12 h-12 rounded-2xl flex items-center justify-center transition-transform duration-300 shadow-2xs;
+  }
+
+  .category-card:hover .category-card__icon,
+  .home-cat-card:hover .home-cat-card__icon {
+    transform: scale(1.1);
+  }
+
+  .category-card__badge,
+  .home-cat-card__badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-sand/60 text-secondary border border-ink/10;
+  }
+
+  .category-card__body,
+  .home-cat-card__body {
+    @apply flex-1 flex flex-col justify-start;
+  }
+
+  .category-card__title,
+  .home-cat-card__title {
+    @apply text-xl font-display font-extrabold text-secondary mb-2 m-0 transition-colors duration-200 leading-snug;
+  }
+
+  .category-card:hover .category-card__title,
+  .home-cat-card:hover .home-cat-card__title {
+    @apply text-primary;
+  }
+
+  .category-card__desc,
+  .home-cat-card__desc {
+    @apply text-xs sm:text-sm text-muted leading-relaxed m-0 font-normal line-clamp-2;
+  }
+
+  .category-card__footer,
+  .home-cat-card__footer {
+    @apply mt-6 pt-4 border-t border-ink/10 flex items-center justify-between gap-3 text-xs;
+  }
+
+  .category-card__count,
+  .home-cat-card__count {
+    @apply inline-flex items-center gap-1.5 text-muted font-medium;
+  }
+
+  .category-card__pulse-dot,
+  .home-cat-card__pulse-dot {
+    @apply w-2 h-2 rounded-full bg-emerald-500 animate-pulse;
+  }
+
+  .category-card__action,
+  .home-cat-card__action {
+    @apply inline-flex items-center gap-1.5 font-bold text-primary transition-colors duration-200;
+  }
+
+  .category-card:hover .category-card__action,
+  .home-cat-card:hover .home-cat-card__action {
+    @apply text-secondary;
+  }
+
+  .category-card__arrow,
+  .home-cat-card__arrow {
+    @apply transition-transform duration-200;
+  }
+
+  .category-card:hover .category-card__arrow,
+  .home-cat-card:hover .home-cat-card__arrow {
+    transform: translateX(4px);
+  }
+
+  /* ---------- Enlaces de acción y medios reutilizables ---------- */
+  .link-action {
+    @apply inline-flex items-center gap-1 font-semibold text-primary no-underline hover:text-secondary;
+  }
+
+  .media-zoom {
+    @apply relative overflow-hidden;
+  }
+
+  .media-zoom img {
     @apply h-full w-full object-cover transition-transform duration-300;
   }
 
-  .card:hover .card__media img {
+  .media-zoom:hover img {
     @apply scale-105;
   }
 
-  .card__badge {
-    @apply absolute left-3 top-3;
+  /* ---------- Tarjetas Horizontales (Categorías y Partners) ---------- */
+  .tile-card,
+  .category-tile,
+  .partner-card {
+    @apply flex items-center gap-4 rounded-2xl border border-ink/10 bg-white p-5 shadow-2xs transition-all duration-300 hover:border-primary/40 hover:bg-primary/5 hover:shadow-md hover:-translate-y-0.5;
+  }
+
+  .tile-card--top,
+  .partner-card {
+    @apply items-start;
+  }
+
+  .tile-card__media,
+  .category-tile__icon,
+  .partner-card__logo {
+    @apply flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary overflow-hidden transition-transform duration-300;
+  }
+
+  .partner-card__logo {
+    @apply h-14 w-14;
+  }
+
+  .partner-card__img {
+    @apply h-full w-full object-contain;
+  }
+
+  .partner-card__monogram {
+    @apply font-display text-xl leading-none text-primary;
+  }
+
+  .tile-card__body,
+  .partner-card__body {
+    @apply flex min-w-0 flex-col gap-1;
+  }
+
+  .tile-card__title,
+  .category-tile__title,
+  .partner-card__title {
+    @apply block font-display text-lg leading-snug text-secondary;
+  }
+
+  .tile-card__meta,
+  .category-tile__count,
+  .partner-card__text {
+    @apply text-sm leading-relaxed text-muted;
+  }
+
+  .partner-card__link {
+    @apply mt-1 inline-flex items-center gap-1 text-sm font-semibold text-primary;
+  }
+
+  /* ---------- Tarjetas y Riel de Destinos / Zonas (dest-track / zone-grid / zone-card / dest-card) ---------- */
+  .dest-track-container {
+    @apply relative -mx-4 sm:mx-0 px-4 sm:px-0;
+  }
+
+  .dest-track {
+    @apply flex gap-5 overflow-x-auto snap-x snap-mandatory py-3 outline-none;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+  }
+
+  .dest-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dest-card,
+  .zone-card {
+    @apply relative rounded-2xl sm:rounded-3xl overflow-hidden bg-secondary border border-ink/10 shadow-md transition-all duration-300;
+  }
+
+  .dest-card:hover,
+  .zone-card:hover {
+    @apply shadow-xl;
+  }
+
+  .dest-card--carousel {
+    @apply shrink-0 w-[280px] sm:w-[320px] md:w-[340px] snap-start;
+  }
+
+  .dest-card--grid,
+  .zone-grid .dest-card,
+  .zone-grid .zone-card {
+    @apply w-full;
+  }
+
+  .dest-card__link,
+  .zone-card__link {
+    @apply relative block h-[400px] sm:h-[440px] text-white no-underline overflow-hidden;
+  }
+
+  .dest-card__media,
+  .zone-card__media {
+    @apply absolute inset-0 w-full h-full;
+  }
+
+  .dest-card__img,
+  .zone-card__img {
+    @apply w-full h-full object-cover transition-transform duration-700 ease-out;
+  }
+
+  .dest-card:hover .dest-card__img,
+  .zone-card:hover .zone-card__img {
+    transform: scale(1.08);
+  }
+
+  .dest-card__gradient,
+  .zone-card__gradient,
+  .event-card__gradient {
+    @apply absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/25 transition-colors duration-300;
+  }
+
+  .dest-card:hover .dest-card__gradient,
+  .zone-card:hover .zone-card__gradient,
+  .event-card:hover .event-card__gradient {
+    @apply via-black/70;
+  }
+
+  /* Badge Superior */
+  .dest-card__top,
+  .zone-card__top,
+  .event-card__top {
+    @apply absolute top-4 inset-x-4 flex items-center justify-between z-10;
+  }
+
+  .dest-card__badge,
+  .zone-card__badge,
+  .event-card__badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md border border-white/30 text-white;
+  }
+
+  .dest-card__count,
+  .zone-card__count,
+  .event-card__date {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-black/50 backdrop-blur-md text-white/95 border border-white/20;
+  }
+
+  /* Info Inferior */
+  .dest-card__bottom,
+  .zone-card__bottom,
+  .zone-card__body,
+  .event-card__bottom {
+    @apply absolute inset-x-0 bottom-0 p-5 sm:p-6 z-10 flex flex-col justify-end;
+  }
+
+  .dest-card__title,
+  .zone-card__title,
+  .event-card__title {
+    @apply text-xl sm:text-2xl font-display font-extrabold leading-tight mb-2;
+    color: #ffffff !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+  }
+
+  .dest-card__desc,
+  .zone-card__desc,
+  .event-card__desc {
+    @apply text-xs sm:text-sm line-clamp-2 leading-relaxed mb-4 m-0 font-normal;
+    color: rgba(255, 255, 255, 0.92) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
+  }
+
+  .dest-card__action,
+  .zone-card__action,
+  .event-card__action {
+    @apply inline-flex items-center gap-2 text-xs sm:text-sm font-bold transition-colors duration-200;
+    color: var(--color-sun, #f0a202) !important;
+  }
+
+  .dest-card:hover .dest-card__action,
+  .zone-card:hover .zone-card__action,
+  .event-card:hover .event-card__action {
+    color: #ffffff !important;
+  }
+
+  .dest-card__action-icon,
+  .zone-card__action-icon,
+  .event-card__action-icon {
+    @apply w-6 h-6 rounded-full bg-sun/20 text-sun flex items-center justify-center transition-all duration-200;
+  }
+
+  .dest-card:hover .dest-card__action-icon,
+  .zone-card:hover .zone-card__action-icon,
+  .event-card:hover .event-card__action-icon {
+    @apply bg-sun text-secondary translate-x-1;
+  }
+
+  /* ---------- Hero de zona ---------- */
+  .zona-hero {
+    @apply relative h-64 overflow-hidden bg-secondary md:h-80;
+  }
+
+  .zona-hero__img {
+    @apply h-full w-full object-cover opacity-70;
+  }
+
+  .zona-hero__overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-secondary/90 to-transparent;
+  }
+
+  .zona-hero__inner {
+    @apply container-page absolute inset-x-0 bottom-0 pb-6;
+  }
+
+  .zona-hero__title {
+    @apply text-4xl leading-tight text-white sm:text-5xl;
+  }
+
+  /* ---------- Paneles Reutilizables ---------- */
+  .panel {
+    @apply rounded-md border border-ink/10 bg-white p-5 shadow-sm;
+  }
+
+  .panel--sand {
+    @apply bg-sand/50;
+  }
+
+  .panel--rounded {
+    @apply rounded-2xl;
+  }
+
+  /* ---------- Cards de lugar ---------- */
+  .card {
+    @apply flex flex-col overflow-hidden rounded-2xl sm:rounded-3xl border border-ink/10 bg-white shadow-2xs transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-primary/30;
+  }
+
+  .card__media {
+    @apply relative aspect-[16/10] overflow-hidden bg-sand/30;
+  }
+
+  .card__media img {
+    @apply h-full w-full object-cover transition-transform duration-500 ease-out;
+  }
+
+  .card:hover .card__media img {
+    transform: scale(1.06);
+  }
+
+  .card__badge,
+  .card__badge.badge--primary {
+    @apply absolute left-3 top-3 z-10 inline-flex max-w-[65%] items-center gap-1.5 rounded-full bg-white/95 px-3 py-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-secondary shadow-md backdrop-blur-md border border-white/70;
+  }
+
+  .card__badge svg {
+    @apply text-primary h-3.5 w-3.5 shrink-0;
+  }
+
+  .card__badge-text {
+    @apply truncate;
+  }
+
+  .card__rating {
+    @apply absolute right-3 top-3 z-10 inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-xs font-bold text-ink shadow-md backdrop-blur-md border border-white/70;
+  }
+
+  .card__rating svg {
+    @apply text-amber-500 h-3.5 w-3.5 shrink-0;
   }
 
   .card__body {
@@ -354,7 +731,7 @@
 
   /* ---------- Paginación ---------- */
   .pagination {
-    @apply mt-12 flex flex-wrap items-center justify-center gap-3 border-t border-ink/10 pt-8 sm:justify-between;
+    @apply my-6 flex flex-wrap items-center justify-center gap-3 border-t border-ink/10 pt-8 sm:justify-between;
   }
 
   .pagination__link {
@@ -461,15 +838,6 @@
     @apply mt-6;
   }
 
-  /* ---------- Modificadores ---------- */
-  .lead--center {
-    @apply mx-auto;
-  }
-
-  .badge--center {
-    @apply mx-auto;
-  }
-
   /* ---------- Columna global de compartir ---------- */
   .share-rail {
     @apply fixed h-full border-l border-ink/10 bg-white items-center justify-center top-0 px-2 right-0 z-30 flex-col my-auto gap-3 hidden md:flex;
@@ -493,4 +861,18 @@
   .share-rail__hint {
     @apply min-h-4 text-center text-xs font-semibold text-primary;
   }
+
+  /* ---------- Página 404 ---------- */
+  .notfound {
+    @apply container-page text-center;
+  }
+
+  .notfound__code {
+    @apply font-display text-7xl text-primary;
+  }
+
+  .notfound__actions {
+    @apply mt-8 flex flex-wrap justify-center gap-3;
+  }
 }
+

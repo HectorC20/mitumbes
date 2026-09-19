@@ -1,24 +1,6 @@
-import type { Locale } from '../constants/locales';
+import type { Partner } from '../interfaces/partner';
 
-/**
- * Partners del sitio. A diferencia del resto del contenido (que vive en
- * mitumbes-server), esta lista es estática y se mantiene en el front.
- */
-export interface Partner {
-  /** Identificador estable, usado como data-id en el HTML. */
-  id: string;
-  /** Nombre del partner mostrado en la tarjeta. */
-  name: string;
-  /** Sitio web del partner. */
-  url: string;
-  /** Descripción corta localizada (opcional). */
-  description?: Record<Locale, string>;
-  /**
-   * Logo del partner (ruta en /public o URL absoluta). Si no se indica se
-   * muestra un monograma con las iniciales del nombre.
-   */
-  logo?: string;
-}
+export type { Partner };
 
 export const PARTNERS: Partner[] = [
   {
