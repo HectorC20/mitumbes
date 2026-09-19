@@ -1,7 +1,7 @@
 import type { ContentCollectionName } from '@/shared/constants/collections';
-import type { Localizado, EnlaceContenido, EntradaContenido, ZonaLigera, ContratoEntry } from '@/shared/interfaces/contenido';
+import type { Localizado, EnlaceContenido, ReferenciaContenido, EntradaContenido, ZonaLigera, ContratoEntry } from '@/shared/interfaces/contenido';
 
-export type { Localizado, EnlaceContenido, EntradaContenido, ZonaLigera, ContratoEntry };
+export type { Localizado, EnlaceContenido, ReferenciaContenido, EntradaContenido, ZonaLigera, ContratoEntry };
 
 /** Zona de respaldo si el string `zone` no coincide con una zona local. */
 function zonaRespaldo(id: string): ZonaLigera {
@@ -38,6 +38,31 @@ function campoLocalizadoArr(
 ): Localizado<string[]> | undefined {
   const v = d[key];
   return v && typeof v === 'object' && !Array.isArray(v) ? (v as Localizado<string[]>) : undefined;
+}
+
+function normalizarReferencias(d: Record<string, unknown>): ReferenciaContenido[] | undefined {
+  const raw = d.references ?? d.referencias;
+  if (!Array.isArray(raw)) return undefined;
+  const list: ReferenciaContenido[] = [];
+  for (const item of raw) {
+    if (typeof item === 'object' && item !== null) {
+      const rec = item as Record<string, unknown>;
+      const nombre = (rec.nombre ?? rec.name ?? rec.title ?? rec.label ?? '') as string;
+      const url = (rec.url ?? rec.link ?? rec.href ?? '') as string;
+      if (url) {
+        list.push({
+          nombre: typeof nombre === 'string' && nombre.trim() ? nombre.trim() : String(url).trim(),
+          url: String(url).trim(),
+        });
+      }
+    } else if (typeof item === 'string' && item.trim()) {
+      list.push({
+        nombre: item.trim(),
+        url: item.trim(),
+      });
+    }
+  }
+  return list.length > 0 ? list : undefined;
 }
 
 /**
@@ -79,6 +104,8 @@ export function normalizarEntrada(
       website: simple<string>('website'),
       social: simple<{ instagram?: string; facebook?: string }>('social'),
       links: simple<EnlaceContenido[]>('links'),
+      references: normalizarReferencias(d),
+      referencias: normalizarReferencias(d),
       services: campoLocalizadoArr(d, 'services'),
       howToGet: campoLocalizado(d, 'howToGet'),
       activities: campoLocalizadoArr(d, 'activities'),

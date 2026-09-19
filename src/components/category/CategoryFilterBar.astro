@@ -1,0 +1,100 @@
+---
+import Icon from '@/shared/components/design/Icon.astro';
+import { loc, type Categoria, type Zona } from '@/shared/content/places';
+import { type Locale } from '@/shared/constants/locales';
+import { t } from '@/shared/constants/ui';
+
+interface Props {
+  action: string;
+  lang: Locale;
+  subcategorias?: Categoria[];
+  zonas?: Zona[];
+  placeholder?: string;
+  params: {
+    q?: string;
+    subcategoria?: string;
+    zona?: string;
+  };
+}
+
+const { action, lang, subcategorias = [], zonas = [], placeholder, params } = Astro.props;
+const inputPlaceholder = placeholder || t(lang, 'categories.searchPlaceholder');
+
+const zonasOptions = zonas
+  .map((z) => ({ id: z.id, title: loc(z.data.title, lang) ?? z.id }))
+  .sort((a, b) => a.title.localeCompare(b.title));
+
+const subcategoriasOptions = subcategorias.map((s) => ({
+  id: s.collection,
+  title: loc(s.data.title, lang) ?? s.collection,
+}));
+
+const hasActiveFilters = Boolean(params.q || params.subcategoria || params.zona);
+---
+
+<div class="category-filter-toolbar mb-6">
+  <form class="search-form flex flex-wrap items-center gap-3 w-full" role="search" action={action} method="get">
+    <div class="flex-1 min-w-[220px]">
+      <label class="sr-only" for="category-filter-q">{inputPlaceholder}</label>
+      <input
+        id="category-filter-q"
+        class="search-form__input w-full"
+        type="search"
+        name="q"
+        placeholder={inputPlaceholder}
+        value={params.q ?? ''}
+      />
+    </div>
+
+    {
+      subcategoriasOptions.length > 0 && (
+        <select
+          class="filter-field"
+          id="category-filter-subcategoria"
+          name="subcategoria"
+          aria-label={t(lang, 'categories.filterSubcategory')}
+        >
+          <option value="">{t(lang, 'categories.allSubcategories')}</option>
+          {subcategoriasOptions.map((s) => (
+            <option value={s.id} selected={params.subcategoria === s.id}>
+              {s.title}
+            </option>
+          ))}
+        </select>
+      )
+    }
+
+    {
+      zonasOptions.length > 0 && (
+        <select
+          class="filter-field"
+          id="category-filter-zona"
+          name="zona"
+          aria-label={t(lang, 'search.filterZone')}
+        >
+          <option value="">{t(lang, 'search.allZones')}</option>
+          {zonasOptions.map((z) => (
+            <option value={z.id} selected={params.zona === z.id}>
+              {z.title}
+            </option>
+          ))}
+        </select>
+      )
+    }
+
+    <div class="flex items-center gap-2">
+      <button class="btn btn--primary search-form__submit" type="submit">
+        <Icon name="search" size="sm" />
+        {t(lang, 'search.submit')}
+      </button>
+
+      {
+        hasActiveFilters && (
+          <a class="btn btn--outline text-xs sm:text-sm py-2 px-3 whitespace-nowrap" href={action}>
+            {t(lang, 'categories.clearFilters')}
+          </a>
+        )
+      }
+    </div>
+  </form>
+</div>

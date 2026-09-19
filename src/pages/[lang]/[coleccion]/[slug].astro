@@ -2,6 +2,7 @@
 import Layout from '@/components/layout/Layout.astro';
 import Icon from '@/shared/components/design/Icon.astro';
 import PlaceCard from '@/components/place/PlaceCard.astro';
+import PlaceCitation from '@/components/place/PlaceCitation.astro';
 import AdBanner from '@/shared/components/ads/AdBanner.astro';
 import noImage from '@/assets/images/no-image.svg';
 import {
@@ -266,6 +267,16 @@ const breadcrumbs = [
               </div>
             )
           }
+
+          <PlaceCitation
+            title={title}
+            canonicalUrl={url}
+            updatedAt={lugar.data.updatedAt}
+            references={lugar.data.references}
+            website={lugar.data.website}
+            source={loc(lugar.data.source, lang)}
+            lang={lang}
+          />
         </div>
 
         <aside class="place-aside">

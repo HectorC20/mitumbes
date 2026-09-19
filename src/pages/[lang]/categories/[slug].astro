@@ -1,9 +1,10 @@
 ---
 import Layout from '@/components/layout/Layout.astro';
-import Icon from '@/shared/components/design/Icon.astro';
+import PageHeader from '@/components/layout/PageHeader.astro';
 import PlaceList from '@/components/place/PlaceList.astro';
 import AdBanner from '@/shared/components/ads/AdBanner.astro';
 import EventCalendarFilter from '@/components/events/EventCalendarFilter.astro';
+import CategoryFilterBar from '@/components/category/CategoryFilterBar.astro';
 import CategoryCard from '@/components/category/CategoryCard.astro';
 import ZoneCard from '@/components/zone/ZoneCard.astro';
 import { loc } from '@/shared/content/places';
@@ -60,6 +61,10 @@ const search = Astro.url.searchParams;
 const pagina = Number.parseInt(search.get('page') ?? '1', 10);
 const paginaActual = Number.isNaN(pagina) || pagina < 1 ? 1 : pagina;
 
+const qParam = search.get('q')?.trim() || undefined;
+const subcategoriaParam = search.get('subcategoria')?.trim() || undefined;
+const zonaParam = search.get('zona')?.trim() || undefined;
+
 // Calendario de eventos: mes y año viajan como query (mes=9&anio=2026).
 const mesNum = Number.parseInt(search.get('mes') ?? '', 10);
 const anioNum = Number.parseInt(search.get('anio') ?? '', 10);
@@ -80,9 +85,24 @@ if (!esSeccionZonas) {
   if (esEventos) {
     listado = await eventosService.listarPagina({ mes: mesCalendario }, paginaActual);
   } else if (esRaiz) {
-    listado = await contentService.lugares.listarPagina({ categoria: slug! }, paginaActual);
+    listado = await contentService.lugares.listarPagina(
+      {
+        categoria: slug!,
+        subcategoria: subcategoriaParam,
+        zona: zonaParam,
+        q: qParam,
+      },
+      paginaActual,
+    );
   } else {
-    listado = await contentService.lugares.listarPagina({ subcategoria: slug! }, paginaActual);
+    listado = await contentService.lugares.listarPagina(
+      {
+        subcategoria: slug!,
+        zona: zonaParam,
+        q: qParam,
+      },
+      paginaActual,
+    );
   }
 }
 
@@ -159,19 +179,12 @@ const emptyBody =
     </ol>
   </nav>
 
-  <section class="section section--sand">
-    <div class="container-page">
-      <div class="flex items-center gap-4">
-        <span class="category-tile__icon">
-          <Icon name={icono} size="lg" />
-        </span>
-        <div>
-          <h1 class="page-title">{title} {t(lang, 'categories.inTumbes')}</h1>
-          <p class="lead">{description}</p>
-        </div>
-      </div>
-    </div>
-  </section>
+  <PageHeader
+    title={`${title} ${t(lang, 'categories.inTumbes')}`}
+    lead={description}
+    icon={icono}
+    image={categoria.data.image}
+  />
 
   <AdBanner lang={lang} id={`category-${slug}-ad`} variant="minimal" />
 
@@ -222,8 +235,21 @@ const emptyBody =
       <section class="section">
         <div class="container-page">
           {
-            esEventos && (
+            esEventos ? (
               <EventCalendarFilter mes={mesCalendario} lang={lang} />
+            ) : (
+              <CategoryFilterBar
+                action={localizePath(`/categories/${slug}/`, lang)}
+                lang={lang}
+                subcategorias={esRaiz ? subcategorias : undefined}
+                zonas={zonas}
+                placeholder={!esRaiz ? `Buscar en ${title}…` : undefined}
+                params={{
+                  q: qParam,
+                  subcategoria: subcategoriaParam,
+                  zona: zonaParam,
+                }}
+              />
             )
           }
           <PlaceList

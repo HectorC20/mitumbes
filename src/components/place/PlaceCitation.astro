@@ -1,0 +1,238 @@
+---
+import Icon from '@/shared/components/design/Icon.astro';
+import type { Locale } from '@/shared/constants/locales';
+import type { ReferenciaContenido } from '@/shared/interfaces/contenido';
+import { t } from '@/shared/constants/ui';
+
+interface Props {
+  title: string;
+  canonicalUrl: string;
+  updatedAt?: Date;
+  references?: ReferenciaContenido[];
+  website?: string;
+  source?: string;
+  lang: Locale;
+}
+
+const {
+  title,
+  canonicalUrl,
+  updatedAt,
+  references = [],
+  website,
+  source,
+  lang,
+} = Astro.props;
+
+// Construir lista de referencias combinando las explícitas y fuentes detectadas
+const allReferences: ReferenciaContenido[] = [...references];
+
+if (website && !allReferences.some((r) => r.url === website)) {
+  allReferences.push({
+    nombre: t(lang, 'place.website') || 'Sitio web oficial',
+    url: website,
+  });
+}
+
+// Formateador de fecha para APA 7 según idioma
+function formatApaDate(date: Date | undefined, locale: Locale): { dateString: string; isDated: boolean } {
+  if (!date || isNaN(date.getTime())) {
+    const noDate = locale === 'en' ? 'n.d.' : locale === 'pt' ? 's.d.' : 's.f.';
+    return { dateString: `(${noDate})`, isDated: false };
+  }
+
+  const year = date.getFullYear();
+  let dayMonth = '';
+
+  if (locale === 'en') {
+    dayMonth = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+    return { dateString: `(${year}, ${dayMonth})`, isDated: true };
+  } else if (locale === 'pt') {
+    dayMonth = date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' });
+    return { dateString: `(${year}, ${dayMonth})`, isDated: true };
+  } else {
+    dayMonth = date.toLocaleDateString('es-PE', { day: 'numeric', month: 'long' });
+    return { dateString: `(${year}, ${dayMonth})`, isDated: true };
+  }
+}
+
+const { dateString, isDated } = formatApaDate(updatedAt, lang);
+
+// En APA 7, si no hay fecha fija (s.f.), se añade la fecha de recuperación
+let retrievalNote = '';
+if (!isDated) {
+  const today = new Date();
+  if (lang === 'en') {
+    const todayStr = today.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    retrievalNote = ` Retrieved ${todayStr}, from`;
+  } else if (lang === 'pt') {
+    const todayStr = today.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+    retrievalNote = ` Recuperado em ${todayStr}, de`;
+  } else {
+    const todayStr = today.toLocaleDateString('es-PE', { day: 'numeric', month: 'long', year: 'numeric' });
+    retrievalNote = ` Recuperado el ${todayStr}, de`;
+  }
+}
+
+// Texto plano para el botón de copiar al portapapeles
+const plainCitation = isDated
+  ? `MiTumbes. ${dateString}. ${title}. MiTumbes. ${canonicalUrl}`
+  : `MiTumbes. ${dateString}. ${title}. MiTumbes.${retrievalNote} ${canonicalUrl}`;
+
+// Extrae el host para mostrarlo limpio en las referencias
+function cleanHost(urlStr: string): string {
+  try {
+    const parsed = new URL(urlStr.startsWith('http') ? urlStr : `https://${urlStr}`);
+    return parsed.hostname.replace(/^www\./, '');
+  } catch {
+    return urlStr.replace(/^https?:\/\//, '').split('/')[0];
+  }
+}
+---
+
+<div class="place-citation-wrapper space-y-6">
+  <!-- Sección 1: Referencias y Fuentes Externas -->
+  <div class="place-panel">
+    <div class="flex items-center gap-2 mb-3">
+      <Icon name="compass" size="sm" class="text-primary" />
+      <h2 class="place-panel__title !mb-0">{t(lang, 'place.referencesTitle')}</h2>
+    </div>
+
+    {allReferences.length > 0 ? (
+      <ul class="space-y-2.5">
+        {allReferences.map((ref) => (
+          <li class="flex items-start justify-between gap-3 text-sm py-1.5 border-b border-sand-dark/30 last:border-0">
+            <div class="min-w-0 flex-1">
+              <a
+                href={ref.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="font-medium text-primary hover:text-secondary hover:underline flex items-center gap-1.5 break-words"
+              >
+                <span>{ref.nombre}</span>
+                <span class="text-xs text-muted/80 shrink-0 font-mono">({cleanHost(ref.url)})</span>
+              </a>
+            </div>
+            <a
+              href={ref.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${ref.nombre} (${t(lang, 'place.website')})`}
+              class="text-muted hover:text-primary shrink-0 p-1"
+            >
+              <Icon name="arrow-right" size="sm" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : source ? (
+      <p class="text-sm text-muted">
+        <span class="font-semibold text-secondary">{t(lang, 'place.source')}:</span> {source}
+      </p>
+    ) : (
+      <p class="text-sm text-muted/90">
+        {t(lang, 'place.noReferences')}
+      </p>
+    )}
+  </div>
+
+  <!-- Sección 2: Cita en Formato APA (7.ª Edición) -->
+  <div class="place-panel bg-sand/30 border border-sand-dark/60 rounded-xl p-4 sm:p-5">
+    <div class="flex items-center justify-between gap-2 mb-2">
+      <div class="flex items-center gap-2">
+        <Icon name="scale" size="sm" class="text-primary" />
+        <h3 class="text-sm font-bold uppercase tracking-wider text-secondary">
+          {t(lang, 'place.citeTitle')}
+        </h3>
+      </div>
+      <span class="text-[10px] font-semibold bg-primary/10 text-primary px-2 py-0.5 rounded-full uppercase">
+        Web / APA 7
+      </span>
+    </div>
+
+    <p class="text-xs text-muted mb-3">
+      {t(lang, 'place.citeDescription')}
+    </p>
+
+    <!-- Caja de visualización de cita -->
+    <div class="relative bg-white rounded-lg p-3.5 border border-sand-dark shadow-xs mb-3 font-serif text-sm leading-relaxed text-secondary select-all">
+      <p id="apa-citation-text" class="break-words">
+        <span>MiTumbes. </span>
+        <span>{dateString} </span>
+        <em class="font-semibold italic">{title}. </em>
+        <span>MiTumbes.</span>
+        {retrievalNote && <span>{retrievalNote} </span>}
+        <a href={canonicalUrl} class="text-primary underline ml-1 font-mono text-xs break-all">
+          {canonicalUrl}
+        </a>
+      </p>
+    </div>
+
+    <!-- Botón de Copiado con feedback interactivo -->
+    <div class="flex justify-end">
+      <button
+        type="button"
+        class="btn btn--outline !py-1.5 !px-3.5 text-xs inline-flex items-center gap-2 cursor-pointer transition-all"
+        id="btn-copy-apa"
+        data-citation={plainCitation}
+        data-text-default={t(lang, 'place.copyCitation')}
+        data-text-copied={t(lang, 'place.citationCopied')}
+      >
+        <Icon name="copy" size="sm" />
+        <span id="btn-copy-text">{t(lang, 'place.copyCitation')}</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function setupApaCopy(): void {
+    const copyBtn = document.getElementById('btn-copy-apa') as HTMLButtonElement | null;
+    const copyText = document.getElementById('btn-copy-text');
+
+    if (!copyBtn || !copyText) return;
+
+    copyBtn.addEventListener('click', async () => {
+      const citation = copyBtn.getAttribute('data-citation');
+      const textDefault = copyBtn.getAttribute('data-text-default') || 'Copiar cita APA';
+      const textCopied = copyBtn.getAttribute('data-text-copied') || '¡Cita copiada!';
+
+      if (!citation) return;
+
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(citation);
+        } else {
+          const textarea = document.createElement('textarea');
+          textarea.value = citation;
+          textarea.setAttribute('readonly', '');
+          textarea.style.position = 'absolute';
+          textarea.style.left = '-9999px';
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+        }
+
+        copyText.textContent = textCopied;
+        copyBtn.classList.add('!bg-emerald-600', '!text-white', '!border-emerald-600');
+
+        setTimeout(() => {
+          copyText.textContent = textDefault;
+          copyBtn.classList.remove('!bg-emerald-600', '!text-white', '!border-emerald-600');
+        }, 2200);
+      } catch {
+        copyText.textContent = textCopied;
+        setTimeout(() => {
+          copyText.textContent = textDefault;
+        }, 2200);
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupApaCopy);
+  } else {
+    setupApaCopy();
+  }
+</script>

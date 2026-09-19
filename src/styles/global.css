@@ -67,6 +67,54 @@
     @apply bg-gradient-to-b from-sand/60 via-sand/35 to-sand/15;
   }
 
+  .section--sand.section--with-image {
+    @apply relative overflow-hidden bg-secondary text-white;
+  }
+
+  .section__bg-wrap {
+    @apply absolute inset-0 z-0 pointer-events-none;
+  }
+
+  .section__bg-img {
+    @apply h-full w-full object-cover opacity-60;
+  }
+
+  .section__bg-overlay {
+    @apply absolute inset-0 bg-gradient-to-r from-secondary/95 via-secondary/80 to-secondary/40 md:to-secondary/30;
+  }
+
+  .section--with-image .container-page {
+    @apply relative z-10;
+  }
+
+  .section--with-image .page-title {
+    @apply text-white;
+  }
+
+  .section--with-image .lead {
+    @apply text-white/90;
+  }
+
+  .section--with-image .eyebrow {
+    @apply text-sun;
+  }
+
+  .section--with-image .category-tile__icon {
+    @apply bg-white/20 text-white backdrop-blur-sm;
+  }
+
+  .page-header__content {
+    @apply flex flex-col;
+  }
+
+  .page-header__content--with-icon {
+    @apply flex-row items-center gap-4;
+  }
+
+  .page-header__text {
+    @apply flex-1 min-w-0;
+  }
+
   .section--deep {
     @apply bg-secondary text-white;
   }

@@ -1,18 +1,59 @@
 ---
+import { imagenSrc } from '@/shared/content/places';
+import Icon from '@/shared/components/design/Icon.astro';
+
 interface Props {
   eyebrow?: string;
   title: string;
   lead?: string;
   theme?: 'sand' | 'white';
+  image?: string;
+  icon?: string;
 }
 
-const { eyebrow, title, lead, theme = 'sand' } = Astro.props;
+const { eyebrow, title, lead, theme = 'sand', image, icon } = Astro.props;
+const bgImage = imagenSrc(image);
 ---
 
-<section class:list={['section', { 'section--sand': theme === 'sand' }]}>
+<section
+  class:list={[
+    'section',
+    {
+      'section--sand': theme === 'sand',
+      'section--with-image': Boolean(bgImage),
+    },
+  ]}
+>
+  {
+    bgImage && (
+      <div class="section__bg-wrap" aria-hidden="true">
+        <img
+          src={bgImage}
+          alt=""
+          class="section__bg-img"
+          loading="eager"
+          decoding="async"
+        />
+        <div class="section__bg-overlay" />
+      </div>
+    )
+  }
   <div class="container-page">
-    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
-    <h1 class="page-title">{title}</h1>
-    {lead && <p class="lead">{lead}</p>}
+    <div class:list={['page-header__content', { 'page-header__content--with-icon': Boolean(icon) }]}>
+      {
+        icon && (
+          <span class="category-tile__icon">
+            <Icon name={icon} size="lg" />
+          </span>
+        )
+      }
+      <div class="page-header__text">
+        {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+        <h1 class="page-title">{title}</h1>
+        {lead && <p class="lead">{lead}</p>}
+        <slot />
+      </div>
+    </div>
   </div>
 </section>
+

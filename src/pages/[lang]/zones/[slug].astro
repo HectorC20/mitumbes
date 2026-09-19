@@ -1,6 +1,8 @@
 ---
 import Layout from '@/components/layout/Layout.astro';
+import PageHeader from '@/components/layout/PageHeader.astro';
 import PlaceList from '@/components/place/PlaceList.astro';
+import CategoryFilterBar from '@/components/category/CategoryFilterBar.astro';
 import AdBanner from '@/shared/components/ads/AdBanner.astro';
 import { contentService } from '@/services/content.service';
 import { imagenSrc, loc } from '@/shared/content/places';
@@ -24,9 +26,18 @@ if (!zona) {
 const search = Astro.url.searchParams;
 const pagina = Number.parseInt(search.get('page') ?? '1', 10);
 const paginaActual = Number.isNaN(pagina) || pagina < 1 ? 1 : pagina;
+const qParam = search.get('q')?.trim() || undefined;
+const categoriaParam = search.get('categoria')?.trim() || undefined;
 
 const [listado, categorias] = await Promise.all([
-  contentService.lugares.listarPagina({ zona: slug! }, paginaActual),
+  contentService.lugares.listarPagina(
+    {
+      zona: slug!,
+      categoria: categoriaParam,
+      q: qParam,
+    },
+    paginaActual,
+  ),
   contentService.categorias.listar(),
 ]);
 
@@ -72,40 +83,27 @@ const breadcrumbs = [
     </ol>
   </nav>
 
-  {
-    zona.data.image ? (
-      <section class="zona-hero">
-        <img class="zona-hero__img" src={imagenSrc(zona.data.image)} alt={t(lang, 'zones.imageAlt').replace('{zone}', title)} />
-        <div class="zona-hero__overlay"></div>
-        <div class="zona-hero__inner">
-          <h1 class="zona-hero__title">
-            {title}
-          </h1>
-        </div>
-      </section>
-    ) : (
-      <section class="section section--sand">
-        <div class="container-page">
-          <h1 class="page-title">{title}</h1>
-        </div>
-      </section>
-    )
-  }
-
-  {
-    zona.data.image && (
-      <section class="section">
-        <div class="container-page">
-          <p class="lead">{description}</p>
-        </div>
-      </section>
-    )
-  }
+  <PageHeader
+    eyebrow={t(lang, 'nav.zones')}
+    title={title}
+    lead={description}
+    image={zona.data.image}
+  />
 
   <AdBanner lang={lang} id={`zone-${slug}-ad`} variant="card" />
 
   <section class="section pt-0">
     <div class="container-page">
+      <CategoryFilterBar
+        action={localizePath(`/zones/${slug}/`, lang)}
+        lang={lang}
+        subcategorias={categorias.filter((c) => !c.data.parent)}
+        placeholder={`Buscar en ${title}…`}
+        params={{
+          q: qParam,
+          subcategoria: categoriaParam,
+        }}
+      />
       <PlaceList
         lugares={listado.items}
         categorias={categorias}

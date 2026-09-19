@@ -145,6 +145,25 @@ describe('normalizarEntrada', () => {
     expect(entrada.data.parentId).toBeNull();
     expect(entrada.data.depth).toBeUndefined();
   });
+
+  it('normaliza referencias con nombre y enlace', () => {
+    const entrada = normalizarEntrada({
+      id: 'playa-zorritos',
+      collection: 'places',
+      data: {
+        title: { es: 'Zorritos', en: 'Zorritos', pt: 'Zorritos' },
+        references: [
+          { nombre: 'SERNANP Tumbes', url: 'https://sernanp.gob.pe' },
+          { name: 'DIRCETUR', link: 'https://dircetur.gob.pe' },
+        ],
+      },
+    });
+
+    expect(entrada.data.references).toEqual([
+      { nombre: 'SERNANP Tumbes', url: 'https://sernanp.gob.pe' },
+      { nombre: 'DIRCETUR', url: 'https://dircetur.gob.pe' },
+    ]);
+  });
 });
 
 describe('porActualizacionDesc', () => {

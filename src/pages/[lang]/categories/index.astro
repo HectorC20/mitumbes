@@ -30,7 +30,18 @@ const [categorias, conteos] = await Promise.all([
 
   <section class="section">
     <div class="container-page">
-      <div class="category-grid">
+      <div class="mb-8 max-w-md">
+        <label class="sr-only" for="category-search-input">{t(lang, 'categories.searchCategories')}</label>
+        <input
+          id="category-search-input"
+          class="search-form__input w-full"
+          type="search"
+          placeholder={t(lang, 'categories.searchCategories')}
+          autocomplete="off"
+        />
+      </div>
+
+      <div id="categories-grid" class="category-grid">
         {
           categorias.map((c) => (
             <CategoryCard
@@ -44,4 +55,23 @@ const [categorias, conteos] = await Promise.all([
       </div>
     </div>
   </section>
+
+  <script>
+    const searchInput = document.getElementById('category-search-input') as HTMLInputElement | null;
+    const cards = document.querySelectorAll<HTMLElement>('#categories-grid .category-card');
+
+    if (searchInput && cards.length > 0) {
+      searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim().toLowerCase();
+        cards.forEach((card) => {
+          const text = card.textContent?.toLowerCase() ?? '';
+          if (!query || text.includes(query)) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    }
+  </script>
 </Layout>

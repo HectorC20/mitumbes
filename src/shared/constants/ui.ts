@@ -117,6 +117,12 @@ export const ui = {
     'place.relatedTitleGeneral': 'Más lugares y experiencias en Tumbes',
     'place.viewZone': 'Ver zona',
     'place.viewMoreRelated': 'Ver más lugares',
+    'place.referencesTitle': 'Referencias y fuentes',
+    'place.citeTitle': 'Cómo citar este recurso (Formato APA 7)',
+    'place.citeDescription': 'Cita para páginas web según las normas APA (7.ª edición).',
+    'place.copyCitation': 'Copiar cita APA',
+    'place.citationCopied': '¡Cita copiada!',
+    'place.noReferences': 'Información verificada y recopilada por el equipo editorial de MiTumbes.',
 
     // Tarjetas de contenido
     'card.verifiedPlace': 'lugar verificado',
@@ -143,6 +149,11 @@ export const ui = {
     'categories.inTumbes': 'en Tumbes',
     'categories.emptyTitle': 'Aún no hay lugares en esta categoría',
     'categories.emptyBody': 'Muy pronto agregaremos más información.',
+    'categories.searchPlaceholder': 'Buscar en esta categoría…',
+    'categories.searchCategories': 'Buscar categoría…',
+    'categories.filterSubcategory': 'Filtrar por subcategoría',
+    'categories.allSubcategories': 'Todas las subcategorías',
+    'categories.clearFilters': 'Limpiar filtros',
 
     // Zonas
     'zones.eyebrow': 'Explorar',
@@ -322,6 +333,12 @@ export const ui = {
     'place.relatedTitleGeneral': 'More places and experiences in Tumbes',
     'place.viewZone': 'View zone',
     'place.viewMoreRelated': 'View more places',
+    'place.referencesTitle': 'References & sources',
+    'place.citeTitle': 'How to cite this resource (APA 7th ed.)',
+    'place.citeDescription': 'Webpage citation according to APA guidelines (7th edition).',
+    'place.copyCitation': 'Copy APA citation',
+    'place.citationCopied': 'Citation copied!',
+    'place.noReferences': 'Information verified and compiled by the MiTumbes editorial team.',
 
     // Content cards
     'card.verifiedPlace': 'verified place',
@@ -348,6 +365,11 @@ export const ui = {
     'categories.inTumbes': 'in Tumbes',
     'categories.emptyTitle': 'No places in this category yet',
     'categories.emptyBody': 'We will add more information soon.',
+    'categories.searchPlaceholder': 'Search in this category…',
+    'categories.searchCategories': 'Search categories…',
+    'categories.filterSubcategory': 'Filter by subcategory',
+    'categories.allSubcategories': 'All subcategories',
+    'categories.clearFilters': 'Clear filters',
 
     'zones.eyebrow': 'Explore',
     'zones.lead':
@@ -524,6 +546,12 @@ export const ui = {
     'place.relatedTitleGeneral': 'Mais lugares e experiências em Tumbes',
     'place.viewZone': 'Ver zona',
     'place.viewMoreRelated': 'Ver mais lugares',
+    'place.referencesTitle': 'Referências e fontes',
+    'place.citeTitle': 'Como citar este recurso (Formato APA 7)',
+    'place.citeDescription': 'Citação para páginas da web segundo as normas APA (7ª edição).',
+    'place.copyCitation': 'Copiar citação APA',
+    'place.citationCopied': 'Citação copiada!',
+    'place.noReferences': 'Informações verificadas e compiladas pela equipe editorial do MiTumbes.',
 
     // Cartões de conteúdo
     'card.verifiedPlace': 'lugar verificado',
@@ -550,6 +578,11 @@ export const ui = {
     'categories.inTumbes': 'em Tumbes',
     'categories.emptyTitle': 'Ainda não há lugares nesta categoria',
     'categories.emptyBody': 'Em breve adicionaremos mais informações.',
+    'categories.searchPlaceholder': 'Pesquisar nesta categoria…',
+    'categories.searchCategories': 'Pesquisar categoria…',
+    'categories.filterSubcategory': 'Filtrar por subcategoria',
+    'categories.allSubcategories': 'Todas as subcategorias',
+    'categories.clearFilters': 'Limpar filtros',
 
     'zones.eyebrow': 'Explorar',
     'zones.lead':

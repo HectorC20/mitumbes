@@ -23,10 +23,11 @@ const filtro: FiltroContenidos = {
 const page = Number.parseInt(search.get('page') ?? '1', 10);
 
 // El filtro, el orden y el troceado a 12 por página los resuelve el backend.
-const [listado, categorias, zonas] = await Promise.all([
+const [listado, categorias, zonas, catPlaces] = await Promise.all([
   contentService.lugares.listarPagina(filtro, Number.isNaN(page) ? 1 : page),
   contentService.categorias.listarRaices(),
   contentService.zonas.listar(),
+  contentService.categorias.buscarPorId('places'),
 ]);
 ---
 
@@ -35,6 +36,7 @@ const [listado, categorias, zonas] = await Promise.all([
     eyebrow={t(lang, 'categories.eyebrow')}
     title={t(lang, 'seo.placesTitle')}
     lead={t(lang, 'seo.placesDescription')}
+    image={catPlaces?.data.image}
   />
 
   <AdBanner lang={lang} id="places-catalog-ad" variant="minimal" />

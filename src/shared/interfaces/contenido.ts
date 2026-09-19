@@ -9,6 +9,11 @@ export interface EnlaceContenido {
   label?: string;
 }
 
+export interface ReferenciaContenido {
+  nombre: string;
+  url: string;
+}
+
 export interface EntradaContenido {
   id: string;
   collection: ContentCollectionName;
@@ -29,6 +34,8 @@ export interface EntradaContenido {
     website?: string;
     social?: { instagram?: string; facebook?: string };
     links?: EnlaceContenido[];
+    references?: ReferenciaContenido[];
+    referencias?: ReferenciaContenido[];
     services?: Localizado<string[]>;
     howToGet?: Localizado<string>;
     activities?: Localizado<string[]>;
